@@ -1,17 +1,17 @@
 //  @ts-check
 
-import js from '@eslint/js'
-import { tanstackConfig } from '@tanstack/eslint-config'
-import pluginQuery from '@tanstack/eslint-plugin-query'
-import reactHooks from 'eslint-plugin-react-hooks'
-import { defineConfig } from 'eslint/config'
-import tseslint from 'typescript-eslint'
+import js from "@eslint/js";
+import { tanstackConfig } from "@tanstack/eslint-config";
+import pluginQuery from "@tanstack/eslint-plugin-query";
+import reactHooks from "eslint-plugin-react-hooks";
+import { defineConfig } from "eslint/config";
+import tseslint from "typescript-eslint";
 
 export default defineConfig([
   ...tanstackConfig,
-  ...pluginQuery.configs['flat/recommended-strict'],
+  ...pluginQuery.configs["flat/recommended-strict"],
   {
-    files: ['**/*.{js,jsx,mjs,cjs,ts,tsx}'],
+    files: ["**/*.{js,jsx,mjs,cjs,ts,tsx}"],
     extends: [
       js.configs.recommended,
       tseslint.configs.strictTypeChecked,
@@ -27,12 +27,12 @@ export default defineConfig([
   },
   {
     rules: {
-      'import/no-cycle': 'off',
-      '@typescript-eslint/array-type': 'off',
-      '@typescript-eslint/require-await': 'off',
+      "import/no-cycle": "off",
+      "@typescript-eslint/array-type": "off",
+      "@typescript-eslint/require-await": "off",
     },
   },
   {
-    ignores: ['eslint.config.js', 'prettier.config.js'],
+    ignores: ["eslint.config.js", "prettier.config.js"],
   },
-])
+]);
