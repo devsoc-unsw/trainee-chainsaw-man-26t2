@@ -1,0 +1,6 @@
+minimumReleaseAge: 10080 # 7 days to prevent supply chain attacks
+blockExoticSubdeps: true # don't get deps from git, tarballs or non-npm registries
+allowBuilds:
+  esbuild: true
+  lightningcss: true
+  unrs-resolver: true
