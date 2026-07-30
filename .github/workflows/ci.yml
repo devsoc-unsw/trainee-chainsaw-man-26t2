@@ -13,6 +13,9 @@ jobs:
   server:
     name: Server Build and Test
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
     steps:
       - uses: actions/checkout@v7
       - name: Install Rust
@@ -21,6 +24,8 @@ jobs:
           components: clippy
       - name: Load Rust/Cargo Cache
         uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: server -> target
       - name: Build
         run: cargo build --all-targets --all-features --locked
       - name: Clippy
@@ -30,6 +35,9 @@ jobs:
   server-formatting:
     name: Server Formatting
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
     steps:
       - uses: actions/checkout@v7
       - name: Install Rust
