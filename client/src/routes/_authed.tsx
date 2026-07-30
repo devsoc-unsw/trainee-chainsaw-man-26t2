@@ -1,0 +1,16 @@
+import { createFileRoute, redirect } from "@tanstack/react-router";
+
+export const Route = createFileRoute("/_authed")({
+  beforeLoad: async ({ location }) => {
+    const isAuthenticated = true; // TODO: Replace with auth logic
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (!isAuthenticated) {
+      return redirect({
+        to: "/auth/login",
+        search: {
+          redirect: location.href,
+        },
+      });
+    }
+  },
+});

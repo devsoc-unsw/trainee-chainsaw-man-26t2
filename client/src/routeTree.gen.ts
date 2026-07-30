@@ -8,52 +8,465 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from "./routes/__root";
-import { Route as IndexRouteImport } from "./routes/index";
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as AuthedRouteImport } from './routes/_authed'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as CountIndexRouteImport } from './routes/count/index'
+import { Route as VoteTokenRouteImport } from './routes/vote/$token'
+import { Route as CountElectionIdRouteImport } from './routes/count/$electionId'
+import { Route as AuthLoginRouteImport } from './routes/auth/login'
+import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
+import { Route as AuthedDashboardRouteImport } from './routes/_authed/dashboard'
+import { Route as VoteTokenIndexRouteImport } from './routes/vote/$token/index'
+import { Route as VoteTokenConfirmRouteImport } from './routes/vote/$token/confirm'
+import { Route as VoteTokenClosedRouteImport } from './routes/vote/$token/closed'
+import { Route as AuthedElectionsNewRouteImport } from './routes/_authed/elections/new'
+import { Route as AuthedElectionsElectionIdRouteImport } from './routes/_authed/elections/$electionId'
+import { Route as AuthedElectionsElectionIdIndexRouteImport } from './routes/_authed/elections/$electionId/index'
+import { Route as VoteTokenRoleIdRoleIdRouteImport } from './routes/vote/$token/$roleId/$roleId'
+import { Route as AuthedElectionsElectionIdSettingsRouteImport } from './routes/_authed/elections/$electionId/settings'
+import { Route as AuthedElectionsElectionIdRolesRouteImport } from './routes/_authed/elections/$electionId/roles'
+import { Route as AuthedElectionsElectionIdInvitesRouteImport } from './routes/_authed/elections/$electionId/invites'
+import { Route as AuthedElectionsElectionIdCandidatesRouteImport } from './routes/_authed/elections/$electionId/candidates'
 
-const IndexRoute = IndexRouteImport.update({
-  id: "/",
-  path: "/",
+const AuthedRoute = AuthedRouteImport.update({
+  id: '/_authed',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CountIndexRoute = CountIndexRouteImport.update({
+  id: '/count/',
+  path: '/count/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VoteTokenRoute = VoteTokenRouteImport.update({
+  id: '/vote/$token',
+  path: '/vote/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CountElectionIdRoute = CountElectionIdRouteImport.update({
+  id: '/count/$electionId',
+  path: '/count/$electionId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthLoginRoute = AuthLoginRouteImport.update({
+  id: '/auth/login',
+  path: '/auth/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/auth/callback',
+  path: '/auth/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthedDashboardRoute = AuthedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthedRoute,
+} as any)
+const VoteTokenIndexRoute = VoteTokenIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => VoteTokenRoute,
+} as any)
+const VoteTokenConfirmRoute = VoteTokenConfirmRouteImport.update({
+  id: '/confirm',
+  path: '/confirm',
+  getParentRoute: () => VoteTokenRoute,
+} as any)
+const VoteTokenClosedRoute = VoteTokenClosedRouteImport.update({
+  id: '/closed',
+  path: '/closed',
+  getParentRoute: () => VoteTokenRoute,
+} as any)
+const AuthedElectionsNewRoute = AuthedElectionsNewRouteImport.update({
+  id: '/elections/new',
+  path: '/elections/new',
+  getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedElectionsElectionIdRoute =
+  AuthedElectionsElectionIdRouteImport.update({
+    id: '/elections/$electionId',
+    path: '/elections/$electionId',
+    getParentRoute: () => AuthedRoute,
+  } as any)
+const AuthedElectionsElectionIdIndexRoute =
+  AuthedElectionsElectionIdIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthedElectionsElectionIdRoute,
+  } as any)
+const VoteTokenRoleIdRoleIdRoute = VoteTokenRoleIdRoleIdRouteImport.update({
+  id: '/$roleId/$roleId',
+  path: '/$roleId/$roleId',
+  getParentRoute: () => VoteTokenRoute,
+} as any)
+const AuthedElectionsElectionIdSettingsRoute =
+  AuthedElectionsElectionIdSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthedElectionsElectionIdRoute,
+  } as any)
+const AuthedElectionsElectionIdRolesRoute =
+  AuthedElectionsElectionIdRolesRouteImport.update({
+    id: '/roles',
+    path: '/roles',
+    getParentRoute: () => AuthedElectionsElectionIdRoute,
+  } as any)
+const AuthedElectionsElectionIdInvitesRoute =
+  AuthedElectionsElectionIdInvitesRouteImport.update({
+    id: '/invites',
+    path: '/invites',
+    getParentRoute: () => AuthedElectionsElectionIdRoute,
+  } as any)
+const AuthedElectionsElectionIdCandidatesRoute =
+  AuthedElectionsElectionIdCandidatesRouteImport.update({
+    id: '/candidates',
+    path: '/candidates',
+    getParentRoute: () => AuthedElectionsElectionIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  "/": typeof IndexRoute;
+  '/': typeof IndexRoute
+  '/dashboard': typeof AuthedDashboardRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/count/$electionId': typeof CountElectionIdRoute
+  '/vote/$token': typeof VoteTokenRouteWithChildren
+  '/count/': typeof CountIndexRoute
+  '/elections/$electionId': typeof AuthedElectionsElectionIdRouteWithChildren
+  '/elections/new': typeof AuthedElectionsNewRoute
+  '/vote/$token/closed': typeof VoteTokenClosedRoute
+  '/vote/$token/confirm': typeof VoteTokenConfirmRoute
+  '/vote/$token/': typeof VoteTokenIndexRoute
+  '/elections/$electionId/candidates': typeof AuthedElectionsElectionIdCandidatesRoute
+  '/elections/$electionId/invites': typeof AuthedElectionsElectionIdInvitesRoute
+  '/elections/$electionId/roles': typeof AuthedElectionsElectionIdRolesRoute
+  '/elections/$electionId/settings': typeof AuthedElectionsElectionIdSettingsRoute
+  '/vote/$token/$roleId/$roleId': typeof VoteTokenRoleIdRoleIdRoute
+  '/elections/$electionId/': typeof AuthedElectionsElectionIdIndexRoute
 }
 export interface FileRoutesByTo {
-  "/": typeof IndexRoute;
+  '/': typeof IndexRoute
+  '/dashboard': typeof AuthedDashboardRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/count/$electionId': typeof CountElectionIdRoute
+  '/count': typeof CountIndexRoute
+  '/elections/new': typeof AuthedElectionsNewRoute
+  '/vote/$token/closed': typeof VoteTokenClosedRoute
+  '/vote/$token/confirm': typeof VoteTokenConfirmRoute
+  '/vote/$token': typeof VoteTokenIndexRoute
+  '/elections/$electionId/candidates': typeof AuthedElectionsElectionIdCandidatesRoute
+  '/elections/$electionId/invites': typeof AuthedElectionsElectionIdInvitesRoute
+  '/elections/$electionId/roles': typeof AuthedElectionsElectionIdRolesRoute
+  '/elections/$electionId/settings': typeof AuthedElectionsElectionIdSettingsRoute
+  '/vote/$token/$roleId/$roleId': typeof VoteTokenRoleIdRoleIdRoute
+  '/elections/$electionId': typeof AuthedElectionsElectionIdIndexRoute
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport;
-  "/": typeof IndexRoute;
+  __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/_authed': typeof AuthedRouteWithChildren
+  '/_authed/dashboard': typeof AuthedDashboardRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/count/$electionId': typeof CountElectionIdRoute
+  '/vote/$token': typeof VoteTokenRouteWithChildren
+  '/count/': typeof CountIndexRoute
+  '/_authed/elections/$electionId': typeof AuthedElectionsElectionIdRouteWithChildren
+  '/_authed/elections/new': typeof AuthedElectionsNewRoute
+  '/vote/$token/closed': typeof VoteTokenClosedRoute
+  '/vote/$token/confirm': typeof VoteTokenConfirmRoute
+  '/vote/$token/': typeof VoteTokenIndexRoute
+  '/_authed/elections/$electionId/candidates': typeof AuthedElectionsElectionIdCandidatesRoute
+  '/_authed/elections/$electionId/invites': typeof AuthedElectionsElectionIdInvitesRoute
+  '/_authed/elections/$electionId/roles': typeof AuthedElectionsElectionIdRolesRoute
+  '/_authed/elections/$electionId/settings': typeof AuthedElectionsElectionIdSettingsRoute
+  '/vote/$token/$roleId/$roleId': typeof VoteTokenRoleIdRoleIdRoute
+  '/_authed/elections/$electionId/': typeof AuthedElectionsElectionIdIndexRoute
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: "/";
-  fileRoutesByTo: FileRoutesByTo;
-  to: "/";
-  id: "__root__" | "/";
-  fileRoutesById: FileRoutesById;
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | '/'
+    | '/dashboard'
+    | '/auth/callback'
+    | '/auth/login'
+    | '/count/$electionId'
+    | '/vote/$token'
+    | '/count/'
+    | '/elections/$electionId'
+    | '/elections/new'
+    | '/vote/$token/closed'
+    | '/vote/$token/confirm'
+    | '/vote/$token/'
+    | '/elections/$electionId/candidates'
+    | '/elections/$electionId/invites'
+    | '/elections/$electionId/roles'
+    | '/elections/$electionId/settings'
+    | '/vote/$token/$roleId/$roleId'
+    | '/elections/$electionId/'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/'
+    | '/dashboard'
+    | '/auth/callback'
+    | '/auth/login'
+    | '/count/$electionId'
+    | '/count'
+    | '/elections/new'
+    | '/vote/$token/closed'
+    | '/vote/$token/confirm'
+    | '/vote/$token'
+    | '/elections/$electionId/candidates'
+    | '/elections/$electionId/invites'
+    | '/elections/$electionId/roles'
+    | '/elections/$electionId/settings'
+    | '/vote/$token/$roleId/$roleId'
+    | '/elections/$electionId'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authed'
+    | '/_authed/dashboard'
+    | '/auth/callback'
+    | '/auth/login'
+    | '/count/$electionId'
+    | '/vote/$token'
+    | '/count/'
+    | '/_authed/elections/$electionId'
+    | '/_authed/elections/new'
+    | '/vote/$token/closed'
+    | '/vote/$token/confirm'
+    | '/vote/$token/'
+    | '/_authed/elections/$electionId/candidates'
+    | '/_authed/elections/$electionId/invites'
+    | '/_authed/elections/$electionId/roles'
+    | '/_authed/elections/$electionId/settings'
+    | '/vote/$token/$roleId/$roleId'
+    | '/_authed/elections/$electionId/'
+  fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute;
+  IndexRoute: typeof IndexRoute
+  AuthedRoute: typeof AuthedRouteWithChildren
+  AuthCallbackRoute: typeof AuthCallbackRoute
+  AuthLoginRoute: typeof AuthLoginRoute
+  CountElectionIdRoute: typeof CountElectionIdRoute
+  VoteTokenRoute: typeof VoteTokenRouteWithChildren
+  CountIndexRoute: typeof CountIndexRoute
 }
 
-declare module "@tanstack/react-router" {
+declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    "/": {
-      id: "/";
-      path: "/";
-      fullPath: "/";
-      preLoaderRoute: typeof IndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+    '/_authed': {
+      id: '/_authed'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/count/': {
+      id: '/count/'
+      path: '/count'
+      fullPath: '/count/'
+      preLoaderRoute: typeof CountIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vote/$token': {
+      id: '/vote/$token'
+      path: '/vote/$token'
+      fullPath: '/vote/$token'
+      preLoaderRoute: typeof VoteTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/count/$electionId': {
+      id: '/count/$electionId'
+      path: '/count/$electionId'
+      fullPath: '/count/$electionId'
+      preLoaderRoute: typeof CountElectionIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/login': {
+      id: '/auth/login'
+      path: '/auth/login'
+      fullPath: '/auth/login'
+      preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/auth/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authed/dashboard': {
+      id: '/_authed/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthedDashboardRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/vote/$token/': {
+      id: '/vote/$token/'
+      path: '/'
+      fullPath: '/vote/$token/'
+      preLoaderRoute: typeof VoteTokenIndexRouteImport
+      parentRoute: typeof VoteTokenRoute
+    }
+    '/vote/$token/confirm': {
+      id: '/vote/$token/confirm'
+      path: '/confirm'
+      fullPath: '/vote/$token/confirm'
+      preLoaderRoute: typeof VoteTokenConfirmRouteImport
+      parentRoute: typeof VoteTokenRoute
+    }
+    '/vote/$token/closed': {
+      id: '/vote/$token/closed'
+      path: '/closed'
+      fullPath: '/vote/$token/closed'
+      preLoaderRoute: typeof VoteTokenClosedRouteImport
+      parentRoute: typeof VoteTokenRoute
+    }
+    '/_authed/elections/new': {
+      id: '/_authed/elections/new'
+      path: '/elections/new'
+      fullPath: '/elections/new'
+      preLoaderRoute: typeof AuthedElectionsNewRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/elections/$electionId': {
+      id: '/_authed/elections/$electionId'
+      path: '/elections/$electionId'
+      fullPath: '/elections/$electionId'
+      preLoaderRoute: typeof AuthedElectionsElectionIdRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/elections/$electionId/': {
+      id: '/_authed/elections/$electionId/'
+      path: '/'
+      fullPath: '/elections/$electionId/'
+      preLoaderRoute: typeof AuthedElectionsElectionIdIndexRouteImport
+      parentRoute: typeof AuthedElectionsElectionIdRoute
+    }
+    '/vote/$token/$roleId/$roleId': {
+      id: '/vote/$token/$roleId/$roleId'
+      path: '/$roleId/$roleId'
+      fullPath: '/vote/$token/$roleId/$roleId'
+      preLoaderRoute: typeof VoteTokenRoleIdRoleIdRouteImport
+      parentRoute: typeof VoteTokenRoute
+    }
+    '/_authed/elections/$electionId/settings': {
+      id: '/_authed/elections/$electionId/settings'
+      path: '/settings'
+      fullPath: '/elections/$electionId/settings'
+      preLoaderRoute: typeof AuthedElectionsElectionIdSettingsRouteImport
+      parentRoute: typeof AuthedElectionsElectionIdRoute
+    }
+    '/_authed/elections/$electionId/roles': {
+      id: '/_authed/elections/$electionId/roles'
+      path: '/roles'
+      fullPath: '/elections/$electionId/roles'
+      preLoaderRoute: typeof AuthedElectionsElectionIdRolesRouteImport
+      parentRoute: typeof AuthedElectionsElectionIdRoute
+    }
+    '/_authed/elections/$electionId/invites': {
+      id: '/_authed/elections/$electionId/invites'
+      path: '/invites'
+      fullPath: '/elections/$electionId/invites'
+      preLoaderRoute: typeof AuthedElectionsElectionIdInvitesRouteImport
+      parentRoute: typeof AuthedElectionsElectionIdRoute
+    }
+    '/_authed/elections/$electionId/candidates': {
+      id: '/_authed/elections/$electionId/candidates'
+      path: '/candidates'
+      fullPath: '/elections/$electionId/candidates'
+      preLoaderRoute: typeof AuthedElectionsElectionIdCandidatesRouteImport
+      parentRoute: typeof AuthedElectionsElectionIdRoute
+    }
   }
 }
 
+interface AuthedElectionsElectionIdRouteChildren {
+  AuthedElectionsElectionIdCandidatesRoute: typeof AuthedElectionsElectionIdCandidatesRoute
+  AuthedElectionsElectionIdInvitesRoute: typeof AuthedElectionsElectionIdInvitesRoute
+  AuthedElectionsElectionIdRolesRoute: typeof AuthedElectionsElectionIdRolesRoute
+  AuthedElectionsElectionIdSettingsRoute: typeof AuthedElectionsElectionIdSettingsRoute
+  AuthedElectionsElectionIdIndexRoute: typeof AuthedElectionsElectionIdIndexRoute
+}
+
+const AuthedElectionsElectionIdRouteChildren: AuthedElectionsElectionIdRouteChildren =
+  {
+    AuthedElectionsElectionIdCandidatesRoute:
+      AuthedElectionsElectionIdCandidatesRoute,
+    AuthedElectionsElectionIdInvitesRoute:
+      AuthedElectionsElectionIdInvitesRoute,
+    AuthedElectionsElectionIdRolesRoute: AuthedElectionsElectionIdRolesRoute,
+    AuthedElectionsElectionIdSettingsRoute:
+      AuthedElectionsElectionIdSettingsRoute,
+    AuthedElectionsElectionIdIndexRoute: AuthedElectionsElectionIdIndexRoute,
+  }
+
+const AuthedElectionsElectionIdRouteWithChildren =
+  AuthedElectionsElectionIdRoute._addFileChildren(
+    AuthedElectionsElectionIdRouteChildren,
+  )
+
+interface AuthedRouteChildren {
+  AuthedDashboardRoute: typeof AuthedDashboardRoute
+  AuthedElectionsElectionIdRoute: typeof AuthedElectionsElectionIdRouteWithChildren
+  AuthedElectionsNewRoute: typeof AuthedElectionsNewRoute
+}
+
+const AuthedRouteChildren: AuthedRouteChildren = {
+  AuthedDashboardRoute: AuthedDashboardRoute,
+  AuthedElectionsElectionIdRoute: AuthedElectionsElectionIdRouteWithChildren,
+  AuthedElectionsNewRoute: AuthedElectionsNewRoute,
+}
+
+const AuthedRouteWithChildren =
+  AuthedRoute._addFileChildren(AuthedRouteChildren)
+
+interface VoteTokenRouteChildren {
+  VoteTokenClosedRoute: typeof VoteTokenClosedRoute
+  VoteTokenConfirmRoute: typeof VoteTokenConfirmRoute
+  VoteTokenIndexRoute: typeof VoteTokenIndexRoute
+  VoteTokenRoleIdRoleIdRoute: typeof VoteTokenRoleIdRoleIdRoute
+}
+
+const VoteTokenRouteChildren: VoteTokenRouteChildren = {
+  VoteTokenClosedRoute: VoteTokenClosedRoute,
+  VoteTokenConfirmRoute: VoteTokenConfirmRoute,
+  VoteTokenIndexRoute: VoteTokenIndexRoute,
+  VoteTokenRoleIdRoleIdRoute: VoteTokenRoleIdRoleIdRoute,
+}
+
+const VoteTokenRouteWithChildren = VoteTokenRoute._addFileChildren(
+  VoteTokenRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-};
+  AuthedRoute: AuthedRouteWithChildren,
+  AuthCallbackRoute: AuthCallbackRoute,
+  AuthLoginRoute: AuthLoginRoute,
+  CountElectionIdRoute: CountElectionIdRoute,
+  VoteTokenRoute: VoteTokenRouteWithChildren,
+  CountIndexRoute: CountIndexRoute,
+}
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>();
+  ._addFileTypes<FileRouteTypes>()
