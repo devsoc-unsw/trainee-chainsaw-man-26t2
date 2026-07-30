@@ -17,7 +17,7 @@ async fn main() -> Result<()> {
     let config = Config::parse();
 
     // Initialise snowflake generator
-    let id_gen = SnowflakeGen::new(123);
+    let id_gen = SnowflakeGen::new(8);
 
     // Create Postgres connection pool
     let db = PgPoolOptions::new()
