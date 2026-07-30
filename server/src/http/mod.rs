@@ -20,7 +20,7 @@ struct ApiContext {
 }
 
 impl ApiContext {
-    pub fn new(config: Config, db: PgPool, id_gen: SnowflakeGen) -> Self {
+    pub(crate) fn new(config: Config, db: PgPool, id_gen: SnowflakeGen) -> Self {
         ApiContext {
             config: Arc::new(config),
             db,
