@@ -4,7 +4,14 @@ name = "server"
 version = "0.1.0"
 
 [dependencies]
+anyhow = "1.0.104"
 axum = "0.8.9"
+chrono = "0.4.45"
+clap = { version = "4.6.4", features = ["derive", "env"] }
+dotenvy = "0.15.7"
+env_logger = "0.11.11"
+log = "0.4.33"
+serde = "1.0.229"
 sqlx = { version = "0.9.0", features = [
     "chrono",
     "postgres",
@@ -12,4 +19,5 @@ sqlx = { version = "0.9.0", features = [
     "tls-rustls",
     "uuid",
 ] }
-tokio = { version = "1.53.1", features = ["macros"] }
+tokio = { version = "1.53.1", features = ["rt-multi-thread", "macros"] }
+tower-http = { version = "0.7.0", features = ["cors"] }
