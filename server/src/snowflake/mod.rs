@@ -8,16 +8,16 @@ use tokio::sync::Mutex;
 /// This is midnight on the 01/01/2026, in UTC.
 const CHAINSAW_EPOCH: i64 = 1767225600000;
 
-/// Get the time elapsed in milliseconds since the WriterCore Epoch.
+/// Get the time elapsed in milliseconds since the Chainsaw Epoch.
 pub fn time_since_epoch() -> i64 {
     Utc::now().timestamp_millis() - CHAINSAW_EPOCH
 }
 
-/// A WriterCore snowflake.
+/// A snowflake ID.
 ///
 /// Format:
 /// - The first bit is always a 0.
-/// - The next 42 bits represent the number of milliseconds since the WriterCore epoch.
+/// - The next 42 bits represent the number of milliseconds since the Chainsaw epoch.
 /// - The next 9 bits represent the worker ID of the snowflake generator.
 /// - The next 12 bits represent an auto-incrementing tail ID for the generator.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
@@ -65,7 +65,7 @@ impl<'de> Deserialize<'de> for Snowflake {
     }
 }
 
-/// A generator for WriterCore snowflakes.
+/// A generator for snowflakes.
 #[derive(Clone)]
 pub struct SnowflakeGen {
     /// The worker ID for this generator. This is centrally allocated globally.
