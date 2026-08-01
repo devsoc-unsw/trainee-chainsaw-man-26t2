@@ -14,8 +14,8 @@ CREATE TABLE campaign_role (
     campaign_id BIGINT NOT NULL,
     title VARCHAR(100) NOT NULL,
     description TEXT NOT NULL,
-    No_of_positions INT NOT NULL,
-    Enable_Abstainment BOOLEAN NOT NULL,
+    no_of_positions INT NOT NULL,
+    enable_abstention BOOLEAN NOT NULL,
 
     CONSTRAINT fk_campaign_role_campaign
         FOREIGN KEY (campaign_id)
