@@ -1,38 +1,44 @@
 CREATE TABLE campaign (
-    campaign_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    title VARCHAR(100) NOT NULL,
+    campaign_id BIGINT PRIMARY KEY,
+    title TEXT NOT NULL,
     description TEXT NOT NULL,
-    opening_date_time TIMESTAMP NOT NULL,
-    closing_date_time TIMESTAMP NOT NULL,
+    opening_date_time TIMESTAMPTZ NOT NULL,
+    closing_date_time TIMESTAMPTZ NOT NULL,
     allowed_role_overlaps BOOLEAN NOT NULL,
     CONSTRAINT valid_campaign_dates
         CHECK (closing_date_time > opening_date_time)
 );
 
 CREATE TABLE campaign_role (
-    role_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    role_id BIGINT PRIMARY KEY,
     campaign_id BIGINT NOT NULL,
-    title VARCHAR(100) NOT NULL,
+    title TEXT NOT NULL,
     description TEXT NOT NULL,
     no_of_positions INT NOT NULL,
     enable_abstention BOOLEAN NOT NULL,
 
     CONSTRAINT fk_campaign_role_campaign
         FOREIGN KEY (campaign_id)
-        REFERENCES campaign(campaign_id),
-        CONSTRAINT valid_number_of_positions
+        REFERENCES campaign(campaign_id)
+        ON DELETE CASCADE, 
+    CONSTRAINT valid_number_of_positions
         CHECK (no_of_positions > 0)
 
 );
 
 CREATE TABLE candidate (
-    candidate_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    first_name VARCHAR(100) NOT NULL,
-    last_name VARCHAR(100) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    student_number VARCHAR(20) UNIQUE,
+    candidate_id BIGINT PRIMARY KEY,
+    campaign_id BIGINT NOT NULL,
+    first_name TEXT NOT NULL,
+    last_name TEXT NOT NULL,
+    email TEXT NOT NULL,
     manifesto TEXT,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    
+    CONSTRAINT fk_candidate_campaign
+        FOREIGN KEY (campaign_id)
+        REFERENCES campaign(campaign_id)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE nomination (
@@ -44,39 +50,40 @@ CREATE TABLE nomination (
 
     CONSTRAINT fk_nomination_role
         FOREIGN KEY (role_id)
-        REFERENCES campaign_role(role_id),
+        REFERENCES campaign_role(role_id)
+        ON DELETE CASCADE,
 
     CONSTRAINT fk_nomination_candidate
         FOREIGN KEY (candidate_id)
         REFERENCES candidate(candidate_id)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE campaign_voter (
-    voter_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    voter_id BIGINT PRIMARY KEY,
     campaign_id BIGINT NOT NULL,
-    first_name VARCHAR(100) NOT NULL,
-    last_name VARCHAR(100) NOT NULL,
-    email VARCHAR(255) NOT NULL,
-    phone_number VARCHAR(30),
+    email TEXT NOT NULL,
     voting_token UUID NOT NULL UNIQUE,
     has_voted BOOLEAN NOT NULL DEFAULT FALSE,
 
     CONSTRAINT fk_campaign_voter_campaign
         FOREIGN KEY (campaign_id)
-        REFERENCES campaign(campaign_id),
+        REFERENCES campaign(campaign_id)
+        ON DELETE CASCADE,
 
     CONSTRAINT uq_campaign_voter_email
         UNIQUE (campaign_id, email)
 );
 
 CREATE TABLE ballot (
-    ballot_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    ballot_id BIGINT PRIMARY KEY,
     campaign_id BIGINT NOT NULL,
-    submitted_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    submitted_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_ballot_campaign
         FOREIGN KEY (campaign_id)
         REFERENCES campaign(campaign_id)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE ballot_preference (
@@ -90,11 +97,13 @@ CREATE TABLE ballot_preference (
 
     CONSTRAINT fk_ballot_preference_ballot
         FOREIGN KEY (ballot_id)
-        REFERENCES ballot(ballot_id),
+        REFERENCES ballot(ballot_id)
+        ON DELETE CASCADE,
 
     CONSTRAINT fk_ballot_preference_nomination
         FOREIGN KEY (role_id, candidate_id)
-        REFERENCES nomination(role_id, candidate_id),
+        REFERENCES nomination(role_id, candidate_id)
+        ON DELETE CASCADE,
 
     CONSTRAINT valid_preference_number
         CHECK (preference_number > 0)
