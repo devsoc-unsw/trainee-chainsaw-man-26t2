@@ -1,3 +1,4 @@
+-- Add migration script here
 CREATE TABLE campaign (
     campaign_id BIGINT PRIMARY KEY,
     title TEXT NOT NULL,
