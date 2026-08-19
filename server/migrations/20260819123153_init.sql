@@ -34,7 +34,6 @@ CREATE TABLE candidate (
     last_name TEXT NOT NULL,
     email TEXT NOT NULL,
     manifesto TEXT,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     
     CONSTRAINT fk_candidate_campaign
         FOREIGN KEY (campaign_id)
@@ -79,7 +78,6 @@ CREATE TABLE campaign_voter (
 CREATE TABLE ballot (
     ballot_id BIGINT PRIMARY KEY,
     campaign_id BIGINT NOT NULL,
-    submitted_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_ballot_campaign
         FOREIGN KEY (campaign_id)
