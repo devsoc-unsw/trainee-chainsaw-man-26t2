@@ -29,7 +29,7 @@ jobs:
       - name: Build
         run: cargo build --all-targets --all-features --locked
       - name: Clippy
-        run: cargo clippy --all-targets --all-features
+        run: cargo clippy --all-targets --all-features -- -D warnings
       - name: Test
         run: cargo test --all-targets --all-features --locked
   server-formatting:

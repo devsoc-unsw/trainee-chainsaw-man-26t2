@@ -13,6 +13,7 @@ mod users;
 
 /// The core type through which handler functions can access common API state.
 #[derive(Clone)]
+#[allow(dead_code)] // TODO: Remove this once the API is implemented
 struct ApiContext {
     config: Arc<Config>,
     db: PgPool,
