@@ -60,7 +60,7 @@ impl<'de> Deserialize<'de> for Snowflake {
         D: Deserializer<'de>,
     {
         let string_id = <&str>::deserialize(deserializer)?;
-        let parsed_id = i64::from_str(&string_id).map_err(serde::de::Error::custom)?;
+        let parsed_id = i64::from_str(string_id).map_err(serde::de::Error::custom)?;
         Ok(Self(parsed_id))
     }
 }
@@ -109,9 +109,9 @@ impl SnowflakeGen {
 
         // Construct snowflake ID
         let mut snowflake_id: i64 = 0;
-        snowflake_id = snowflake_id | ((time_since_epoch() & 0x3FFFFFFFFFF) << 21);
-        snowflake_id = snowflake_id | ((self.worker_id as i64 & 0x1FF) << 12);
-        snowflake_id = snowflake_id | (seq as i64 & 0xFFF);
+        snowflake_id |= (time_since_epoch() & 0x3FFFFFFFFFF) << 21;
+        snowflake_id |= (i64::from(self.worker_id) & 0x1FF) << 12;
+        snowflake_id |= i64::from(seq) & 0xFFF;
 
         // Return new snowflake
         Snowflake::from(snowflake_id)
