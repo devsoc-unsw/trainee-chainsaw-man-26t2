@@ -5,7 +5,6 @@ info:
   version: 1.0.0
   description: API for campaign setup, voting, results, and authentication.
 
-
 tags:
   - name: Campaigns
     description: Create, update, view, and delete campaigns
@@ -28,7 +27,6 @@ tags:
   - name: Auth
     description: Authentication and session management
 
-
 paths:
   /campaigns:
     post:
@@ -40,17 +38,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateCampaignRequest'
+              $ref: "#/components/schemas/CreateCampaignRequest"
       responses:
-        '201':
+        "201":
           description: Campaign created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Campaign'
-        '400':
+                $ref: "#/components/schemas/CreateCampaignResponse"
+        "400":
           description: Invalid input
-        '401':
+        "401":
           description: Unauthorized
 
     get:
@@ -58,17 +56,16 @@ paths:
         - Campaigns
       summary: Get all campaigns owned by the authenticated user
       responses:
-        '200':
+        "200":
           description: Campaigns retrieved successfully
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Campaign'
-        '401':
+                  $ref: "#/components/schemas/Campaign"
+        "401":
           description: Unauthorized
-
 
   /campaigns/{campaign_id}:
     parameters:
@@ -76,25 +73,24 @@ paths:
         in: path
         required: true
         schema:
-          type: integer
-          format: int64
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
 
     get:
       tags:
         - Campaigns
       summary: Get a campaign by ID
       responses:
-        '200':
+        "200":
           description: Campaign retrieved successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Campaign'
-        '401':
+                $ref: "#/components/schemas/Campaign"
+        "401":
           description: Unauthorized
-        '403':
-          description: User does not have permission to access this campaign
-        '404':
+        "404":
           description: Campaign not found
 
     patch:
@@ -106,21 +102,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateCampaignRequest'
+              $ref: "#/components/schemas/UpdateCampaignRequest"
       responses:
-        '200':
+        "204":
           description: Campaign updated successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Campaign'
-        '400':
+        "400":
           description: Invalid input
-        '401':
+        "401":
           description: Unauthorized
-        '403':
-          description: User does not have permission to modify this campaign
-        '404':
+        "404":
           description: Campaign not found
 
     delete:
@@ -128,13 +118,11 @@ paths:
         - Campaigns
       summary: Delete a campaign
       responses:
-        '204':
+        "204":
           description: Campaign deleted successfully
-        '401':
+        "401":
           description: Unauthorized
-        '403':
-          description: User does not have permission to delete this campaign
-        '404':
+        "404":
           description: Campaign not found
 
   /campaigns/{campaign_id}/candidates:
@@ -143,8 +131,9 @@ paths:
         in: path
         required: true
         schema:
-          type: integer
-          format: int64
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
 
     post:
       tags:
@@ -155,21 +144,19 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateCandidateRequest'
+              $ref: "#/components/schemas/CreateCandidateRequest"
       responses:
-        '201':
+        "201":
           description: Candidate created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Candidate'
-        '400':
+                $ref: "#/components/schemas/CreateCandidateResponse"
+        "400":
           description: Invalid input
-        '401':
+        "401":
           description: Unauthorized
-        '403':
-          description: User does not have permission to modify this campaign
-        '404':
+        "404":
           description: Campaign not found
 
     get:
@@ -177,21 +164,18 @@ paths:
         - Candidates
       summary: Get all candidates in a campaign
       responses:
-        '200':
+        "200":
           description: Candidates retrieved successfully
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Candidate'
-        '401':
+                  $ref: "#/components/schemas/Candidate"
+        "401":
           description: Unauthorized
-        '403':
-          description: User does not have permission to access this campaign
-        '404':
+        "404":
           description: Campaign not found
-
 
   /campaigns/{campaign_id}/candidates/{candidate_id}:
     parameters:
@@ -199,32 +183,32 @@ paths:
         in: path
         required: true
         schema:
-          type: integer
-          format: int64
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
 
       - name: candidate_id
         in: path
         required: true
         schema:
-          type: integer
-          format: int64
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
 
     get:
       tags:
         - Candidates
       summary: Get a candidate
       responses:
-        '200':
+        "200":
           description: Candidate retrieved successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Candidate'
-        '401':
+                $ref: "#/components/schemas/Candidate"
+        "401":
           description: Unauthorized
-        '403':
-          description: User does not have permission to access this campaign
-        '404':
+        "404":
           description: Candidate not found
 
     patch:
@@ -236,21 +220,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateCandidateRequest'
+              $ref: "#/components/schemas/UpdateCandidateRequest"
       responses:
-        '200':
+        "204":
           description: Candidate updated successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Candidate'
-        '400':
+        "400":
           description: Invalid input
-        '401':
+        "401":
           description: Unauthorized
-        '403':
-          description: User does not have permission to modify this campaign
-        '404':
+        "404":
           description: Candidate not found
 
     delete:
@@ -258,13 +236,11 @@ paths:
         - Candidates
       summary: Delete a candidate
       responses:
-        '204':
+        "204":
           description: Candidate deleted successfully
-        '401':
+        "401":
           description: Unauthorized
-        '403':
-          description: User does not have permission to modify this campaign
-        '404':
+        "404":
           description: Candidate not found
 
   /campaigns/{campaign_id}/roles:
@@ -273,8 +249,9 @@ paths:
         in: path
         required: true
         schema:
-          type: integer
-          format: int64
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
 
     post:
       tags:
@@ -285,21 +262,19 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateRoleRequest'
+              $ref: "#/components/schemas/CreateRoleRequest"
       responses:
-        '201':
+        "201":
           description: Role created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Role'
-        '400':
+                $ref: "#/components/schemas/CreateRoleResponse"
+        "400":
           description: Invalid input
-        '401':
+        "401":
           description: Unauthorized
-        '403':
-          description: User does not have permission to modify this campaign
-        '404':
+        "404":
           description: Campaign not found
 
     get:
@@ -307,21 +282,18 @@ paths:
         - Roles
       summary: Get all roles in a campaign
       responses:
-        '200':
+        "200":
           description: Roles retrieved successfully
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Role'
-        '401':
+                  $ref: "#/components/schemas/Role"
+        "401":
           description: Unauthorized
-        '403':
-          description: User does not have permission to access this campaign
-        '404':
+        "404":
           description: Campaign not found
-
 
   /campaigns/{campaign_id}/roles/{role_id}:
     parameters:
@@ -329,32 +301,32 @@ paths:
         in: path
         required: true
         schema:
-          type: integer
-          format: int64
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
 
       - name: role_id
         in: path
         required: true
         schema:
-          type: integer
-          format: int64
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
 
     get:
       tags:
         - Roles
       summary: Get a campaign role
       responses:
-        '200':
+        "200":
           description: Role retrieved successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Role'
-        '401':
+                $ref: "#/components/schemas/Role"
+        "401":
           description: Unauthorized
-        '403':
-          description: User does not have permission to access this campaign
-        '404':
+        "404":
           description: Role not found
 
     patch:
@@ -366,21 +338,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateRoleRequest'
+              $ref: "#/components/schemas/UpdateRoleRequest"
       responses:
-        '200':
+        "204":
           description: Role updated successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Role'
-        '400':
+        "400":
           description: Invalid input
-        '401':
+        "401":
           description: Unauthorized
-        '403':
-          description: User does not have permission to modify this campaign
-        '404':
+        "404":
           description: Role not found
 
     delete:
@@ -388,13 +354,11 @@ paths:
         - Roles
       summary: Delete a campaign role
       responses:
-        '204':
+        "204":
           description: Role deleted successfully
-        '401':
+        "401":
           description: Unauthorized
-        '403':
-          description: User does not have permission to modify this campaign
-        '404':
+        "404":
           description: Role not found
 
   /campaigns/{campaign_id}/voters:
@@ -403,175 +367,85 @@ paths:
         in: path
         required: true
         schema:
-          type: integer
-          format: int64
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
 
     post:
       tags:
         - Voters
-      summary: Add a voter to a campaign
+      summary: Add voters to a campaign
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateVoterRequest'
+              $ref: "#/components/schemas/CreateVotersRequest"
       responses:
-        '201':
-          description: Voter added successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Voter'
-        '400':
-          description: Invalid input
-        '401':
-          description: Unauthorized
-        '403':
-          description: User does not have permission to modify this campaign
-        '404':
-          description: Campaign not found
-        '409':
-          description: Voter already exists in campaign
-
-    get:
-      tags:
-        - Voters
-      summary: Get all voters in a campaign
-      responses:
-        '200':
-          description: Voters retrieved successfully
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Voter'
-        '401':
-          description: Unauthorized
-        '403':
-          description: User does not have permission to access this campaign
-        '404':
-          description: Campaign not found
-
-
-  /campaigns/{campaign_id}/voters/bulk:
-    parameters:
-      - name: campaign_id
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int64
-
-    post:
-      tags:
-        - Voters
-      summary: Add multiple voters to a campaign
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/BulkCreateVotersRequest'
-      responses:
-        '201':
+        "201":
           description: Voters added successfully
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Voter'
-        '400':
+                  $ref: "#/components/schemas/CreateVoterResponse"
+        "400":
           description: Invalid input
-        '401':
+        "401":
           description: Unauthorized
-        '403':
-          description: User does not have permission to modify this campaign
-        '404':
+        "404":
+          description: Campaign not found
+        "409":
+          description: One or more voters already exists in campaign
+
+    get:
+      tags:
+        - Voters
+      summary: Get all voters in a campaign
+      responses:
+        "200":
+          description: Voters retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Voter"
+        "401":
+          description: Unauthorized
+        "404":
           description: Campaign not found
 
-
-  /campaigns/{campaign_id}/voters/bulk-delete:
+  /campaigns/{campaign_id}/voters/delete:
     parameters:
       - name: campaign_id
         in: path
         required: true
         schema:
-          type: integer
-          format: int64
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
 
     post:
       tags:
         - Voters
-      summary: Delete multiple voters from a campaign
+      summary: Delete 1 or more voters from a campaign
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BulkDeleteVotersRequest'
+              $ref: "#/components/schemas/DeleteVotersRequest"
       responses:
-        '204':
+        "204":
           description: Voters deleted successfully
-        '400':
+        "400":
           description: Invalid input
-        '401':
+        "401":
           description: Unauthorized
-        '403':
-          description: User does not have permission to modify this campaign
-        '404':
+        "404":
           description: Campaign not found
-
-
-  /campaigns/{campaign_id}/voters/{voter_id}:
-    parameters:
-      - name: campaign_id
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int64
-
-      - name: voter_id
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int64
-
-    get:
-      tags:
-        - Voters
-      summary: Get a voter
-      responses:
-        '200':
-          description: Voter retrieved successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Voter'
-        '401':
-          description: Unauthorized
-        '403':
-          description: User does not have permission to access this campaign
-        '404':
-          description: Voter not found
-
-    delete:
-      tags:
-        - Voters
-      summary: Delete a voter
-      responses:
-        '204':
-          description: Voter deleted successfully
-        '401':
-          description: Unauthorized
-        '403':
-          description: User does not have permission to modify this campaign
-        '404':
-          description: Voter not found
 
   /campaigns/{campaign_id}/invitations:
     parameters:
@@ -579,33 +453,23 @@ paths:
         in: path
         required: true
         schema:
-          type: integer
-          format: int64
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
 
     post:
       tags:
         - Voters
       summary: Send voting invitations
       description: >
-        Sends voting invitations to the specified voters.
-        If no voter IDs are supplied, invitations may be sent to all voters
-        in the campaign.
-      requestBody:
-        required: false
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SendInvitesRequest'
+        Sends voting invitations to all voters in the campaign who have not yet been sent an invitation.
       responses:
-        '202':
+        "202":
           description: Invitations accepted for sending
-        '401':
+        "401":
           description: Unauthorized
-        '403':
-          description: User does not have permission to modify this campaign
-        '404':
+        "404":
           description: Campaign not found
-
 
   /vote/{token}:
     parameters:
@@ -624,17 +488,16 @@ paths:
         Returns the campaign, roles, and candidates associated with
         the voter's voting token.
       responses:
-        '200':
+        "200":
           description: Voting information retrieved successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/VotingCampaign'
-        '404':
+                $ref: "#/components/schemas/VotingCampaign"
+        "404":
           description: Voting token not found or invalid
-        '409':
+        "409":
           description: Voting is not currently open
-
 
   /vote/{token}/ballot:
     parameters:
@@ -654,15 +517,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SubmitBallotRequest'
+              $ref: "#/components/schemas/SubmitBallotRequest"
       responses:
-        '204':
+        "204":
           description: Ballot submitted successfully
-        '400':
+        "400":
           description: Invalid ballot
-        '404':
+        "404":
           description: Voting token not found or invalid
-        '409':
+        "409":
           description: Vote already submitted or voting is not currently open
 
   /campaigns/{campaign_id}/results:
@@ -671,8 +534,9 @@ paths:
         in: path
         required: true
         schema:
-          type: integer
-          format: int64
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
 
     get:
       tags:
@@ -680,21 +544,18 @@ paths:
       summary: Get election results
       description: Returns election results including all counting rounds.
       responses:
-        '200':
+        "200":
           description: Results retrieved successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ElectionResults'
-        '401':
+                $ref: "#/components/schemas/ElectionResults"
+        "401":
           description: Unauthorized
-        '403':
-          description: User does not have permission to access these results
-        '404':
+        "404":
           description: Campaign not found
-        '409':
+        "409":
           description: Results are not yet available
-
 
   /campaigns/{campaign_id}/results/export:
     parameters:
@@ -702,8 +563,9 @@ paths:
         in: path
         required: true
         schema:
-          type: integer
-          format: int64
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
 
     get:
       tags:
@@ -711,17 +573,15 @@ paths:
       summary: Export election result data
       description: Export anonymized election result data as CSV.
       responses:
-        '200':
+        "200":
           description: Election data exported successfully
           content:
             text/csv:
               schema:
                 type: string
-        '401':
+        "401":
           description: Unauthorized
-        '403':
-          description: User does not have permission to export these results
-        '404':
+        "404":
           description: Campaign not found
 
   /auth/callback:
@@ -743,11 +603,10 @@ paths:
             type: string
 
       responses:
-        '302':
+        "302":
           description: Authentication successful and user redirected
-        '400':
+        "400":
           description: Invalid authentication callback
-
 
   /auth/logout:
     post:
@@ -755,14 +614,12 @@ paths:
         - Auth
       summary: Log out the authenticated user
       responses:
-        '204':
+        "204":
           description: Logout successful
-        '401':
+        "401":
           description: Unauthorized
 
-
 components:
-
   schemas:
     CreateCampaignRequest:
       type: object
@@ -785,7 +642,16 @@ components:
           format: date-time
         allowed_role_overlaps:
           type: boolean
-
+   
+    CreateCampaignResponse:
+      type: object
+      required:
+        - campaign_id
+      properties:
+        campaign_id:
+          type: string
+          format: number
+          pattern: '^[1-9][0-9]*$'
 
     UpdateCampaignRequest:
       type: object
@@ -804,7 +670,6 @@ components:
         allowed_role_overlaps:
           type: boolean
 
-
     Campaign:
       type: object
       required:
@@ -816,8 +681,9 @@ components:
         - allowed_role_overlaps
       properties:
         campaign_id:
-          type: integer
-          format: int64
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
         title:
           type: string
         description:
@@ -848,14 +714,25 @@ components:
           format: email
         manifesto:
           type: string
+          maxLength: 1000
         role_ids:
           type: array
           minItems: 1
           uniqueItems: true
           items:
-            type: integer
-            format: int64
+            type: string
+            format: number
+            pattern: "^[1-9][0-9]*$"
 
+    CreateCandidateResponse:
+      type: object
+      required:
+        - candidate_id
+      properties:
+        candidate_id:
+          type: string
+          format: number
+          pattern: '^[1-9][0-9]*$'
 
     UpdateCandidateRequest:
       type: object
@@ -870,14 +747,15 @@ components:
           format: email
         manifesto:
           type: string
+          maxLength: 1000
         role_ids:
           type: array
           minItems: 1
           uniqueItems: true
           items:
-            type: integer
-            format: int64
-
+            type: string
+            format: number
+            pattern: "^[1-9][0-9]*$"
 
     Candidate:
       type: object
@@ -889,8 +767,9 @@ components:
         - role_ids
       properties:
         candidate_id:
-          type: integer
-          format: int64
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
         first_name:
           type: string
         last_name:
@@ -903,8 +782,9 @@ components:
         role_ids:
           type: array
           items:
-            type: integer
-            format: int64
+            type: string
+            format: number
+            pattern: "^[1-9][0-9]*$"
 
     CreateRoleRequest:
       type: object
@@ -924,6 +804,15 @@ components:
         enable_abstention:
           type: boolean
 
+    CreateRoleResponse:
+      type: object
+      required:
+        - role_id
+      properties:
+        role_id:
+          type: string
+          format: number
+          pattern: '^[1-9][0-9]*$'
 
     UpdateRoleRequest:
       type: object
@@ -939,7 +828,6 @@ components:
         enable_abstention:
           type: boolean
 
-
     Role:
       type: object
       required:
@@ -950,8 +838,9 @@ components:
         - enable_abstention
       properties:
         role_id:
-          type: integer
-          format: int64
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
         title:
           type: string
         description:
@@ -962,17 +851,7 @@ components:
         enable_abstention:
           type: boolean
 
-    CreateVoterRequest:
-      type: object
-      required:
-        - email
-      properties:
-        email:
-          type: string
-          format: email
-
-
-    BulkCreateVotersRequest:
+    CreateVotersRequest:
       type: object
       required:
         - emails
@@ -985,8 +864,7 @@ components:
             type: string
             format: email
 
-
-    BulkDeleteVotersRequest:
+    DeleteVotersRequest:
       type: object
       required:
         - voter_ids
@@ -996,36 +874,27 @@ components:
           minItems: 1
           uniqueItems: true
           items:
-            type: integer
-            format: int64
-
+            type: string
+            format: number
+            pattern: "^[1-9][0-9]*$"
 
     Voter:
       type: object
       required:
         - voter_id
         - email
-        - has_voted
+        - status
       properties:
         voter_id:
-          type: integer
-          format: int64
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
         email:
           type: string
           format: email
-        has_voted:
-          type: boolean
-
-    SendInvitesRequest:
-      type: object
-      properties:
-        voter_ids:
-          type: array
-          minItems: 1
-          uniqueItems: true
-          items:
-            type: integer
-            format: int64
+        status:
+          type: string
+          enum: [pending, invited, voted]
 
     VotingCampaign:
       type: object
@@ -1038,8 +907,9 @@ components:
         - roles
       properties:
         campaign_id:
-          type: integer
-          format: int64
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
         title:
           type: string
         description:
@@ -1053,8 +923,17 @@ components:
         roles:
           type: array
           items:
-            $ref: '#/components/schemas/VotingRole'
-
+            $ref: "#/components/schemas/VotingRole"
+    
+    CreateVoterResponse:
+      type: object
+      required:
+        - voter_id
+      properties:
+        voter_id:
+          type: string
+          format: number
+          pattern: '^[1-9][0-9]*$'
 
     VotingRole:
       type: object
@@ -1067,8 +946,9 @@ components:
         - candidates
       properties:
         role_id:
-          type: integer
-          format: int64
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
         title:
           type: string
         description:
@@ -1081,8 +961,7 @@ components:
         candidates:
           type: array
           items:
-            $ref: '#/components/schemas/VotingCandidate'
-
+            $ref: "#/components/schemas/VotingCandidate"
 
     VotingCandidate:
       type: object
@@ -1092,15 +971,15 @@ components:
         - last_name
       properties:
         candidate_id:
-          type: integer
-          format: int64
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
         first_name:
           type: string
         last_name:
           type: string
         manifesto:
           type: string
-
 
     SubmitBallotRequest:
       type: object
@@ -1111,8 +990,7 @@ components:
           type: array
           minItems: 1
           items:
-            $ref: '#/components/schemas/BallotRoleSelection'
-
+            $ref: "#/components/schemas/BallotRoleSelection"
 
     BallotRoleSelection:
       type: object
@@ -1122,8 +1000,9 @@ components:
         - preferences
       properties:
         role_id:
-          type: integer
-          format: int64
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
         abstain:
           type: boolean
           description: Whether the voter chooses to abstain from this role.
@@ -1131,8 +1010,16 @@ components:
           type: array
           description: Ranked candidate preferences for this role.
           items:
-            $ref: '#/components/schemas/CandidatePreference'
-
+            $ref: "#/components/schemas/CandidatePreference"
+      allOf:
+      - if:
+          properties:
+            abstain:
+              const: true
+        then:
+          properties:
+            preferences:
+              maxItems: 0
 
     CandidatePreference:
       type: object
@@ -1141,8 +1028,9 @@ components:
         - preference_number
       properties:
         candidate_id:
-          type: integer
-          format: int64
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
         preference_number:
           type: integer
           minimum: 1
@@ -1154,13 +1042,13 @@ components:
         - roles
       properties:
         campaign_id:
-          type: integer
-          format: int64
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
         roles:
           type: array
           items:
-            $ref: '#/components/schemas/RoleResult'
-
+            $ref: "#/components/schemas/RoleResult"
 
     RoleResult:
       type: object
@@ -1171,41 +1059,40 @@ components:
         - rounds
       properties:
         role_id:
-          type: integer
-          format: int64
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
         title:
           type: string
         winners:
           type: array
           items:
-            $ref: '#/components/schemas/ResultCandidate'
+            $ref: "#/components/schemas/ResultCandidate"
         rounds:
           type: array
           items:
-            $ref: '#/components/schemas/ResultRound'
+            $ref: "#/components/schemas/ResultRound"
 
     ResultRound:
       type: object
       required:
-        - round_number
         - candidate_totals
         - exhausted_ballots
       properties:
-        round_number:
-          type: integer
-          minimum: 1
         candidate_totals:
           type: array
           items:
-            $ref: '#/components/schemas/CandidateVoteTotal'
+            $ref: "#/components/schemas/CandidateVoteTotal"
         eliminated_candidate_id:
-          type: integer
-          format: int64
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
         elected_candidate_ids:
           type: array
           items:
-            type: integer
-            format: int64
+            type: string
+            format: number
+            pattern: "^[1-9][0-9]*$"
         exhausted_ballots:
           type: integer
           minimum: 0
@@ -1218,8 +1105,9 @@ components:
         - last_name
       properties:
         candidate_id:
-          type: integer
-          format: int64
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
         first_name:
           type: string
         last_name:
@@ -1232,8 +1120,9 @@ components:
         - votes
       properties:
         candidate_id:
-          type: integer
-          format: int64
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
         votes:
           type: integer
           minimum: 0
