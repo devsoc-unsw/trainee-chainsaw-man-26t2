@@ -22,7 +22,7 @@ pub(super) fn router() -> Router<ApiState> {
         .nest("/{campaign_id}/results", results::router())
 }
 
-pub async fn post_campaign(
+async fn post_campaign(
     State(state): State<BaseState>,
     Json(data): Json<CreateCampaign>,
 ) -> Result<impl IntoResponse, ChainsawError> {
