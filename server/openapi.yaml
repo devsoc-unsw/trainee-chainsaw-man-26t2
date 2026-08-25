@@ -1,0 +1,1128 @@
+openapi: 3.1.1
+
+info:
+  title: Chainsaw Voting API
+  version: 1.0.0
+  description: API for campaign setup, voting, results, and authentication.
+
+tags:
+  - name: Campaigns
+    description: Create, update, view, and delete campaigns
+
+  - name: Candidates
+    description: Manage candidates within campaigns
+
+  - name: Roles
+    description: Manage campaign roles
+
+  - name: Voters
+    description: Manage eligible campaign voters
+
+  - name: Voting
+    description: Retrieve voting information and submit ballots
+
+  - name: Results
+    description: Retrieve and export election results
+
+  - name: Auth
+    description: Authentication and session management
+
+paths:
+  /campaigns:
+    post:
+      tags:
+        - Campaigns
+      summary: Create a new campaign
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCampaignRequest"
+      responses:
+        "201":
+          description: Campaign created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateCampaignResponse"
+        "400":
+          description: Invalid input
+        "401":
+          description: Unauthorized
+
+    get:
+      tags:
+        - Campaigns
+      summary: Get all campaigns owned by the authenticated user
+      responses:
+        "200":
+          description: Campaigns retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Campaign"
+        "401":
+          description: Unauthorized
+
+  /campaigns/{campaign_id}:
+    parameters:
+      - name: campaign_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
+
+    get:
+      tags:
+        - Campaigns
+      summary: Get a campaign by ID
+      responses:
+        "200":
+          description: Campaign retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Campaign"
+        "401":
+          description: Unauthorized
+        "404":
+          description: Campaign not found
+
+    patch:
+      tags:
+        - Campaigns
+      summary: Update a campaign
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCampaignRequest"
+      responses:
+        "204":
+          description: Campaign updated successfully
+        "400":
+          description: Invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: Campaign not found
+
+    delete:
+      tags:
+        - Campaigns
+      summary: Delete a campaign
+      responses:
+        "204":
+          description: Campaign deleted successfully
+        "401":
+          description: Unauthorized
+        "404":
+          description: Campaign not found
+
+  /campaigns/{campaign_id}/candidates:
+    parameters:
+      - name: campaign_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
+
+    post:
+      tags:
+        - Candidates
+      summary: Create a candidate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCandidateRequest"
+      responses:
+        "201":
+          description: Candidate created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateCandidateResponse"
+        "400":
+          description: Invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: Campaign not found
+
+    get:
+      tags:
+        - Candidates
+      summary: Get all candidates in a campaign
+      responses:
+        "200":
+          description: Candidates retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Candidate"
+        "401":
+          description: Unauthorized
+        "404":
+          description: Campaign not found
+
+  /campaigns/{campaign_id}/candidates/{candidate_id}:
+    parameters:
+      - name: campaign_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
+
+      - name: candidate_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
+
+    get:
+      tags:
+        - Candidates
+      summary: Get a candidate
+      responses:
+        "200":
+          description: Candidate retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Candidate"
+        "401":
+          description: Unauthorized
+        "404":
+          description: Candidate not found
+
+    patch:
+      tags:
+        - Candidates
+      summary: Update a candidate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCandidateRequest"
+      responses:
+        "204":
+          description: Candidate updated successfully
+        "400":
+          description: Invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: Candidate not found
+
+    delete:
+      tags:
+        - Candidates
+      summary: Delete a candidate
+      responses:
+        "204":
+          description: Candidate deleted successfully
+        "401":
+          description: Unauthorized
+        "404":
+          description: Candidate not found
+
+  /campaigns/{campaign_id}/roles:
+    parameters:
+      - name: campaign_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
+
+    post:
+      tags:
+        - Roles
+      summary: Create a campaign role
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRoleRequest"
+      responses:
+        "201":
+          description: Role created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateRoleResponse"
+        "400":
+          description: Invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: Campaign not found
+
+    get:
+      tags:
+        - Roles
+      summary: Get all roles in a campaign
+      responses:
+        "200":
+          description: Roles retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Role"
+        "401":
+          description: Unauthorized
+        "404":
+          description: Campaign not found
+
+  /campaigns/{campaign_id}/roles/{role_id}:
+    parameters:
+      - name: campaign_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
+
+      - name: role_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
+
+    get:
+      tags:
+        - Roles
+      summary: Get a campaign role
+      responses:
+        "200":
+          description: Role retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Role"
+        "401":
+          description: Unauthorized
+        "404":
+          description: Role not found
+
+    patch:
+      tags:
+        - Roles
+      summary: Update a campaign role
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateRoleRequest"
+      responses:
+        "204":
+          description: Role updated successfully
+        "400":
+          description: Invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: Role not found
+
+    delete:
+      tags:
+        - Roles
+      summary: Delete a campaign role
+      responses:
+        "204":
+          description: Role deleted successfully
+        "401":
+          description: Unauthorized
+        "404":
+          description: Role not found
+
+  /campaigns/{campaign_id}/voters:
+    parameters:
+      - name: campaign_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
+
+    post:
+      tags:
+        - Voters
+      summary: Add voters to a campaign
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateVotersRequest"
+      responses:
+        "201":
+          description: Voters added successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CreateVoterResponse"
+        "400":
+          description: Invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: Campaign not found
+        "409":
+          description: One or more voters already exists in campaign
+
+    get:
+      tags:
+        - Voters
+      summary: Get all voters in a campaign
+      responses:
+        "200":
+          description: Voters retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Voter"
+        "401":
+          description: Unauthorized
+        "404":
+          description: Campaign not found
+
+  /campaigns/{campaign_id}/voters/delete:
+    parameters:
+      - name: campaign_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
+
+    post:
+      tags:
+        - Voters
+      summary: Delete 1 or more voters from a campaign
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeleteVotersRequest"
+      responses:
+        "204":
+          description: Voters deleted successfully
+        "400":
+          description: Invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: Campaign not found
+
+  /campaigns/{campaign_id}/invitations:
+    parameters:
+      - name: campaign_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
+
+    post:
+      tags:
+        - Voters
+      summary: Send voting invitations
+      description: >
+        Sends voting invitations to all voters in the campaign who have not yet been sent an invitation.
+      responses:
+        "202":
+          description: Invitations accepted for sending
+        "401":
+          description: Unauthorized
+        "404":
+          description: Campaign not found
+
+  /vote/{token}:
+    parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+
+    get:
+      tags:
+        - Voting
+      summary: Get campaign information for a voter
+      description: >
+        Returns the campaign, roles, and candidates associated with
+        the voter's voting token.
+      responses:
+        "200":
+          description: Voting information retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VotingCampaign"
+        "404":
+          description: Voting token not found or invalid
+        "409":
+          description: Voting is not currently open
+
+  /vote/{token}/ballot:
+    parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+
+    post:
+      tags:
+        - Voting
+      summary: Submit a ballot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubmitBallotRequest"
+      responses:
+        "204":
+          description: Ballot submitted successfully
+        "400":
+          description: Invalid ballot
+        "404":
+          description: Voting token not found or invalid
+        "409":
+          description: Vote already submitted or voting is not currently open
+
+  /campaigns/{campaign_id}/results:
+    parameters:
+      - name: campaign_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
+
+    get:
+      tags:
+        - Results
+      summary: Get election results
+      description: Returns election results including all counting rounds.
+      responses:
+        "200":
+          description: Results retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ElectionResults"
+        "401":
+          description: Unauthorized
+        "404":
+          description: Campaign not found
+        "409":
+          description: Results are not yet available
+
+  /campaigns/{campaign_id}/results/export:
+    parameters:
+      - name: campaign_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
+
+    get:
+      tags:
+        - Results
+      summary: Export election result data
+      description: Export anonymized election result data as CSV.
+      responses:
+        "200":
+          description: Election data exported successfully
+          content:
+            text/csv:
+              schema:
+                type: string
+        "401":
+          description: Unauthorized
+        "404":
+          description: Campaign not found
+
+  /auth/callback:
+    get:
+      tags:
+        - Auth
+      summary: Handle authentication callback
+      parameters:
+        - name: code
+          in: query
+          required: true
+          schema:
+            type: string
+
+        - name: state
+          in: query
+          required: true
+          schema:
+            type: string
+
+      responses:
+        "302":
+          description: Authentication successful and user redirected
+        "400":
+          description: Invalid authentication callback
+
+  /auth/logout:
+    post:
+      tags:
+        - Auth
+      summary: Log out the authenticated user
+      responses:
+        "204":
+          description: Logout successful
+        "401":
+          description: Unauthorized
+
+components:
+  schemas:
+    CreateCampaignRequest:
+      type: object
+      required:
+        - title
+        - description
+        - opening_date_time
+        - closing_date_time
+        - allowed_role_overlaps
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        opening_date_time:
+          type: string
+          format: date-time
+        closing_date_time:
+          type: string
+          format: date-time
+        allowed_role_overlaps:
+          type: boolean
+   
+    CreateCampaignResponse:
+      type: object
+      required:
+        - campaign_id
+      properties:
+        campaign_id:
+          type: string
+          format: number
+          pattern: '^[1-9][0-9]*$'
+
+    UpdateCampaignRequest:
+      type: object
+      minProperties: 1
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        opening_date_time:
+          type: string
+          format: date-time
+        closing_date_time:
+          type: string
+          format: date-time
+        allowed_role_overlaps:
+          type: boolean
+
+    Campaign:
+      type: object
+      required:
+        - campaign_id
+        - title
+        - description
+        - opening_date_time
+        - closing_date_time
+        - allowed_role_overlaps
+      properties:
+        campaign_id:
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
+        title:
+          type: string
+        description:
+          type: string
+        opening_date_time:
+          type: string
+          format: date-time
+        closing_date_time:
+          type: string
+          format: date-time
+        allowed_role_overlaps:
+          type: boolean
+
+    CreateCandidateRequest:
+      type: object
+      required:
+        - first_name
+        - last_name
+        - email
+        - role_ids
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+        manifesto:
+          type: string
+          maxLength: 1000
+        role_ids:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items:
+            type: string
+            format: number
+            pattern: "^[1-9][0-9]*$"
+
+    CreateCandidateResponse:
+      type: object
+      required:
+        - candidate_id
+      properties:
+        candidate_id:
+          type: string
+          format: number
+          pattern: '^[1-9][0-9]*$'
+
+    UpdateCandidateRequest:
+      type: object
+      minProperties: 1
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+        manifesto:
+          type: string
+          maxLength: 1000
+        role_ids:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items:
+            type: string
+            format: number
+            pattern: "^[1-9][0-9]*$"
+
+    Candidate:
+      type: object
+      required:
+        - candidate_id
+        - first_name
+        - last_name
+        - email
+        - role_ids
+      properties:
+        candidate_id:
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+        manifesto:
+          type: string
+        role_ids:
+          type: array
+          items:
+            type: string
+            format: number
+            pattern: "^[1-9][0-9]*$"
+
+    CreateRoleRequest:
+      type: object
+      required:
+        - title
+        - description
+        - no_of_positions
+        - enable_abstention
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        no_of_positions:
+          type: integer
+          minimum: 1
+        enable_abstention:
+          type: boolean
+
+    CreateRoleResponse:
+      type: object
+      required:
+        - role_id
+      properties:
+        role_id:
+          type: string
+          format: number
+          pattern: '^[1-9][0-9]*$'
+
+    UpdateRoleRequest:
+      type: object
+      minProperties: 1
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        no_of_positions:
+          type: integer
+          minimum: 1
+        enable_abstention:
+          type: boolean
+
+    Role:
+      type: object
+      required:
+        - role_id
+        - title
+        - description
+        - no_of_positions
+        - enable_abstention
+      properties:
+        role_id:
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
+        title:
+          type: string
+        description:
+          type: string
+        no_of_positions:
+          type: integer
+          minimum: 1
+        enable_abstention:
+          type: boolean
+
+    CreateVotersRequest:
+      type: object
+      required:
+        - emails
+      properties:
+        emails:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items:
+            type: string
+            format: email
+
+    DeleteVotersRequest:
+      type: object
+      required:
+        - voter_ids
+      properties:
+        voter_ids:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items:
+            type: string
+            format: number
+            pattern: "^[1-9][0-9]*$"
+
+    Voter:
+      type: object
+      required:
+        - voter_id
+        - email
+        - status
+      properties:
+        voter_id:
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
+        email:
+          type: string
+          format: email
+        status:
+          type: string
+          enum: [pending, invited, voted]
+
+    VotingCampaign:
+      type: object
+      required:
+        - campaign_id
+        - title
+        - description
+        - opening_date_time
+        - closing_date_time
+        - roles
+      properties:
+        campaign_id:
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
+        title:
+          type: string
+        description:
+          type: string
+        opening_date_time:
+          type: string
+          format: date-time
+        closing_date_time:
+          type: string
+          format: date-time
+        roles:
+          type: array
+          items:
+            $ref: "#/components/schemas/VotingRole"
+    
+    CreateVoterResponse:
+      type: object
+      required:
+        - voter_id
+      properties:
+        voter_id:
+          type: string
+          format: number
+          pattern: '^[1-9][0-9]*$'
+
+    VotingRole:
+      type: object
+      required:
+        - role_id
+        - title
+        - description
+        - no_of_positions
+        - enable_abstention
+        - candidates
+      properties:
+        role_id:
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
+        title:
+          type: string
+        description:
+          type: string
+        no_of_positions:
+          type: integer
+          minimum: 1
+        enable_abstention:
+          type: boolean
+        candidates:
+          type: array
+          items:
+            $ref: "#/components/schemas/VotingCandidate"
+
+    VotingCandidate:
+      type: object
+      required:
+        - candidate_id
+        - first_name
+        - last_name
+      properties:
+        candidate_id:
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
+        first_name:
+          type: string
+        last_name:
+          type: string
+        manifesto:
+          type: string
+
+    SubmitBallotRequest:
+      type: object
+      required:
+        - selections
+      properties:
+        selections:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/BallotRoleSelection"
+
+    BallotRoleSelection:
+      type: object
+      required:
+        - role_id
+        - abstain
+        - preferences
+      properties:
+        role_id:
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
+        abstain:
+          type: boolean
+          description: Whether the voter chooses to abstain from this role.
+        preferences:
+          type: array
+          description: Ranked candidate preferences for this role.
+          items:
+            $ref: "#/components/schemas/CandidatePreference"
+      allOf:
+      - if:
+          properties:
+            abstain:
+              const: true
+        then:
+          properties:
+            preferences:
+              maxItems: 0
+
+    CandidatePreference:
+      type: object
+      required:
+        - candidate_id
+        - preference_number
+      properties:
+        candidate_id:
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
+        preference_number:
+          type: integer
+          minimum: 1
+
+    ElectionResults:
+      type: object
+      required:
+        - campaign_id
+        - roles
+      properties:
+        campaign_id:
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
+        roles:
+          type: array
+          items:
+            $ref: "#/components/schemas/RoleResult"
+
+    RoleResult:
+      type: object
+      required:
+        - role_id
+        - title
+        - winners
+        - rounds
+      properties:
+        role_id:
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
+        title:
+          type: string
+        winners:
+          type: array
+          items:
+            $ref: "#/components/schemas/ResultCandidate"
+        rounds:
+          type: array
+          items:
+            $ref: "#/components/schemas/ResultRound"
+
+    ResultRound:
+      type: object
+      required:
+        - candidate_totals
+        - exhausted_ballots
+      properties:
+        candidate_totals:
+          type: array
+          items:
+            $ref: "#/components/schemas/CandidateVoteTotal"
+        eliminated_candidate_id:
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
+        elected_candidate_ids:
+          type: array
+          items:
+            type: string
+            format: number
+            pattern: "^[1-9][0-9]*$"
+        exhausted_ballots:
+          type: integer
+          minimum: 0
+
+    ResultCandidate:
+      type: object
+      required:
+        - candidate_id
+        - first_name
+        - last_name
+      properties:
+        candidate_id:
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
+        first_name:
+          type: string
+        last_name:
+          type: string
+
+    CandidateVoteTotal:
+      type: object
+      required:
+        - candidate_id
+        - votes
+      properties:
+        candidate_id:
+          type: string
+          format: number
+          pattern: "^[1-9][0-9]*$"
+        votes:
+          type: integer
+          minimum: 0
