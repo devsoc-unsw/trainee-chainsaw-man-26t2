@@ -1,39 +1,26 @@
 use crate::config::Config;
+use crate::models::state::ApiState;
 use crate::snowflake::SnowflakeGen;
 use anyhow::Context;
 use axum::Router;
 use axum::http::{Method, header};
 use sqlx::PgPool;
-use std::sync::Arc;
 use tokio::net::TcpListener;
 use tower_http::cors::CorsLayer;
 
 // Import routing modules
-mod users;
-
-/// The core type through which handler functions can access common API state.
-#[derive(Clone)]
-#[allow(dead_code)] // TODO: Remove this once the API is implemented
-struct ApiContext {
-    config: Arc<Config>,
-    db: PgPool,
-    id_gen: SnowflakeGen,
-}
-
-impl ApiContext {
-    pub(crate) fn new(config: Config, db: PgPool, id_gen: SnowflakeGen) -> Self {
-        ApiContext {
-            config: Arc::new(config),
-            db,
-            id_gen,
-        }
-    }
-}
+mod auth;
+mod campaigns;
+mod candidates;
+mod results;
+mod roles;
+mod vote;
+mod voters;
 
 /// Create and return the API router for the application.
 ///
 /// Includes a CORS layer to enable interoperability with the frontend.
-fn api_router() -> Router<ApiContext> {
+fn api_router() -> Router<ApiState> {
     // Create CORS layer
     let cors = CorsLayer::new()
         .allow_methods([
@@ -56,13 +43,17 @@ fn api_router() -> Router<ApiContext> {
         ]);
 
     // Return merged router, with CORS layer
-    Router::new().merge(users::router()).layer(cors)
+    Router::new()
+        .nest("/campaigns", campaigns::router())
+        .nest("/vote", vote::router())
+        .nest("/auth", auth::router())
+        .layer(cors)
 }
 
 /// Start serving the API.
 pub async fn serve(config: Config, db: PgPool, id_gen: SnowflakeGen) -> anyhow::Result<()> {
     // Create application
-    let app = api_router().with_state(ApiContext::new(config, db, id_gen));
+    let app = api_router().with_state(ApiState::new(config, db, id_gen));
 
     // Create listener on port 8080
     let listener = TcpListener::bind("0.0.0.0:8080")
