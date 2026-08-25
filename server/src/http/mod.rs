@@ -9,7 +9,13 @@ use tokio::net::TcpListener;
 use tower_http::cors::CorsLayer;
 
 // Import routing modules
-mod users;
+mod auth;
+mod campaigns;
+mod candidates;
+mod results;
+mod roles;
+mod vote;
+mod voters;
 
 /// The core type through which handler functions can access common API state.
 #[derive(Clone)]
@@ -56,7 +62,11 @@ fn api_router() -> Router<ApiContext> {
         ]);
 
     // Return merged router, with CORS layer
-    Router::new().merge(users::router()).layer(cors)
+    Router::new()
+        .nest("/campaigns", campaigns::router())
+        .nest("/vote", vote::router())
+        .nest("/auth", auth::router())
+        .layer(cors)
 }
 
 /// Start serving the API.

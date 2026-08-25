@@ -447,7 +447,7 @@ paths:
         "404":
           description: Campaign not found
 
-  /campaigns/{campaign_id}/invitations:
+  /campaigns/{campaign_id}/voters/invite:
     parameters:
       - name: campaign_id
         in: path
@@ -642,7 +642,7 @@ components:
           format: date-time
         allowed_role_overlaps:
           type: boolean
-   
+
     CreateCampaignResponse:
       type: object
       required:
@@ -894,7 +894,7 @@ components:
           format: email
         status:
           type: string
-          enum: [pending, invited, voted]
+          enum: [ pending, invited, voted ]
 
     VotingCampaign:
       type: object
@@ -1012,14 +1012,14 @@ components:
           items:
             $ref: "#/components/schemas/CandidatePreference"
       allOf:
-      - if:
-          properties:
-            abstain:
-              const: true
-        then:
-          properties:
-            preferences:
-              maxItems: 0
+        - if:
+            properties:
+              abstain:
+                const: true
+          then:
+            properties:
+              preferences:
+                maxItems: 0
 
     CandidatePreference:
       type: object
