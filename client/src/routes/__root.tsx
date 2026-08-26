@@ -29,7 +29,7 @@ function RootComponent() {
           },
         ]}
       />
-      <div className="fixed inset-0 -z-10 bg-background pointer-events-none">
+      <div className="fixed inset-0 -z-10 bg-blue pointer-events-none">
         <img src={rings} alt="" className = "absolute w-[70vw] h-[70vw] left-[-30vw] top-[-6vw] max-w-none"/>
       </div>
     </>
