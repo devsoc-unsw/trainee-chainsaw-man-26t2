@@ -1,0 +1,28 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT voter_id\n        FROM campaign_voters\n        WHERE campaign_id = $1 AND voting_token IS NULL\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "voter_id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "campaign_voters",
+            "name": "voter_id"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "854df29bd6d8254a1f196e395e881114745df9af56331b134052349702bab299"
+}

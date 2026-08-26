@@ -16,6 +16,8 @@ pub(crate) enum ChainsawError {
     CampaignNotFound,
     #[error("Candidate manifesto too long.")]
     CandidateManifestoTooLong,
+    #[error("Candidate role IDs must be non-empty and unique.")]
+    CandidateRoleIdsInvalid,
     #[error("Candidate not found.")]
     CandidateNotFound,
     #[error("Role title too long.")]
@@ -26,6 +28,12 @@ pub(crate) enum ChainsawError {
     RoleInvalidPositions,
     #[error("Role not found.")]
     RoleNotFound,
+    #[error("Update request must contain at least one field.")]
+    UpdateRequestEmpty,
+    #[error("Voter emails must be non-empty and unique.")]
+    VoterEmailsInvalid,
+    #[error("Voter IDs must be non-empty and unique.")]
+    VoterIdsInvalid,
     #[error("Database error.")]
     DatabaseError(#[from] sqlx::Error),
 }
@@ -37,9 +45,13 @@ impl IntoResponse for ChainsawError {
             | Self::CampaignDescriptionTooLong
             | Self::CampaignDatesInvalid
             | Self::CandidateManifestoTooLong
+            | Self::CandidateRoleIdsInvalid
             | Self::RoleTitleTooLong
             | Self::RoleDescriptionTooLong
-            | Self::RoleInvalidPositions => StatusCode::UNPROCESSABLE_ENTITY,
+            | Self::RoleInvalidPositions
+            | Self::UpdateRequestEmpty
+            | Self::VoterEmailsInvalid
+            | Self::VoterIdsInvalid => StatusCode::UNPROCESSABLE_ENTITY,
             Self::CampaignNotFound | Self::CandidateNotFound | Self::RoleNotFound => {
                 StatusCode::NOT_FOUND
             }

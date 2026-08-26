@@ -28,11 +28,11 @@ async fn post_role(
 ) -> Result<impl IntoResponse, ChainsawError> {
     // TODO: Handle users
     // TODO: Move all validate numbers to constants (or provide field validators)
-    if data.title.len() > 50 {
+    if data.title.chars().count() > 50 {
         return Err(ChainsawError::RoleTitleTooLong);
     }
 
-    if data.description.len() > 200 {
+    if data.description.chars().count() > 200 {
         return Err(ChainsawError::RoleDescriptionTooLong);
     }
 
@@ -51,7 +51,7 @@ async fn post_role(
     )
     .await?;
 
-    Ok((StatusCode::OK, Json(json!({"role_id": role_id}))))
+    Ok((StatusCode::CREATED, Json(json!({"role_id": role_id}))))
 }
 
 async fn get_roles(
@@ -113,14 +113,22 @@ async fn patch_role(
     Json(data): Json<UpdateRole>,
 ) -> Result<impl IntoResponse, ChainsawError> {
     // TODO: Handle users
-    if data.title.as_ref().is_some_and(|title| title.len() > 50) {
+    if data.is_empty() {
+        return Err(ChainsawError::UpdateRequestEmpty);
+    }
+
+    if data
+        .title
+        .as_ref()
+        .is_some_and(|title| title.chars().count() > 50)
+    {
         return Err(ChainsawError::RoleTitleTooLong);
     }
 
     if data
         .description
         .as_ref()
-        .is_some_and(|description| description.len() > 200)
+        .is_some_and(|description| description.chars().count() > 200)
     {
         return Err(ChainsawError::RoleDescriptionTooLong);
     }

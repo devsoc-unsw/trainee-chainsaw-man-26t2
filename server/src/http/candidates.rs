@@ -27,8 +27,16 @@ async fn post_candidate(
     Json(data): Json<CreateCandidate>,
 ) -> Result<impl IntoResponse, ChainsawError> {
     // TODO: Handle users
-    if data.manifesto.as_ref().is_some_and(|m| m.len() > 1000) {
+    if data
+        .manifesto
+        .as_ref()
+        .is_some_and(|m| m.chars().count() > 1000)
+    {
         return Err(ChainsawError::CandidateManifestoTooLong);
+    }
+
+    if !data.role_ids_are_valid() {
+        return Err(ChainsawError::CandidateRoleIdsInvalid);
     }
 
     // TODO: Validate email format
@@ -44,7 +52,10 @@ async fn post_candidate(
     )
     .await?;
 
-    Ok((StatusCode::OK, Json(json!({"candidate_id": candidate_id}))))
+    Ok((
+        StatusCode::CREATED,
+        Json(json!({"candidate_id": candidate_id})),
+    ))
 }
 
 async fn get_candidates(
@@ -114,8 +125,20 @@ async fn patch_candidate(
     Json(data): Json<UpdateCandidate>,
 ) -> Result<impl IntoResponse, ChainsawError> {
     // TODO: Handle users
-    if data.manifesto.as_ref().is_some_and(|m| m.len() > 1000) {
+    if data.is_empty() {
+        return Err(ChainsawError::UpdateRequestEmpty);
+    }
+
+    if data
+        .manifesto
+        .as_ref()
+        .is_some_and(|m| m.chars().count() > 1000)
+    {
         return Err(ChainsawError::CandidateManifestoTooLong);
+    }
+
+    if !data.role_ids_are_valid() {
+        return Err(ChainsawError::CandidateRoleIdsInvalid);
     }
 
     let mut tx = state.db.begin().await?;

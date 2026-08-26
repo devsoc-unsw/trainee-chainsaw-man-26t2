@@ -33,10 +33,10 @@ async fn post_campaign(
 ) -> Result<impl IntoResponse, ChainsawError> {
     // TODO: Handle users
     // Validate inputs
-    if data.title.len() > 50 {
+    if data.title.chars().count() > 50 {
         return Err(ChainsawError::CampaignTitleTooLong);
     }
-    if data.description.len() > 2000 {
+    if data.description.chars().count() > 2000 {
         return Err(ChainsawError::CampaignDescriptionTooLong);
     }
     if data.opening_date_time >= data.closing_date_time {
@@ -55,7 +55,10 @@ async fn post_campaign(
     )
     .await?;
 
-    Ok((StatusCode::OK, Json(json!({"campaign_id": campaign_id}))))
+    Ok((
+        StatusCode::CREATED,
+        Json(json!({"campaign_id": campaign_id})),
+    ))
 }
 
 async fn get_campaigns(State(state): State<BaseState>) -> Result<impl IntoResponse, ChainsawError> {
@@ -93,14 +96,22 @@ async fn patch_campaign(
     Json(data): Json<UpdateCampaign>,
 ) -> Result<impl IntoResponse, ChainsawError> {
     // TODO: Handle users
-    if data.title.as_ref().is_some_and(|title| title.len() > 50) {
+    if data.is_empty() {
+        return Err(ChainsawError::UpdateRequestEmpty);
+    }
+
+    if data
+        .title
+        .as_ref()
+        .is_some_and(|title| title.chars().count() > 50)
+    {
         return Err(ChainsawError::CampaignTitleTooLong);
     }
 
     if data
         .description
         .as_ref()
-        .is_some_and(|description| description.len() > 2000)
+        .is_some_and(|description| description.chars().count() > 2000)
     {
         return Err(ChainsawError::CampaignDescriptionTooLong);
     }

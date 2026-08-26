@@ -1,4 +1,5 @@
 use crate::models::error::ChainsawError;
+use crate::models::is_non_empty_unique;
 use crate::snowflake::{Snowflake, SnowflakeGen, SnowflakeIds};
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
@@ -72,6 +73,12 @@ pub(crate) struct CreateCandidate {
     pub role_ids: Vec<Snowflake>,
 }
 
+impl CreateCandidate {
+    pub(crate) fn role_ids_are_valid(&self) -> bool {
+        is_non_empty_unique(&self.role_ids)
+    }
+}
+
 #[derive(Deserialize)]
 pub(crate) struct UpdateCandidate {
     pub first_name: Option<String>,
@@ -79,4 +86,18 @@ pub(crate) struct UpdateCandidate {
     pub email: Option<String>,
     pub manifesto: Option<String>,
     pub role_ids: Option<Vec<Snowflake>>,
+}
+
+impl UpdateCandidate {
+    pub(crate) fn is_empty(&self) -> bool {
+        self.first_name.is_none()
+            && self.last_name.is_none()
+            && self.email.is_none()
+            && self.manifesto.is_none()
+            && self.role_ids.is_none()
+    }
+
+    pub(crate) fn role_ids_are_valid(&self) -> bool {
+        self.role_ids.as_deref().is_none_or(is_non_empty_unique)
+    }
 }

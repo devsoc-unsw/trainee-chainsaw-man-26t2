@@ -1,3 +1,4 @@
+use crate::models::is_non_empty_unique;
 use crate::snowflake::Snowflake;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
@@ -32,7 +33,19 @@ pub(crate) struct VoterEmails {
     pub(crate) emails: Vec<String>,
 }
 
+impl VoterEmails {
+    pub(crate) fn emails_are_valid(&self) -> bool {
+        is_non_empty_unique(&self.emails)
+    }
+}
+
 #[derive(Deserialize)]
 pub(crate) struct VoterIds {
     pub(crate) voter_ids: Vec<Snowflake>,
+}
+
+impl VoterIds {
+    pub(crate) fn voter_ids_are_valid(&self) -> bool {
+        is_non_empty_unique(&self.voter_ids)
+    }
 }

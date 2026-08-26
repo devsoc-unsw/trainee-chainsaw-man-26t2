@@ -26,6 +26,10 @@ async fn post_voters(
     Path(campaign_id): Path<Snowflake>,
     Json(data): Json<VoterEmails>,
 ) -> Result<impl IntoResponse, ChainsawError> {
+    if !data.emails_are_valid() {
+        return Err(ChainsawError::VoterEmailsInvalid);
+    }
+
     let mut voter_ids: Vec<Snowflake> = Vec::with_capacity(data.emails.len());
     for _ in &data.emails {
         voter_ids.push(state.id_gen.generate().await);
@@ -45,7 +49,7 @@ async fn post_voters(
     .execute(&state.db)
     .await?;
 
-    Ok((StatusCode::OK, Json(json!({"voter_ids": voter_ids}))))
+    Ok((StatusCode::CREATED, Json(json!({"voter_ids": voter_ids}))))
 }
 
 async fn get_voters(
@@ -87,6 +91,10 @@ async fn delete_voters(
     Path(campaign_id): Path<Snowflake>,
     Json(data): Json<VoterIds>,
 ) -> Result<impl IntoResponse, ChainsawError> {
+    if !data.voter_ids_are_valid() {
+        return Err(ChainsawError::VoterIdsInvalid);
+    }
+
     // TODO: Nicer error handling?
     // - Campaign not found
     // - IDs not found
@@ -112,10 +120,9 @@ async fn invite_voters(
     State(state): State<BaseState>,
     Path(campaign_id): Path<Snowflake>,
 ) -> Result<impl IntoResponse, ChainsawError> {
-    let mut voters = sqlx::query_as!(
-        Voter,
+    let voter_ids = sqlx::query_scalar!(
         r#"
-        SELECT voter_id, email, voting_token, has_voted
+        SELECT voter_id
         FROM campaign_voters
         WHERE campaign_id = $1 AND voting_token IS NULL
         "#,
@@ -124,25 +131,23 @@ async fn invite_voters(
     .fetch_all(&state.db)
     .await?;
 
-    voters.iter_mut().for_each(|v| {
-        v.voting_token = Some(Uuid::new_v4());
-    });
+    let voting_tokens = voter_ids.iter().map(|_| Uuid::new_v4()).collect::<Vec<_>>();
 
-    let mut tx = state.db.begin().await?;
-    for voter in &voters {
-        sqlx::query!(
-            r#"
-            UPDATE campaign_voters
-            SET voting_token = $1
-            WHERE voter_id = $2
-            "#,
-            voter.voting_token,
-            voter.voter_id.get()
-        )
-        .execute(&mut *tx)
-        .await?;
-    }
-    tx.commit().await?;
+    sqlx::query!(
+        r#"
+        UPDATE campaign_voters AS voter
+        SET voting_token = invitation.voting_token
+        FROM UNNEST($1::bigint[], $2::uuid[]) AS invitation(voter_id, voting_token)
+        WHERE voter.voter_id = invitation.voter_id
+            AND voter.campaign_id = $3
+            AND voter.voting_token IS NULL
+        "#,
+        &voter_ids,
+        &voting_tokens,
+        campaign_id.get()
+    )
+    .execute(&state.db)
+    .await?;
 
     // TODO: Send emails to voters with their voting tokens
     // TODO: Should we store successful email sends in the database?
@@ -151,5 +156,5 @@ async fn invite_voters(
     // are not one atomic operation. We may also want a re-send button just in case
     // we hit an issue where email isn't delivered.
 
-    Ok(StatusCode::NO_CONTENT)
+    Ok(StatusCode::ACCEPTED)
 }

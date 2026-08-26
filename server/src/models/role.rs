@@ -59,3 +59,12 @@ pub(crate) struct UpdateRole {
     pub(crate) no_of_positions: Option<i32>,
     pub(crate) enable_abstention: Option<bool>,
 }
+
+impl UpdateRole {
+    pub(crate) fn is_empty(&self) -> bool {
+        self.title.is_none()
+            && self.description.is_none()
+            && self.no_of_positions.is_none()
+            && self.enable_abstention.is_none()
+    }
+}

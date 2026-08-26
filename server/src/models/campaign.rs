@@ -64,3 +64,13 @@ pub(crate) struct UpdateCampaign {
     pub closing_date_time: Option<DateTime<Utc>>,
     pub allow_role_overlaps: Option<bool>,
 }
+
+impl UpdateCampaign {
+    pub(crate) fn is_empty(&self) -> bool {
+        self.title.is_none()
+            && self.description.is_none()
+            && self.opening_date_time.is_none()
+            && self.closing_date_time.is_none()
+            && self.allow_role_overlaps.is_none()
+    }
+}
