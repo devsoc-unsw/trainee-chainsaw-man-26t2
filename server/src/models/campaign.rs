@@ -6,7 +6,7 @@ use sqlx::{FromRow, PgPool};
 
 #[derive(FromRow, Deserialize, Serialize)]
 pub(crate) struct Campaign {
-    pub(crate) campaign_id: i64,
+    pub(crate) campaign_id: Snowflake,
     pub(crate) title: String,
     pub(crate) description: String,
     pub(crate) opening_date_time: DateTime<Utc>,

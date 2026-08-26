@@ -23,7 +23,7 @@ pub(super) fn router() -> Router<ApiState> {
 
 async fn post_voters(
     State(state): State<BaseState>,
-    Path(campaign_id): Path<i64>,
+    Path(campaign_id): Path<Snowflake>,
     Json(data): Json<VoterEmails>,
 ) -> Result<impl IntoResponse, ChainsawError> {
     let mut voter_ids: Vec<Snowflake> = Vec::with_capacity(data.emails.len());
@@ -40,7 +40,7 @@ async fn post_voters(
         "#,
         &voter_ids.iter().map(|id| id.get()).collect::<Vec<i64>>(),
         &data.emails,
-        campaign_id
+        campaign_id.get()
     )
     .execute(&state.db)
     .await?;
@@ -50,7 +50,7 @@ async fn post_voters(
 
 async fn get_voters(
     State(state): State<BaseState>,
-    Path(campaign_id): Path<i64>,
+    Path(campaign_id): Path<Snowflake>,
 ) -> Result<impl IntoResponse, ChainsawError> {
     let voters = sqlx::query_as!(
         Voter,
@@ -59,7 +59,7 @@ async fn get_voters(
         FROM campaign_voters
         WHERE campaign_id = $1
         "#,
-        campaign_id
+        campaign_id.get()
     )
     .fetch_all(&state.db)
     .await?;
@@ -84,7 +84,7 @@ async fn get_voters(
 
 async fn delete_voters(
     State(state): State<BaseState>,
-    Path(campaign_id): Path<i64>,
+    Path(campaign_id): Path<Snowflake>,
     Json(data): Json<VoterIds>,
 ) -> Result<impl IntoResponse, ChainsawError> {
     // TODO: Nicer error handling?
@@ -95,8 +95,12 @@ async fn delete_voters(
         DELETE FROM campaign_voters
         WHERE campaign_id = $1 AND voter_id = ANY($2)
         "#,
-        campaign_id,
-        &data.voter_ids
+        campaign_id.get(),
+        &data
+            .voter_ids
+            .iter()
+            .map(|id| id.get())
+            .collect::<Vec<i64>>()
     )
     .execute(&state.db)
     .await?;
@@ -106,7 +110,7 @@ async fn delete_voters(
 
 async fn invite_voters(
     State(state): State<BaseState>,
-    Path(campaign_id): Path<i64>,
+    Path(campaign_id): Path<Snowflake>,
 ) -> Result<impl IntoResponse, ChainsawError> {
     let mut voters = sqlx::query_as!(
         Voter,
@@ -115,7 +119,7 @@ async fn invite_voters(
         FROM campaign_voters
         WHERE campaign_id = $1 AND voting_token IS NULL
         "#,
-        campaign_id
+        campaign_id.get()
     )
     .fetch_all(&state.db)
     .await?;
@@ -133,7 +137,7 @@ async fn invite_voters(
             WHERE voter_id = $2
             "#,
             voter.voting_token,
-            voter.voter_id
+            voter.voter_id.get()
         )
         .execute(&mut *tx)
         .await?;

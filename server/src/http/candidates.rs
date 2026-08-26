@@ -1,6 +1,7 @@
 use crate::models::candidate::{Candidate, CreateCandidate, UpdateCandidate};
 use crate::models::error::ChainsawError;
 use crate::models::state::{ApiState, BaseState};
+use crate::snowflake::Snowflake;
 use axum::extract::{Path, State};
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
@@ -22,7 +23,7 @@ pub(super) fn router() -> Router<ApiState> {
 
 async fn post_candidate(
     State(state): State<BaseState>,
-    Path(campaign_id): Path<i64>,
+    Path(campaign_id): Path<Snowflake>,
     Json(data): Json<CreateCandidate>,
 ) -> Result<impl IntoResponse, ChainsawError> {
     // TODO: Handle users
@@ -48,7 +49,7 @@ async fn post_candidate(
 
 async fn get_candidates(
     State(state): State<BaseState>,
-    Path(campaign_id): Path<i64>,
+    Path(campaign_id): Path<Snowflake>,
 ) -> Result<impl IntoResponse, ChainsawError> {
     // TODO: Handle users
     let candidates = sqlx::query_as!(
@@ -66,7 +67,7 @@ async fn get_candidates(
     WHERE c.campaign_id = $1
     GROUP BY c.candidate_id
     "#,
-    campaign_id
+    campaign_id.get()
     )
 .fetch_all(&state.db)
 .await?;
@@ -76,7 +77,7 @@ async fn get_candidates(
 
 async fn get_candidate(
     State(state): State<BaseState>,
-    Path((campaign_id, candidate_id)): Path<(i64, i64)>,
+    Path((campaign_id, candidate_id)): Path<(Snowflake, Snowflake)>,
 ) -> Result<impl IntoResponse, ChainsawError> {
     // TODO Handle users
     let candidate = sqlx::query_as!(
@@ -94,8 +95,8 @@ async fn get_candidate(
         WHERE c.campaign_id = $1 AND c.candidate_id = $2
         GROUP BY c.candidate_id
         "#,
-        campaign_id,
-        candidate_id
+        campaign_id.get(),
+        candidate_id.get()
     )
     .fetch_optional(&state.db)
     .await?;
@@ -109,7 +110,7 @@ async fn get_candidate(
 
 async fn patch_candidate(
     State(state): State<BaseState>,
-    Path((campaign_id, candidate_id)): Path<(i64, i64)>,
+    Path((campaign_id, candidate_id)): Path<(Snowflake, Snowflake)>,
     Json(data): Json<UpdateCandidate>,
 ) -> Result<impl IntoResponse, ChainsawError> {
     // TODO: Handle users
@@ -133,8 +134,8 @@ async fn patch_candidate(
         data.last_name,
         data.email,
         data.manifesto,
-        campaign_id,
-        candidate_id
+        campaign_id.get(),
+        candidate_id.get()
     )
     .execute(&mut *tx)
     .await?;
@@ -147,8 +148,8 @@ async fn patch_candidate(
         // Delete existing roles
         sqlx::query!(
             r#"DELETE FROM "candidate_roles" WHERE campaign_id = $1 AND candidate_id = $2"#,
-            campaign_id,
-            candidate_id
+            campaign_id.get(),
+            candidate_id.get()
         )
         .execute(&mut *tx)
         .await?;
@@ -158,9 +159,9 @@ async fn patch_candidate(
         for role_id in role_ids {
             sqlx::query!(
                 r#"INSERT INTO "candidate_roles" (candidate_id, role_id, campaign_id) VALUES ($1, $2, $3)"#,
-                candidate_id,
-                role_id,
-                campaign_id
+                candidate_id.get(),
+                role_id.get(),
+                campaign_id.get()
             )
             .execute(&mut *tx)
             .await?;
@@ -173,13 +174,13 @@ async fn patch_candidate(
 
 async fn delete_candidate(
     State(state): State<BaseState>,
-    Path((campaign_id, candidate_id)): Path<(i64, i64)>,
+    Path((campaign_id, candidate_id)): Path<(Snowflake, Snowflake)>,
 ) -> Result<impl IntoResponse, ChainsawError> {
     // TODO: Handle users
     let result = sqlx::query!(
         r#"DELETE FROM "candidates" WHERE campaign_id = $1 AND candidate_id = $2"#,
-        campaign_id,
-        candidate_id
+        campaign_id.get(),
+        candidate_id.get()
     )
     .execute(&state.db)
     .await?;

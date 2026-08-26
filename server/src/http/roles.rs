@@ -1,6 +1,7 @@
 use crate::models::error::ChainsawError;
 use crate::models::role::{CreateRole, Role, UpdateRole};
 use crate::models::state::{ApiState, BaseState};
+use crate::snowflake::Snowflake;
 use axum::extract::{Path, State};
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
@@ -22,7 +23,7 @@ pub(super) fn router() -> Router<ApiState> {
 
 async fn post_role(
     State(state): State<BaseState>,
-    Path(campaign_id): Path<i64>,
+    Path(campaign_id): Path<Snowflake>,
     Json(data): Json<CreateRole>,
 ) -> Result<impl IntoResponse, ChainsawError> {
     // TODO: Handle users
@@ -35,7 +36,7 @@ async fn post_role(
         return Err(ChainsawError::RoleDescriptionTooLong);
     }
 
-    if data.no_of_positions < 1 || data.no_of_positions > 100 {
+    if !(1..=100).contains(&data.no_of_positions) {
         return Err(ChainsawError::RoleInvalidPositions);
     }
 
@@ -55,7 +56,7 @@ async fn post_role(
 
 async fn get_roles(
     State(state): State<BaseState>,
-    Path(campaign_id): Path<i64>,
+    Path(campaign_id): Path<Snowflake>,
 ) -> Result<impl IntoResponse, ChainsawError> {
     // TODO: Handle users
     // TODO: Give nice error if campaign does not exist?
@@ -69,7 +70,7 @@ async fn get_roles(
             enable_abstention
         FROM "campaign_roles"
         WHERE campaign_id = $1"#,
-        campaign_id
+        campaign_id.get()
     )
     .fetch_all(&state.db)
     .await?;
@@ -79,7 +80,7 @@ async fn get_roles(
 
 async fn get_role(
     State(state): State<BaseState>,
-    Path((campaign_id, role_id)): Path<(i64, i64)>,
+    Path((campaign_id, role_id)): Path<(Snowflake, Snowflake)>,
 ) -> Result<impl IntoResponse, ChainsawError> {
     // TODO: Handle users
     // TODO: Do we care if the campaign does not exist?
@@ -93,8 +94,8 @@ async fn get_role(
             enable_abstention
         FROM "campaign_roles"
         WHERE campaign_id = $1 AND role_id = $2"#,
-        campaign_id,
-        role_id
+        campaign_id.get(),
+        role_id.get()
     )
     .fetch_optional(&state.db)
     .await?;
@@ -108,7 +109,7 @@ async fn get_role(
 
 async fn patch_role(
     State(state): State<BaseState>,
-    Path((campaign_id, role_id)): Path<(i64, i64)>,
+    Path((campaign_id, role_id)): Path<(Snowflake, Snowflake)>,
     Json(data): Json<UpdateRole>,
 ) -> Result<impl IntoResponse, ChainsawError> {
     // TODO: Handle users
@@ -127,7 +128,7 @@ async fn patch_role(
     if data
         .no_of_positions
         .as_ref()
-        .is_some_and(|&no_of_positions| no_of_positions < 1 || no_of_positions > 100)
+        .is_some_and(|&no_of_positions| !(1..=100).contains(&no_of_positions))
     {
         return Err(ChainsawError::RoleInvalidPositions);
     }
@@ -146,8 +147,8 @@ async fn patch_role(
         data.description,
         data.no_of_positions,
         data.enable_abstention,
-        campaign_id,
-        role_id
+        campaign_id.get(),
+        role_id.get()
     )
     .execute(&state.db)
     .await?;
@@ -161,13 +162,13 @@ async fn patch_role(
 
 async fn delete_role(
     State(state): State<BaseState>,
-    Path((campaign_id, role_id)): Path<(i64, i64)>,
+    Path((campaign_id, role_id)): Path<(Snowflake, Snowflake)>,
 ) -> Result<impl IntoResponse, ChainsawError> {
     // TODO: Handle users
     let result = sqlx::query!(
         r#"DELETE FROM "campaign_roles" WHERE campaign_id = $1 AND role_id = $2"#,
-        campaign_id,
-        role_id
+        campaign_id.get(),
+        role_id.get()
     )
     .execute(&state.db)
     .await?;

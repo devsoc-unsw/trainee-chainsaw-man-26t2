@@ -2,6 +2,7 @@ use crate::http::{ApiState, candidates, results, roles, voters};
 use crate::models::campaign::{Campaign, CreateCampaign, UpdateCampaign};
 use crate::models::error::ChainsawError;
 use crate::models::state::BaseState;
+use crate::snowflake::Snowflake;
 use anyhow::Result;
 use axum::extract::{Path, State};
 use axum::http::StatusCode;
@@ -68,13 +69,13 @@ async fn get_campaigns(State(state): State<BaseState>) -> Result<impl IntoRespon
 
 async fn get_campaign(
     State(state): State<BaseState>,
-    Path(campaign_id): Path<i64>,
+    Path(campaign_id): Path<Snowflake>,
 ) -> Result<impl IntoResponse, ChainsawError> {
     // TODO: Handle users
     let campaign = sqlx::query_as!(
         Campaign,
         r#"SELECT * FROM "campaigns" WHERE campaign_id = $1"#,
-        campaign_id,
+        campaign_id.get(),
     )
     .fetch_optional(&state.db)
     .await?;
@@ -88,7 +89,7 @@ async fn get_campaign(
 
 async fn patch_campaign(
     State(state): State<BaseState>,
-    Path(campaign_id): Path<i64>,
+    Path(campaign_id): Path<Snowflake>,
     Json(data): Json<UpdateCampaign>,
 ) -> Result<impl IntoResponse, ChainsawError> {
     // TODO: Handle users
@@ -132,7 +133,7 @@ async fn patch_campaign(
         data.opening_date_time,
         data.closing_date_time,
         data.allow_role_overlaps,
-        campaign_id,
+        campaign_id.get(),
     )
     .execute(&state.db)
     .await?;
@@ -146,12 +147,12 @@ async fn patch_campaign(
 
 async fn delete_campaign(
     State(state): State<BaseState>,
-    Path(campaign_id): Path<i64>,
+    Path(campaign_id): Path<Snowflake>,
 ) -> Result<impl IntoResponse, ChainsawError> {
     // TODO: Handle users
     let result = sqlx::query!(
         r#"DELETE FROM "campaigns" WHERE campaign_id = $1"#,
-        campaign_id,
+        campaign_id.get(),
     )
     .execute(&state.db)
     .await?;

@@ -1,27 +1,28 @@
 use crate::models::error::ChainsawError;
-use crate::snowflake::{Snowflake, SnowflakeGen};
+use crate::snowflake::{Snowflake, SnowflakeGen, SnowflakeIds};
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
 use sqlx::prelude::FromRow;
 
 #[derive(FromRow, Deserialize, Serialize)]
 pub(crate) struct Candidate {
-    pub(crate) candidate_id: i64,
+    pub(crate) candidate_id: Snowflake,
     pub(crate) first_name: String,
     pub(crate) last_name: String,
     pub(crate) email: String,
     pub(crate) manifesto: Option<String>,
-    pub(crate) role_ids: Vec<i64>,
+    pub(crate) role_ids: SnowflakeIds,
 }
 
 impl Candidate {
+    #[allow(clippy::too_many_arguments)]
     pub(crate) async fn create(
         first_name: String,
         last_name: String,
         email: String,
         manifesto: Option<String>,
-        campaign_id: i64,
-        role_ids: &[i64],
+        campaign_id: Snowflake,
+        role_ids: &[Snowflake],
         id_gen: &SnowflakeGen,
         pool: &PgPool,
     ) -> Result<Snowflake, ChainsawError> {
@@ -36,7 +37,7 @@ impl Candidate {
             VALUES ($1, $2, $3, $4, $5, $6)
             "#,
             candidate_id.get(),
-            campaign_id,
+            campaign_id.get(),
             first_name,
             last_name,
             email,
@@ -50,8 +51,8 @@ impl Candidate {
             sqlx::query!(
                 r#"INSERT INTO "candidate_roles" (candidate_id, role_id, campaign_id) VALUES ($1, $2, $3)"#,
                 candidate_id.get(),
-                role_id,
-                campaign_id
+                role_id.get(),
+                campaign_id.get()
             )
             .execute(&mut *tx)
             .await?;
@@ -68,7 +69,7 @@ pub(crate) struct CreateCandidate {
     pub last_name: String,
     pub email: String,
     pub manifesto: Option<String>,
-    pub role_ids: Vec<i64>,
+    pub role_ids: Vec<Snowflake>,
 }
 
 #[derive(Deserialize)]
@@ -77,5 +78,5 @@ pub(crate) struct UpdateCandidate {
     pub last_name: Option<String>,
     pub email: Option<String>,
     pub manifesto: Option<String>,
-    pub role_ids: Option<Vec<i64>>,
+    pub role_ids: Option<Vec<Snowflake>>,
 }

@@ -5,7 +5,7 @@ use sqlx::PgPool;
 
 #[derive(sqlx::FromRow, Serialize)]
 pub(crate) struct Role {
-    pub(crate) role_id: i64,
+    pub(crate) role_id: Snowflake,
     pub(crate) title: String,
     pub(crate) description: String,
     pub(crate) no_of_positions: i32,
@@ -18,7 +18,7 @@ impl Role {
         description: String,
         no_of_positions: i32,
         enable_abstention: bool,
-        campaign_id: i64,
+        campaign_id: Snowflake,
         id_gen: &SnowflakeGen,
         pool: &PgPool,
     ) -> Result<Snowflake, ChainsawError> {
@@ -31,7 +31,7 @@ impl Role {
             VALUES ($1, $2, $3, $4, $5, $6)
             "#,
             role_id.get(),
-            campaign_id,
+            campaign_id.get(),
             title,
             description,
             no_of_positions,
