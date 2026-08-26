@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        INSERT INTO campaign_voters (voter_id, email, campaign_id)\n        SELECT v, e, $3\n        FROM UNNEST($1::bigint[], $2::text[]) AS t(v, e)\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8Array",
+        "TextArray",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "86711d98104c7aa152d9dd7673fec7867347463acb5da9da09aa201b00ccca79"
+}

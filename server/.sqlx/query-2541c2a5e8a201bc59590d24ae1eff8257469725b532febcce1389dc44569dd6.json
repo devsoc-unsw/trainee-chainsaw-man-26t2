@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            INSERT INTO \"candidates\"\n            (candidate_id, campaign_id, first_name, last_name, email, manifesto)\n            VALUES ($1, $2, $3, $4, $5, $6)\n            RETURNING *\n            ",
+  "query": "\n    SELECT\n        c.candidate_id,\n        c.first_name,\n        c.last_name,\n        c.email,\n        c.manifesto,\n        COALESCE(array_agg(cr.role_id) FILTER (WHERE cr.role_id IS NOT NULL), '{}') AS \"role_ids!: Vec<i64>\"\n    FROM \"candidates\" c\n    LEFT JOIN \"candidate_roles\" cr ON cr.candidate_id = c.candidate_id\n    WHERE c.campaign_id = $1\n    GROUP BY c.candidate_id\n    ",
   "describe": {
     "columns": [
       {
@@ -16,17 +16,6 @@
       },
       {
         "ordinal": 1,
-        "name": "campaign_id",
-        "type_info": "Int8",
-        "origin": {
-          "Table": {
-            "table": "candidates",
-            "name": "campaign_id"
-          }
-        }
-      },
-      {
-        "ordinal": 2,
         "name": "first_name",
         "type_info": "Text",
         "origin": {
@@ -37,7 +26,7 @@
         }
       },
       {
-        "ordinal": 3,
+        "ordinal": 2,
         "name": "last_name",
         "type_info": "Text",
         "origin": {
@@ -48,7 +37,7 @@
         }
       },
       {
-        "ordinal": 4,
+        "ordinal": 3,
         "name": "email",
         "type_info": "Text",
         "origin": {
@@ -59,7 +48,7 @@
         }
       },
       {
-        "ordinal": 5,
+        "ordinal": 4,
         "name": "manifesto",
         "type_info": "Text",
         "origin": {
@@ -68,16 +57,17 @@
             "name": "manifesto"
           }
         }
+      },
+      {
+        "ordinal": 5,
+        "name": "role_ids!: Vec<i64>",
+        "type_info": "Int8Array",
+        "origin": "Expression"
       }
     ],
     "parameters": {
       "Left": [
-        "Int8",
-        "Int8",
-        "Text",
-        "Text",
-        "Text",
-        "Text"
+        "Int8"
       ]
     },
     "nullable": [
@@ -85,9 +75,9 @@
       false,
       false,
       false,
-      false,
-      true
+      true,
+      null
     ]
   },
-  "hash": "a04f052b1931f81a0acff82c5180739c25b3522fed18b11d56fcb7822b716607"
+  "hash": "2541c2a5e8a201bc59590d24ae1eff8257469725b532febcce1389dc44569dd6"
 }
