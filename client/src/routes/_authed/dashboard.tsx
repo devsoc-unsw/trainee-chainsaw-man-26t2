@@ -5,5 +5,10 @@ export const Route = createFileRoute("/_authed/dashboard")({
 });
 
 function RouteComponent() {
-  return <div>Hello "/_authed/dashboard"!</div>;
+  return (
+  <div>
+    <div>
+    </div>
+  </div>
+  );
 }
