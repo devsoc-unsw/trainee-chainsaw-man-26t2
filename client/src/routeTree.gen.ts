@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthedRouteImport } from './routes/_authed'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CountIndexRouteImport } from './routes/count/index'
+import { Route as VoteRoleRouteImport } from './routes/vote/role'
 import { Route as VoteTokenRouteImport } from './routes/vote/$token'
 import { Route as CountElectionIdRouteImport } from './routes/count/$electionId'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
@@ -41,6 +42,11 @@ const IndexRoute = IndexRouteImport.update({
 const CountIndexRoute = CountIndexRouteImport.update({
   id: '/count/',
   path: '/count/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VoteRoleRoute = VoteRoleRouteImport.update({
+  id: '/vote/role',
+  path: '/vote/role',
   getParentRoute: () => rootRouteImport,
 } as any)
 const VoteTokenRoute = VoteTokenRouteImport.update({
@@ -137,6 +143,7 @@ export interface FileRoutesByFullPath {
   '/auth/login': typeof AuthLoginRoute
   '/count/$electionId': typeof CountElectionIdRoute
   '/vote/$token': typeof VoteTokenRouteWithChildren
+  '/vote/role': typeof VoteRoleRoute
   '/count/': typeof CountIndexRoute
   '/elections/$electionId': typeof AuthedElectionsElectionIdRouteWithChildren
   '/elections/new': typeof AuthedElectionsNewRoute
@@ -156,6 +163,7 @@ export interface FileRoutesByTo {
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/login': typeof AuthLoginRoute
   '/count/$electionId': typeof CountElectionIdRoute
+  '/vote/role': typeof VoteRoleRoute
   '/count': typeof CountIndexRoute
   '/elections/new': typeof AuthedElectionsNewRoute
   '/vote/$token/closed': typeof VoteTokenClosedRoute
@@ -177,6 +185,7 @@ export interface FileRoutesById {
   '/auth/login': typeof AuthLoginRoute
   '/count/$electionId': typeof CountElectionIdRoute
   '/vote/$token': typeof VoteTokenRouteWithChildren
+  '/vote/role': typeof VoteRoleRoute
   '/count/': typeof CountIndexRoute
   '/_authed/elections/$electionId': typeof AuthedElectionsElectionIdRouteWithChildren
   '/_authed/elections/new': typeof AuthedElectionsNewRoute
@@ -199,6 +208,7 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/count/$electionId'
     | '/vote/$token'
+    | '/vote/role'
     | '/count/'
     | '/elections/$electionId'
     | '/elections/new'
@@ -218,6 +228,7 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/auth/login'
     | '/count/$electionId'
+    | '/vote/role'
     | '/count'
     | '/elections/new'
     | '/vote/$token/closed'
@@ -238,6 +249,7 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/count/$electionId'
     | '/vote/$token'
+    | '/vote/role'
     | '/count/'
     | '/_authed/elections/$electionId'
     | '/_authed/elections/new'
@@ -259,6 +271,7 @@ export interface RootRouteChildren {
   AuthLoginRoute: typeof AuthLoginRoute
   CountElectionIdRoute: typeof CountElectionIdRoute
   VoteTokenRoute: typeof VoteTokenRouteWithChildren
+  VoteRoleRoute: typeof VoteRoleRoute
   CountIndexRoute: typeof CountIndexRoute
 }
 
@@ -283,6 +296,13 @@ declare module '@tanstack/react-router' {
       path: '/count'
       fullPath: '/count/'
       preLoaderRoute: typeof CountIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vote/role': {
+      id: '/vote/role'
+      path: '/vote/role'
+      fullPath: '/vote/role'
+      preLoaderRoute: typeof VoteRoleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/vote/$token': {
@@ -465,6 +485,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthLoginRoute: AuthLoginRoute,
   CountElectionIdRoute: CountElectionIdRoute,
   VoteTokenRoute: VoteTokenRouteWithChildren,
+  VoteRoleRoute: VoteRoleRoute,
   CountIndexRoute: CountIndexRoute,
 }
 export const routeTree = rootRouteImport
