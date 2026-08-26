@@ -387,9 +387,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/CreateVoterResponse"
+                $ref: "#/components/schemas/CreateVotersResponse"
         "400":
           description: Invalid input
         "401":
@@ -651,7 +649,7 @@ components:
         campaign_id:
           type: string
           format: number
-          pattern: '^[1-9][0-9]*$'
+          pattern: "^[1-9][0-9]*$"
 
     UpdateCampaignRequest:
       type: object
@@ -732,7 +730,7 @@ components:
         candidate_id:
           type: string
           format: number
-          pattern: '^[1-9][0-9]*$'
+          pattern: "^[1-9][0-9]*$"
 
     UpdateCandidateRequest:
       type: object
@@ -812,7 +810,7 @@ components:
         role_id:
           type: string
           format: number
-          pattern: '^[1-9][0-9]*$'
+          pattern: "^[1-9][0-9]*$"
 
     UpdateRoleRequest:
       type: object
@@ -894,7 +892,7 @@ components:
           format: email
         status:
           type: string
-          enum: [ pending, invited, voted ]
+          enum: [pending, invited, voted]
 
     VotingCampaign:
       type: object
@@ -924,16 +922,19 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/VotingRole"
-    
-    CreateVoterResponse:
+
+    CreateVotersResponse:
       type: object
       required:
-        - voter_id
+        - voter_ids
       properties:
-        voter_id:
-          type: string
-          format: number
-          pattern: '^[1-9][0-9]*$'
+        voter_ids:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            format: number
+            pattern: "^[1-9][0-9]*$"
 
     VotingRole:
       type: object

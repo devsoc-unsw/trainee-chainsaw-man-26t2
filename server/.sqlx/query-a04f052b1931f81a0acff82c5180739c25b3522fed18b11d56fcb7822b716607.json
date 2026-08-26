@@ -1,0 +1,93 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            INSERT INTO \"candidates\"\n            (candidate_id, campaign_id, first_name, last_name, email, manifesto)\n            VALUES ($1, $2, $3, $4, $5, $6)\n            RETURNING *\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "candidate_id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "candidates",
+            "name": "candidate_id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "campaign_id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "candidates",
+            "name": "campaign_id"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "first_name",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "candidates",
+            "name": "first_name"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "last_name",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "candidates",
+            "name": "last_name"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "email",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "candidates",
+            "name": "email"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "manifesto",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "candidates",
+            "name": "manifesto"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8",
+        "Text",
+        "Text",
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      true
+    ]
+  },
+  "hash": "a04f052b1931f81a0acff82c5180739c25b3522fed18b11d56fcb7822b716607"
+}

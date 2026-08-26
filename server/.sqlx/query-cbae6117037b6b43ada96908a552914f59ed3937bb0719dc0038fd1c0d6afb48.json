@@ -1,0 +1,19 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        UPDATE \"campaigns\"\n        SET\n            title = COALESCE($1, title),\n            description = COALESCE($2, description),\n            opening_date_time = COALESCE($3, opening_date_time),\n            closing_date_time = COALESCE($4, closing_date_time),\n            allow_role_overlaps = COALESCE($5, allow_role_overlaps)\n        WHERE campaign_id = $6\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Timestamptz",
+        "Timestamptz",
+        "Bool",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "cbae6117037b6b43ada96908a552914f59ed3937bb0719dc0038fd1c0d6afb48"
+}

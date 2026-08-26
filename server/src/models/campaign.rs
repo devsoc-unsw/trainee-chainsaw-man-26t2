@@ -6,12 +6,12 @@ use sqlx::{FromRow, PgPool};
 
 #[derive(FromRow, Deserialize, Serialize)]
 pub(crate) struct Campaign {
-    campaign_id: i64,
-    title: String,
-    description: String,
-    opening_date_time: DateTime<Utc>,
-    closing_date_time: DateTime<Utc>,
-    allow_role_overlaps: bool,
+    pub(crate) campaign_id: i64,
+    pub(crate) title: String,
+    pub(crate) description: String,
+    pub(crate) opening_date_time: DateTime<Utc>,
+    pub(crate) closing_date_time: DateTime<Utc>,
+    pub(crate) allow_role_overlaps: bool,
 }
 
 impl Campaign {
@@ -54,4 +54,13 @@ pub(crate) struct CreateCampaign {
     pub opening_date_time: DateTime<Utc>,
     pub closing_date_time: DateTime<Utc>,
     pub allow_role_overlaps: bool,
+}
+
+#[derive(Deserialize)]
+pub(crate) struct UpdateCampaign {
+    pub title: Option<String>,
+    pub description: Option<String>,
+    pub opening_date_time: Option<DateTime<Utc>>,
+    pub closing_date_time: Option<DateTime<Utc>>,
+    pub allow_role_overlaps: Option<bool>,
 }
