@@ -1,10 +1,11 @@
 @import "tailwindcss";
 
 @theme {
-  --color-blue: #043E89;
-  --color-emphasis: #FBDA54;
-  --color-card: #FFF8E7;
-  --color-on-dark: #FAFAFA;
+  --color-blue: #043e89;
+  --color-emphasis: #fbda54;
+  --color-card: #fff8e7;
+  --color-on-dark: #fafafa;
+  --color-statusLabel: #b11250;
 }
 
 * {
