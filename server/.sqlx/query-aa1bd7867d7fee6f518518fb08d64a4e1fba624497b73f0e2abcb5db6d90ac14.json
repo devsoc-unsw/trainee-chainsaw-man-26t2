@@ -1,0 +1,76 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT\n                role_id,\n                title,\n                description,\n                no_of_positions,\n                enable_abstention\n            FROM \"campaign_roles\"\n            WHERE campaign_id = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "role_id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "campaign_roles",
+            "name": "role_id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "title",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "campaign_roles",
+            "name": "title"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "description",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "campaign_roles",
+            "name": "description"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "no_of_positions",
+        "type_info": "Int4",
+        "origin": {
+          "Table": {
+            "table": "campaign_roles",
+            "name": "no_of_positions"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "enable_abstention",
+        "type_info": "Bool",
+        "origin": {
+          "Table": {
+            "table": "campaign_roles",
+            "name": "enable_abstention"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "aa1bd7867d7fee6f518518fb08d64a4e1fba624497b73f0e2abcb5db6d90ac14"
+}

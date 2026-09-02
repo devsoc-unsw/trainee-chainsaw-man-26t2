@@ -1,0 +1,19 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        UPDATE \"candidates\"\n        SET\n            first_name = COALESCE($1, first_name),\n            last_name = COALESCE($2, last_name),\n            email = COALESCE($3, email),\n            manifesto = COALESCE($4, manifesto)\n        WHERE campaign_id = $5 AND candidate_id = $6\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "b5ea9945a735886bcf26e2bddb72ae8b8667ce3932291151dd581fbd110dbdf9"
+}
