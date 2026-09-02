@@ -63,9 +63,7 @@ async fn post_campaign(
 
 async fn get_campaigns(State(state): State<BaseState>) -> Result<impl IntoResponse, ChainsawError> {
     // TODO: Handle users
-    let campaigns = sqlx::query_as!(Campaign, r#"SELECT * FROM "campaigns""#)
-        .fetch_all(&state.db)
-        .await?;
+    let campaigns = Campaign::get_all(&state.db).await?;
 
     Ok((StatusCode::OK, Json(json!(campaigns))))
 }
@@ -75,17 +73,9 @@ async fn get_campaign(
     Path(campaign_id): Path<Snowflake>,
 ) -> Result<impl IntoResponse, ChainsawError> {
     // TODO: Handle users
-    let campaign = sqlx::query_as!(
-        Campaign,
-        r#"SELECT * FROM "campaigns" WHERE campaign_id = $1"#,
-        campaign_id.get(),
-    )
-    .fetch_optional(&state.db)
-    .await?;
-
-    if campaign.is_none() {
-        return Err(ChainsawError::CampaignNotFound);
-    }
+    let campaign = Campaign::get(campaign_id, &state.db)
+        .await?
+        .ok_or(ChainsawError::CampaignNotFound)?;
 
     Ok((StatusCode::OK, Json(json!(campaign))))
 }
@@ -128,30 +118,7 @@ async fn patch_campaign(
         }
     }
 
-    let result = sqlx::query!(
-        r#"
-        UPDATE "campaigns"
-        SET
-            title = COALESCE($1, title),
-            description = COALESCE($2, description),
-            opening_date_time = COALESCE($3, opening_date_time),
-            closing_date_time = COALESCE($4, closing_date_time),
-            allow_role_overlaps = COALESCE($5, allow_role_overlaps)
-        WHERE campaign_id = $6
-        "#,
-        data.title,
-        data.description,
-        data.opening_date_time,
-        data.closing_date_time,
-        data.allow_role_overlaps,
-        campaign_id.get(),
-    )
-    .execute(&state.db)
-    .await?;
-
-    if result.rows_affected() == 0 {
-        return Err(ChainsawError::CampaignNotFound);
-    }
+    Campaign::update(campaign_id, data, &state.db).await?;
 
     Ok(StatusCode::NO_CONTENT)
 }
@@ -161,16 +128,7 @@ async fn delete_campaign(
     Path(campaign_id): Path<Snowflake>,
 ) -> Result<impl IntoResponse, ChainsawError> {
     // TODO: Handle users
-    let result = sqlx::query!(
-        r#"DELETE FROM "campaigns" WHERE campaign_id = $1"#,
-        campaign_id.get(),
-    )
-    .execute(&state.db)
-    .await?;
-
-    if result.rows_affected() == 0 {
-        return Err(ChainsawError::CampaignNotFound);
-    }
+    Campaign::delete(campaign_id, &state.db).await?;
 
     Ok(StatusCode::NO_CONTENT)
 }

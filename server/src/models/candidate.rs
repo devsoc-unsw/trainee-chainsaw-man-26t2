@@ -1,6 +1,6 @@
 use crate::models::error::ChainsawError;
-use crate::models::is_non_empty_unique;
 use crate::snowflake::{Snowflake, SnowflakeGen, SnowflakeIds};
+use crate::utils::is_non_empty_unique;
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
 use sqlx::prelude::FromRow;

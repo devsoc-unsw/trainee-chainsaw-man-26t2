@@ -42,6 +42,101 @@ impl Role {
 
         Ok(role_id)
     }
+
+    pub(crate) async fn get_all(
+        campaign_id: Snowflake,
+        pool: &PgPool,
+    ) -> Result<Vec<Self>, ChainsawError> {
+        Ok(sqlx::query_as!(
+            Role,
+            r#"SELECT
+                role_id,
+                title,
+                description,
+                no_of_positions,
+                enable_abstention
+            FROM "campaign_roles"
+            WHERE campaign_id = $1"#,
+            campaign_id.get()
+        )
+        .fetch_all(pool)
+        .await?)
+    }
+
+    pub(crate) async fn get(
+        campaign_id: Snowflake,
+        role_id: Snowflake,
+        pool: &PgPool,
+    ) -> Result<Option<Self>, ChainsawError> {
+        Ok(sqlx::query_as!(
+            Role,
+            r#"SELECT
+                role_id,
+                title,
+                description,
+                no_of_positions,
+                enable_abstention
+            FROM "campaign_roles"
+            WHERE campaign_id = $1 AND role_id = $2"#,
+            campaign_id.get(),
+            role_id.get()
+        )
+        .fetch_optional(pool)
+        .await?)
+    }
+
+    pub(crate) async fn update(
+        campaign_id: Snowflake,
+        role_id: Snowflake,
+        data: UpdateRole,
+        pool: &PgPool,
+    ) -> Result<(), ChainsawError> {
+        let result = sqlx::query!(
+            r#"
+            UPDATE "campaign_roles"
+            SET
+                title = COALESCE($1, title),
+                description = COALESCE($2, description),
+                no_of_positions = COALESCE($3, no_of_positions),
+                enable_abstention = COALESCE($4, enable_abstention)
+            WHERE campaign_id = $5 AND role_id = $6
+            "#,
+            data.title,
+            data.description,
+            data.no_of_positions,
+            data.enable_abstention,
+            campaign_id.get(),
+            role_id.get()
+        )
+        .execute(pool)
+        .await?;
+
+        if result.rows_affected() == 0 {
+            return Err(ChainsawError::RoleNotFound);
+        }
+
+        Ok(())
+    }
+
+    pub(crate) async fn delete(
+        campaign_id: Snowflake,
+        role_id: Snowflake,
+        pool: &PgPool,
+    ) -> Result<(), ChainsawError> {
+        let result = sqlx::query!(
+            r#"DELETE FROM "campaign_roles" WHERE campaign_id = $1 AND role_id = $2"#,
+            campaign_id.get(),
+            role_id.get()
+        )
+        .execute(pool)
+        .await?;
+
+        if result.rows_affected() == 0 {
+            return Err(ChainsawError::RoleNotFound);
+        }
+
+        Ok(())
+    }
 }
 
 #[derive(Deserialize)]

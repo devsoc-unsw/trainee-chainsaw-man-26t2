@@ -45,6 +45,85 @@ impl Campaign {
         // Return campaign ID
         Ok(campaign_id)
     }
+
+    pub(crate) async fn get_all(pool: &PgPool) -> Result<Vec<Self>, ChainsawError> {
+        Ok(sqlx::query_as!(Campaign, r#"SELECT * FROM "campaigns""#)
+            .fetch_all(pool)
+            .await?)
+    }
+
+    pub(crate) async fn get(
+        campaign_id: Snowflake,
+        pool: &PgPool,
+    ) -> Result<Option<Self>, ChainsawError> {
+        Ok(sqlx::query_as!(
+            Campaign,
+            r#"SELECT * FROM "campaigns" WHERE campaign_id = $1"#,
+            campaign_id.get(),
+        )
+        .fetch_optional(pool)
+        .await?)
+    }
+
+    pub(crate) async fn exists(
+        campaign_id: Snowflake,
+        pool: &PgPool,
+    ) -> Result<bool, ChainsawError> {
+        Ok(sqlx::query_scalar::<_, bool>(
+            r#"SELECT EXISTS(SELECT 1 FROM "campaigns" WHERE campaign_id = $1)"#,
+        )
+        .bind(campaign_id.get())
+        .fetch_one(pool)
+        .await?)
+    }
+
+    pub(crate) async fn update(
+        campaign_id: Snowflake,
+        data: UpdateCampaign,
+        pool: &PgPool,
+    ) -> Result<(), ChainsawError> {
+        let result = sqlx::query!(
+            r#"
+            UPDATE "campaigns"
+            SET
+                title = COALESCE($1, title),
+                description = COALESCE($2, description),
+                opening_date_time = COALESCE($3, opening_date_time),
+                closing_date_time = COALESCE($4, closing_date_time),
+                allow_role_overlaps = COALESCE($5, allow_role_overlaps)
+            WHERE campaign_id = $6
+            "#,
+            data.title,
+            data.description,
+            data.opening_date_time,
+            data.closing_date_time,
+            data.allow_role_overlaps,
+            campaign_id.get(),
+        )
+        .execute(pool)
+        .await?;
+
+        if result.rows_affected() == 0 {
+            return Err(ChainsawError::CampaignNotFound);
+        }
+
+        Ok(())
+    }
+
+    pub(crate) async fn delete(campaign_id: Snowflake, pool: &PgPool) -> Result<(), ChainsawError> {
+        let result = sqlx::query!(
+            r#"DELETE FROM "campaigns" WHERE campaign_id = $1"#,
+            campaign_id.get(),
+        )
+        .execute(pool)
+        .await?;
+
+        if result.rows_affected() == 0 {
+            return Err(ChainsawError::CampaignNotFound);
+        }
+
+        Ok(())
+    }
 }
 
 #[derive(Deserialize)]

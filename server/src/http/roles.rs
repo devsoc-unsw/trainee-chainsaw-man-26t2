@@ -1,3 +1,4 @@
+use crate::models::campaign::Campaign;
 use crate::models::error::ChainsawError;
 use crate::models::role::{CreateRole, Role, UpdateRole};
 use crate::models::state::{ApiState, BaseState};
@@ -40,7 +41,9 @@ async fn post_role(
         return Err(ChainsawError::RoleInvalidPositions);
     }
 
-    let role_id = crate::models::role::Role::create(
+    ensure_campaign_exists(campaign_id, &state).await?;
+
+    let role_id = Role::create(
         data.title,
         data.description,
         data.no_of_positions,
@@ -59,21 +62,11 @@ async fn get_roles(
     Path(campaign_id): Path<Snowflake>,
 ) -> Result<impl IntoResponse, ChainsawError> {
     // TODO: Handle users
-    // TODO: Give nice error if campaign does not exist?
-    let roles = sqlx::query_as!(
-        Role,
-        r#"SELECT
-            role_id,
-            title,
-            description,
-            no_of_positions,
-            enable_abstention
-        FROM "campaign_roles"
-        WHERE campaign_id = $1"#,
-        campaign_id.get()
-    )
-    .fetch_all(&state.db)
-    .await?;
+    // Normally not the end of the world if a campaign isn't found when looking up a role
+    // However this case we'd just see an empty list and not know if the campaign exists
+    ensure_campaign_exists(campaign_id, &state).await?;
+    // We can still race here, but that's a non-issue since this is read-only anyway...
+    let roles = Role::get_all(campaign_id, &state.db).await?;
 
     Ok(Json(roles))
 }
@@ -83,26 +76,11 @@ async fn get_role(
     Path((campaign_id, role_id)): Path<(Snowflake, Snowflake)>,
 ) -> Result<impl IntoResponse, ChainsawError> {
     // TODO: Handle users
-    // TODO: Do we care if the campaign does not exist?
-    let role = sqlx::query_as!(
-        Role,
-        r#"SELECT
-            role_id,
-            title,
-            description,
-            no_of_positions,
-            enable_abstention
-        FROM "campaign_roles"
-        WHERE campaign_id = $1 AND role_id = $2"#,
-        campaign_id.get(),
-        role_id.get()
-    )
-    .fetch_optional(&state.db)
-    .await?;
-
-    if role.is_none() {
-        return Err(ChainsawError::RoleNotFound);
-    }
+    // Note that is a campaign does not exist, the error
+    // will just say role not found (cheaper for database)
+    let role = Role::get(campaign_id, role_id, &state.db)
+        .await?
+        .ok_or(ChainsawError::RoleNotFound)?;
 
     Ok(Json(role))
 }
@@ -141,29 +119,8 @@ async fn patch_role(
         return Err(ChainsawError::RoleInvalidPositions);
     }
 
-    let result = sqlx::query!(
-        r#"
-        UPDATE "campaign_roles"
-        SET
-            title = COALESCE($1, title),
-            description = COALESCE($2, description),
-            no_of_positions = COALESCE($3, no_of_positions),
-            enable_abstention = COALESCE($4, enable_abstention)
-        WHERE campaign_id = $5 AND role_id = $6
-        "#,
-        data.title,
-        data.description,
-        data.no_of_positions,
-        data.enable_abstention,
-        campaign_id.get(),
-        role_id.get()
-    )
-    .execute(&state.db)
-    .await?;
-
-    if result.rows_affected() == 0 {
-        return Err(ChainsawError::RoleNotFound);
-    }
+    // Same error quirk as above
+    Role::update(campaign_id, role_id, data, &state.db).await?;
 
     Ok(StatusCode::NO_CONTENT)
 }
@@ -173,17 +130,19 @@ async fn delete_role(
     Path((campaign_id, role_id)): Path<(Snowflake, Snowflake)>,
 ) -> Result<impl IntoResponse, ChainsawError> {
     // TODO: Handle users
-    let result = sqlx::query!(
-        r#"DELETE FROM "campaign_roles" WHERE campaign_id = $1 AND role_id = $2"#,
-        campaign_id.get(),
-        role_id.get()
-    )
-    .execute(&state.db)
-    .await?;
-
-    if result.rows_affected() == 0 {
-        return Err(ChainsawError::RoleNotFound);
-    }
+    // Same error quirk as above
+    Role::delete(campaign_id, role_id, &state.db).await?;
 
     Ok(StatusCode::NO_CONTENT)
+}
+
+async fn ensure_campaign_exists(
+    campaign_id: Snowflake,
+    state: &BaseState,
+) -> Result<(), ChainsawError> {
+    if !Campaign::exists(campaign_id, &state.db).await? {
+        return Err(ChainsawError::CampaignNotFound);
+    }
+
+    Ok(())
 }

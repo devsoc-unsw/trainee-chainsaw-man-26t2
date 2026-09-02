@@ -8,7 +8,6 @@ use axum::response::IntoResponse;
 use axum::routing::{get, post};
 use axum::{Json, Router};
 use serde_json::json;
-use uuid::Uuid;
 
 /// The router for all voter routes.
 pub(super) fn router() -> Router<ApiState> {
@@ -36,18 +35,7 @@ async fn post_voters(
     }
 
     // TODO: Give a nice error for duplicate emails
-    sqlx::query!(
-        r#"
-        INSERT INTO campaign_voters (voter_id, email, campaign_id)
-        SELECT v, e, $3
-        FROM UNNEST($1::bigint[], $2::text[]) AS t(v, e)
-        "#,
-        &voter_ids.iter().map(|id| id.get()).collect::<Vec<i64>>(),
-        &data.emails,
-        campaign_id.get()
-    )
-    .execute(&state.db)
-    .await?;
+    Voter::create_many(&voter_ids, &data.emails, campaign_id, &state.db).await?;
 
     Ok((StatusCode::CREATED, Json(json!({"voter_ids": voter_ids}))))
 }
@@ -56,17 +44,7 @@ async fn get_voters(
     State(state): State<BaseState>,
     Path(campaign_id): Path<Snowflake>,
 ) -> Result<impl IntoResponse, ChainsawError> {
-    let voters = sqlx::query_as!(
-        Voter,
-        r#"
-        SELECT voter_id, email, voting_token, has_voted
-        FROM campaign_voters
-        WHERE campaign_id = $1
-        "#,
-        campaign_id.get()
-    )
-    .fetch_all(&state.db)
-    .await?;
+    let voters = Voter::get_all(campaign_id, &state.db).await?;
 
     let voters: Vec<VoterResponse> = voters
         .iter()
@@ -98,20 +76,7 @@ async fn delete_voters(
     // TODO: Nicer error handling?
     // - Campaign not found
     // - IDs not found
-    sqlx::query!(
-        r#"
-        DELETE FROM campaign_voters
-        WHERE campaign_id = $1 AND voter_id = ANY($2)
-        "#,
-        campaign_id.get(),
-        &data
-            .voter_ids
-            .iter()
-            .map(|id| id.get())
-            .collect::<Vec<i64>>()
-    )
-    .execute(&state.db)
-    .await?;
+    Voter::delete_many(&data.voter_ids, campaign_id, &state.db).await?;
 
     Ok(StatusCode::NO_CONTENT)
 }
@@ -120,34 +85,7 @@ async fn invite_voters(
     State(state): State<BaseState>,
     Path(campaign_id): Path<Snowflake>,
 ) -> Result<impl IntoResponse, ChainsawError> {
-    let voter_ids = sqlx::query_scalar!(
-        r#"
-        SELECT voter_id
-        FROM campaign_voters
-        WHERE campaign_id = $1 AND voting_token IS NULL
-        "#,
-        campaign_id.get()
-    )
-    .fetch_all(&state.db)
-    .await?;
-
-    let voting_tokens = voter_ids.iter().map(|_| Uuid::new_v4()).collect::<Vec<_>>();
-
-    sqlx::query!(
-        r#"
-        UPDATE campaign_voters AS voter
-        SET voting_token = invitation.voting_token
-        FROM UNNEST($1::bigint[], $2::uuid[]) AS invitation(voter_id, voting_token)
-        WHERE voter.voter_id = invitation.voter_id
-            AND voter.campaign_id = $3
-            AND voter.voting_token IS NULL
-        "#,
-        &voter_ids,
-        &voting_tokens,
-        campaign_id.get()
-    )
-    .execute(&state.db)
-    .await?;
+    let _invitations = Voter::invite_pending(campaign_id, &state.db).await?;
 
     // TODO: Send emails to voters with their voting tokens
     // TODO: Should we store successful email sends in the database?

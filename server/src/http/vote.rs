@@ -17,15 +17,15 @@ pub(super) fn router() -> Router<ApiState> {
 }
 
 async fn get_ballot(
-    State(state): State<BaseState>,
-    Path(token): Path<Uuid>,
+    State(_state): State<BaseState>,
+    Path(_token): Path<Uuid>,
 ) -> Result<impl IntoResponse, ChainsawError> {
     Ok(StatusCode::OK)
 }
 
 async fn post_ballot(
-    State(state): State<BaseState>,
-    Path(token): Path<Uuid>,
+    State(_state): State<BaseState>,
+    Path(_token): Path<Uuid>,
 ) -> Result<impl IntoResponse, ChainsawError> {
     Ok(StatusCode::NO_CONTENT)
 }
