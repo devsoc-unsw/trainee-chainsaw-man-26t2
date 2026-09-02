@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "INSERT INTO \"candidate_roles\" (candidate_id, role_id, campaign_id) VALUES ($1, $2, $3)",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "993c2dd95fd54b815204af0f2e39dfdcb5b563f2c2c20fbd2715699cfb9ebf00"
+}

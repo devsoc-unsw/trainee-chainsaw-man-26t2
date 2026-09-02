@@ -65,6 +65,22 @@ impl<'de> Deserialize<'de> for Snowflake {
     }
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(transparent)]
+pub struct SnowflakeIds(pub Vec<Snowflake>);
+
+impl From<Vec<i64>> for SnowflakeIds {
+    fn from(ids: Vec<i64>) -> Self {
+        Self(ids.into_iter().map(Snowflake::from).collect())
+    }
+}
+
+impl From<SnowflakeIds> for Vec<i64> {
+    fn from(ids: SnowflakeIds) -> Self {
+        ids.0.into_iter().map(Snowflake::get).collect()
+    }
+}
+
 /// A generator for snowflakes.
 #[derive(Clone)]
 pub struct SnowflakeGen {

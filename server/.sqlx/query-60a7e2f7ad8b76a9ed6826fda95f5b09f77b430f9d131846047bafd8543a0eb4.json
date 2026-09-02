@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "DELETE FROM \"candidates\" WHERE campaign_id = $1 AND candidate_id = $2",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "60a7e2f7ad8b76a9ed6826fda95f5b09f77b430f9d131846047bafd8543a0eb4"
+}

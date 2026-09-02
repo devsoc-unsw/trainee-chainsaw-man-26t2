@@ -1,0 +1,19 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            INSERT INTO \"campaign_roles\"\n            (role_id, campaign_id, title, description, no_of_positions, enable_abstention)\n            VALUES ($1, $2, $3, $4, $5, $6)\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8",
+        "Text",
+        "Text",
+        "Int4",
+        "Bool"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "f6c43f3d581814cf393a0170c09a2b5606ca9a3f531dfaf5574b85eb8aeb9e31"
+}

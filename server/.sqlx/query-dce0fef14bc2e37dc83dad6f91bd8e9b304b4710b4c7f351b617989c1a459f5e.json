@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            UPDATE campaign_voters AS voter\n            SET voting_token = invitation.voting_token\n            FROM UNNEST($1::bigint[], $2::uuid[]) AS invitation(voter_id, voting_token)\n            WHERE voter.voter_id = invitation.voter_id\n                AND voter.campaign_id = $3\n                AND voter.voting_token IS NULL\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8Array",
+        "UuidArray",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "dce0fef14bc2e37dc83dad6f91bd8e9b304b4710b4c7f351b617989c1a459f5e"
+}

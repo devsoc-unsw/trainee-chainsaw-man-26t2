@@ -47,7 +47,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/CreateCampaignResponse"
         "400":
-          description: Invalid input
+          description: Malformed JSON request body
+        "422":
+          description: Request body could not be deserialized or failed field validation
         "401":
           description: Unauthorized
 
@@ -107,7 +109,9 @@ paths:
         "204":
           description: Campaign updated successfully
         "400":
-          description: Invalid input
+          description: Malformed JSON request body
+        "422":
+          description: Request body could not be deserialized or failed field validation
         "401":
           description: Unauthorized
         "404":
@@ -153,7 +157,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/CreateCandidateResponse"
         "400":
-          description: Invalid input
+          description: Malformed JSON request body
+        "422":
+          description: Request body could not be deserialized or failed field validation
         "401":
           description: Unauthorized
         "404":
@@ -225,7 +231,9 @@ paths:
         "204":
           description: Candidate updated successfully
         "400":
-          description: Invalid input
+          description: Malformed JSON request body
+        "422":
+          description: Request body could not be deserialized or failed field validation
         "401":
           description: Unauthorized
         "404":
@@ -271,7 +279,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/CreateRoleResponse"
         "400":
-          description: Invalid input
+          description: Malformed JSON request body
+        "422":
+          description: Request body could not be deserialized or failed field validation
         "401":
           description: Unauthorized
         "404":
@@ -343,7 +353,9 @@ paths:
         "204":
           description: Role updated successfully
         "400":
-          description: Invalid input
+          description: Malformed JSON request body
+        "422":
+          description: Request body could not be deserialized or failed field validation
         "401":
           description: Unauthorized
         "404":
@@ -387,11 +399,11 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/CreateVoterResponse"
+                $ref: "#/components/schemas/CreateVotersResponse"
         "400":
-          description: Invalid input
+          description: Malformed JSON request body
+        "422":
+          description: Request body could not be deserialized or failed field validation
         "401":
           description: Unauthorized
         "404":
@@ -441,7 +453,9 @@ paths:
         "204":
           description: Voters deleted successfully
         "400":
-          description: Invalid input
+          description: Malformed JSON request body
+        "422":
+          description: Request body could not be deserialized or failed field validation
         "401":
           description: Unauthorized
         "404":
@@ -628,19 +642,21 @@ components:
         - description
         - opening_date_time
         - closing_date_time
-        - allowed_role_overlaps
+        - allow_role_overlaps
       properties:
         title:
           type: string
+          maxLength: 50
         description:
           type: string
+          maxLength: 2000
         opening_date_time:
           type: string
           format: date-time
         closing_date_time:
           type: string
           format: date-time
-        allowed_role_overlaps:
+        allow_role_overlaps:
           type: boolean
 
     CreateCampaignResponse:
@@ -651,23 +667,30 @@ components:
         campaign_id:
           type: string
           format: number
-          pattern: '^[1-9][0-9]*$'
+          pattern: "^[1-9][0-9]*$"
 
     UpdateCampaignRequest:
       type: object
       minProperties: 1
+      dependentRequired:
+        opening_date_time:
+          - closing_date_time
+        closing_date_time:
+          - opening_date_time
       properties:
         title:
           type: string
+          maxLength: 50
         description:
           type: string
+          maxLength: 2000
         opening_date_time:
           type: string
           format: date-time
         closing_date_time:
           type: string
           format: date-time
-        allowed_role_overlaps:
+        allow_role_overlaps:
           type: boolean
 
     Campaign:
@@ -678,7 +701,7 @@ components:
         - description
         - opening_date_time
         - closing_date_time
-        - allowed_role_overlaps
+        - allow_role_overlaps
       properties:
         campaign_id:
           type: string
@@ -686,15 +709,17 @@ components:
           pattern: "^[1-9][0-9]*$"
         title:
           type: string
+          maxLength: 50
         description:
           type: string
+          maxLength: 2000
         opening_date_time:
           type: string
           format: date-time
         closing_date_time:
           type: string
           format: date-time
-        allowed_role_overlaps:
+        allow_role_overlaps:
           type: boolean
 
     CreateCandidateRequest:
@@ -732,7 +757,7 @@ components:
         candidate_id:
           type: string
           format: number
-          pattern: '^[1-9][0-9]*$'
+          pattern: "^[1-9][0-9]*$"
 
     UpdateCandidateRequest:
       type: object
@@ -779,8 +804,11 @@ components:
           format: email
         manifesto:
           type: string
+          maxLength: 1000
         role_ids:
           type: array
+          minItems: 1
+          uniqueItems: true
           items:
             type: string
             format: number
@@ -796,11 +824,14 @@ components:
       properties:
         title:
           type: string
+          maxLength: 50
         description:
           type: string
+          maxLength: 200
         no_of_positions:
           type: integer
           minimum: 1
+          maximum: 100
         enable_abstention:
           type: boolean
 
@@ -812,7 +843,7 @@ components:
         role_id:
           type: string
           format: number
-          pattern: '^[1-9][0-9]*$'
+          pattern: "^[1-9][0-9]*$"
 
     UpdateRoleRequest:
       type: object
@@ -820,11 +851,14 @@ components:
       properties:
         title:
           type: string
+          maxLength: 50
         description:
           type: string
+          maxLength: 200
         no_of_positions:
           type: integer
           minimum: 1
+          maximum: 100
         enable_abstention:
           type: boolean
 
@@ -843,11 +877,14 @@ components:
           pattern: "^[1-9][0-9]*$"
         title:
           type: string
+          maxLength: 50
         description:
           type: string
+          maxLength: 200
         no_of_positions:
           type: integer
           minimum: 1
+          maximum: 100
         enable_abstention:
           type: boolean
 
@@ -894,7 +931,7 @@ components:
           format: email
         status:
           type: string
-          enum: [ pending, invited, voted ]
+          enum: [pending, invited, voted]
 
     VotingCampaign:
       type: object
@@ -924,16 +961,19 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/VotingRole"
-    
-    CreateVoterResponse:
+
+    CreateVotersResponse:
       type: object
       required:
-        - voter_id
+        - voter_ids
       properties:
-        voter_id:
-          type: string
-          format: number
-          pattern: '^[1-9][0-9]*$'
+        voter_ids:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            format: number
+            pattern: "^[1-9][0-9]*$"
 
     VotingRole:
       type: object

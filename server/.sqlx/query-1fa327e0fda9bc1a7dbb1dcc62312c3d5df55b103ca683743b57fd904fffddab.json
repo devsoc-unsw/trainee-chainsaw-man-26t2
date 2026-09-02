@@ -1,0 +1,19 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            UPDATE \"campaign_roles\"\n            SET\n                title = COALESCE($1, title),\n                description = COALESCE($2, description),\n                no_of_positions = COALESCE($3, no_of_positions),\n                enable_abstention = COALESCE($4, enable_abstention)\n            WHERE campaign_id = $5 AND role_id = $6\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Int4",
+        "Bool",
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "1fa327e0fda9bc1a7dbb1dcc62312c3d5df55b103ca683743b57fd904fffddab"
+}

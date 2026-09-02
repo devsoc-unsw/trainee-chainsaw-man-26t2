@@ -1,0 +1,14 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "DELETE FROM \"campaigns\" WHERE campaign_id = $1",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "b473af3e46183981b0d24d878f5bc2089c6cef6855c8e3c3e9e773eff7792907"
+}
