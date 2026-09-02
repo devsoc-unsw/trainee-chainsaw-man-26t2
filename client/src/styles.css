@@ -20,6 +20,11 @@
   --color-ring-4: #fa9303;
   --color-ring-5: #fdd130;
   --color-ring-6: #fff6E8;
+
+  --color-popover: #fffdf7;
+  --color-popover-foreground: #38474d;
+  --color-accent: #fff8e7;
+  --color-accent-foreground: #38474d;
 }
 
 * {
