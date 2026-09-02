@@ -13,6 +13,13 @@
   --color-on-dark: #fafafa;
   --color-statusLabel: #b11250;
   --color-muted: #38474d;
+
+  --color-ring-1: #b11250;
+  --color-ring-2: #da1E30;
+  --color-ring-3: #f75610;
+  --color-ring-4: #fa9303;
+  --color-ring-5: #fdd130;
+  --color-ring-6: #fff6E8;
 }
 
 * {
