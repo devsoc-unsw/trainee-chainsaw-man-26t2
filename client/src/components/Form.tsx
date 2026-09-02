@@ -2,7 +2,7 @@ import type { InputHTMLAttributes, TextareaHTMLAttributes } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/Select";
 
 export const fieldClass =
-  "w-full rounded-full bg-input px-4 py-2 text-xs " +
+  "w-full rounded-lg bg-input px-4 py-2 text-xs " +
   "border border-muted/40 outline-none focus:border-blue " +
   "placeholder:text-neutral-600";
 
@@ -11,7 +11,7 @@ export const areaClass =
   "border border-muted/40 outline-none focus:border-blue " +
   "placeholder:text-neutral-600 resize-none [field-sizing:content]";
 
-export const labelClass = "block text-xs text-neutral-800 mb-1";
+export const labelClass = "block text-xs text-neutral-800 mt-1 mb-1 first:mt-0";
 
 export type Option = { value: string; label: string };
 
@@ -34,13 +34,15 @@ export function Field({
 export function TextArea({
   label,
   error,
+  hint,
   ...props
-}: { label: string; error?: string } & TextareaHTMLAttributes<HTMLTextAreaElement>) {
+}: { label: string; error?: string; hint?: string; } & TextareaHTMLAttributes<HTMLTextAreaElement>) {
   return (
     <div>
-      <label className={labelClass}>
-        {label}
-      </label>
+      <div className="flex items-baseline justify-between">
+        <label className={labelClass}>{label}</label>
+        {hint && <span className="text-xs text-muted/60">{hint}</span>}
+      </div>
       <textarea className={areaClass} rows={2} {...props} />
       {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
     </div>
