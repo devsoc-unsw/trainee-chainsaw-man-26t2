@@ -41,7 +41,7 @@ const STUB_ROLES: Role[] = [
   { role_id: "3", title: "Secretary", description: "Takes minutes", no_of_positions: 1, enable_abstention: true },
 ];
 
-const HAS_ROLES = false;
+const HAS_ROLES = true;
 
 const fetchRoles = async (_electionID: string): Promise<Role[]> => {
   await new Promise((r) => setTimeout(r, 300));

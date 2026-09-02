@@ -1,14 +1,14 @@
 import type { InputHTMLAttributes, TextareaHTMLAttributes } from "react";
 
 export const fieldClass=
-    "w-full rounded-full bg-input px-4 py-2 text-xs text-center " +
+    "w-full rounded-full bg-input px-4 py-2 text-xs " +
     "border border-muted/40 outline-none focus:border-blue " +
     "placeholder:text-neutral-600";
 
 export const areaClass =
     "w-full rounded-2xl bg-input px-4 py-2 text-xs " +
     "border border-muted/40 outline-none focus:border-blue " +
-    "placeholder:text-neutral-600 placeholder:text-center resize-none [field-sizing:content]";
+    "placeholder:text-neutral-600 resize-none [field-sizing:content]";
 
 export const labelClass = "block text-xs text-neutral-800 mb-1";
 
