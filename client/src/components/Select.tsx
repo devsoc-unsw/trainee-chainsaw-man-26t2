@@ -10,7 +10,7 @@ const Select = SelectPrimitive.Root
 const popupClass =
   "relative isolate z-50 p-1 overflow-y-auto " +
   "max-h-(--available-height) w-(--anchor-width) origin-(--transform-origin) " +
-  "rounded-2xl bg-input text-popover-foreground " +
+  "rounded-lg bg-input text-popover-foreground " +
   "border border-muted/40 shadow-lg " +
   "duration-100 data-open:animate-in data-open:fade-in-0 " +
   "data-closed:animate-out data-closed:fade-out-0";

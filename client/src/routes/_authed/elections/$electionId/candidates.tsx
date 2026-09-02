@@ -180,6 +180,7 @@ function RouteComponent() {
             placeholder="Input Field"
             value={candidate.manifesto}
             maxLength={MAX_MANIFESTO}
+            hint={`${candidate.manifesto.length}/${MAX_MANIFESTO}`}
             onChange={(e) => update(candidate.candidate_id, "manifesto", e.target.value)}
           />
           <RoleSelect
