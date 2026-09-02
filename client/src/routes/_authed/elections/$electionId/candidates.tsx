@@ -194,7 +194,7 @@ function RouteComponent() {
       <Card className="p-3">
         <button
           onClick={addCandidate}
-          className="w-full rounded-full bg-emphasis py-2 text-xs"
+          className="w-full rounded-lg bg-emphasis py-2 text-xs"
         >
           Click to add +
         </button>

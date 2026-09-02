@@ -2,7 +2,7 @@ import type { InputHTMLAttributes, TextareaHTMLAttributes } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/Select";
 
 export const fieldClass =
-  "w-full rounded-lg bg-input px-4 py-2 text-xs " +
+  "w-full rounded-lg bg-input px-4 py-1 text-xs " +
   "border border-muted/40 outline-none focus:border-blue " +
   "placeholder:text-neutral-600";
 
@@ -11,7 +11,7 @@ export const areaClass =
   "border border-muted/40 outline-none focus:border-blue " +
   "placeholder:text-neutral-600 resize-none [field-sizing:content]";
 
-export const labelClass = "block text-xs text-neutral-800 mt-1 mb-1 first:mt-0";
+export const labelClass = "block text-xs text-neutral-800 mt-1 mb-1 ";
 
 export type Option = { value: string; label: string };
 
