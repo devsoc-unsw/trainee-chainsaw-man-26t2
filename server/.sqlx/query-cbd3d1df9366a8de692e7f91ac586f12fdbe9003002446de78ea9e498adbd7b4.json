@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "SELECT\n            role_id,\n            title,\n            description,\n            no_of_positions,\n            enable_abstention\n        FROM \"campaign_roles\"\n        WHERE campaign_id = $1",
+  "query": "SELECT\n                role_id,\n                title,\n                description,\n                no_of_positions,\n                enable_abstention\n            FROM \"campaign_roles\"\n            WHERE campaign_id = $1 AND role_id = $2",
   "describe": {
     "columns": [
       {
@@ -61,6 +61,7 @@
     ],
     "parameters": {
       "Left": [
+        "Int8",
         "Int8"
       ]
     },
@@ -72,5 +73,5 @@
       false
     ]
   },
-  "hash": "aff80dfe59a0f16da79493cdec7e3d8b8a3c704f6fe262080068e59cd6a7894b"
+  "hash": "cbd3d1df9366a8de692e7f91ac586f12fdbe9003002446de78ea9e498adbd7b4"
 }

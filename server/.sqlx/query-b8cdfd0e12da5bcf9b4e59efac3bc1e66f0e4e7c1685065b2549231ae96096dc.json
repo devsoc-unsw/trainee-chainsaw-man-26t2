@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        SELECT voter_id, email, voting_token, has_voted\n        FROM campaign_voters\n        WHERE campaign_id = $1\n        ",
+  "query": "\n            SELECT voter_id, email, voting_token, has_voted\n            FROM campaign_voters\n            WHERE campaign_id = $1\n            ",
   "describe": {
     "columns": [
       {
@@ -60,5 +60,5 @@
       false
     ]
   },
-  "hash": "311887ba886674e5f3b3d561f02404c114340bbe8821db929c2758ed70aeb9ec"
+  "hash": "b8cdfd0e12da5bcf9b4e59efac3bc1e66f0e4e7c1685065b2549231ae96096dc"
 }
