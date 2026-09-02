@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import { Field } from "@/components/Form";
+import { Card } from "@/components/Card";
 
 interface Role {
   role_id: string;
@@ -77,8 +79,71 @@ function RouteComponent() {
   };
   */
 
+  const removeRole = (id: string) =>
+    setRoles(roles.filter((r) => r.role_id !== id));
+
   return (
-    <div>{roles.length} roles
+    <div className="w-full space-y-3">
+      {roles.map((role, i) => (
+        <Card key={role.role_id} className="p-4 space-y-2">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs text-muted/60">
+              Role #{i + 1}
+            </span>
+            <button
+              onClick={() => removeRole(role.role_id)}
+              className="text-xs text-neutral-500 hover:text-neutral-900"
+            >
+              Remove
+            </button>
+          </div>
+
+          <Field
+            label="Title"
+            placeholder="Input field"
+            value={role.title}
+            onChange={(e) => update(role.role_id, "title", e.target.value)}
+          />
+
+          <Field
+            label="Description"
+            placeholder="Input field"
+            value={role.description}
+            onChange={(e) => update(role.role_id, "description", e.target.value)}
+          />
+
+          <Field
+            label="Number of winners"
+            placeholder="Input field"
+            type="number"
+            min={1}
+            value={role.no_of_positions}
+            error={!Number.isInteger(role.no_of_positions) || role.no_of_positions < 1
+              ? "Must be an integer greater or equal to 1"
+              : undefined
+            }
+            onChange={(e) => update(role.role_id, "no_of_positions", Number(e.target.value))}
+          />
+
+          <label className="flex items-center gap-2 text-xs">
+            <input
+              type="checkbox"
+              checked={role.enable_abstention}
+              onChange={(e) => update(role.role_id, "enable_abstention", e.target.checked)}
+            />
+            Enable abstain
+          </label>
+        </Card>
+      ))}
+
+      <Card className="p-3">
+        <button
+        onClick={addRole}
+        className="w-full rounded-full bg-emphasis py-2 text-xs"
+        >
+          Click to add +
+        </button>
+      </Card>
     </div>
   );
 }
