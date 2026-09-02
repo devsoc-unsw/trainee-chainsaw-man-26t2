@@ -41,7 +41,7 @@ const STUB_ROLES: Role[] = [
   { role_id: "3", title: "Secretary", description: "Takes minutes", no_of_positions: 1, enable_abstention: true },
 ];
 
-const HAS_ROLES = true;
+const HAS_ROLES = false;
 
 const fetchRoles = async (_electionID: string): Promise<Role[]> => {
   await new Promise((r) => setTimeout(r, 300));
@@ -128,7 +128,7 @@ function RouteComponent() {
       <div className="w-full space-y-3">
         <Card className="p-4">
           <p className="text-center text-xs">
-            Add at least one role before adding candidates.
+            Add at least one role before adding candidate(s).
           </p>
         </Card>
       </div>
