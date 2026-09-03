@@ -53,7 +53,7 @@ fn api_router() -> Router<ApiState> {
 /// Start serving the API.
 pub async fn serve(config: Config, db: PgPool, id_gen: SnowflakeGen) -> anyhow::Result<()> {
     // Create application
-    let app = api_router().with_state(ApiState::new(config, db, id_gen));
+    let app = api_router().with_state(ApiState::new(config, db, id_gen).await);
 
     // Create listener on port 8080
     let listener = TcpListener::bind("0.0.0.0:8080")

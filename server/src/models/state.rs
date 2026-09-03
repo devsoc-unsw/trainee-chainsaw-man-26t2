@@ -1,4 +1,5 @@
 use crate::config::Config;
+use crate::models::auth::AuthState;
 use crate::snowflake::SnowflakeGen;
 use axum::extract::FromRef;
 use sqlx::PgPool;
@@ -27,12 +28,20 @@ impl BaseState {
 #[derive(Clone)]
 pub(crate) struct ApiState {
     base: BaseState,
+    auth: AuthState,
 }
 
 impl ApiState {
-    pub(crate) fn new(config: Config, db: PgPool, id_gen: SnowflakeGen) -> Self {
-        ApiState {
-            base: BaseState::new(config, db, id_gen),
+    /// Initialise the API state using the provided values and standard env variables.
+    ///
+    /// Panics on fail, so should only be used on startup.
+    pub(crate) async fn new(config: Config, db: PgPool, id_gen: SnowflakeGen) -> Self {
+        match AuthState::new().await {
+            Ok(auth) => ApiState {
+                base: BaseState::new(config, db, id_gen),
+                auth,
+            },
+            Err(error) => panic!("Couldn't initialise auth state: {}", error),
         }
     }
 }
@@ -40,5 +49,11 @@ impl ApiState {
 impl FromRef<ApiState> for BaseState {
     fn from_ref(input: &ApiState) -> Self {
         input.base.clone()
+    }
+}
+
+impl FromRef<ApiState> for AuthState {
+    fn from_ref(input: &ApiState) -> Self {
+        input.auth.clone()
     }
 }
