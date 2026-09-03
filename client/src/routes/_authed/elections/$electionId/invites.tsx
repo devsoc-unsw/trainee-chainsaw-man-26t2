@@ -167,7 +167,7 @@ function RouteComponent() {
       <Card className="p-4 space-y-2">
         <TextArea
           label="Add voters"
-          placeholder="Paste emails from your spreadsheet, one per line"
+          placeholder="Paste a column from your spreadsheet, or type emails separated by commas"
           rows={4}
           value={raw}
           onChange={(e) => setRaw(e.target.value)}
