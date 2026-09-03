@@ -3,8 +3,6 @@ import { Outlet, createRootRoute } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 
-import { Header } from "../components/Header";
-
 import "../styles.css";
 
 import rings from "../../assets/rings.svg";
@@ -16,7 +14,6 @@ export const Route = createRootRoute({
 function RootComponent() {
   return (
     <>
-      <Header />
       <Outlet />
       <TanStackDevtools
         config={{
