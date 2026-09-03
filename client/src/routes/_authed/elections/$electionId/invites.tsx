@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Card } from "@/components/Card";
-import { TextArea } from "@/components/Form";
+import { TextArea, Field } from "@/components/Form";
 
 interface Voter {
   voter_id: string;
@@ -49,9 +49,24 @@ async function deleteVoters(campaignId: string, voterIds: string[]) {
   await new Promise((r) => setTimeout(r, 200));
   console.log("deleteVoters", campaignId, voterIds);
 }
+
+async function fetchReadiness(campaignId: string) {
+  await new Promise((r) => setTimeout(r, 200));
+  console.log("fetchReadiness", campaignId);
+  return { roles: 2, candidates: 4 };
+}
+
+async function scheduleAndInvite(
+  campaignId: string,
+  opening: string,
+  closing: string,
+) {
+  await new Promise((r) => setTimeout(r, 400));
+  console.log("scheduleAndInvite", campaignId, opening, closing);
+}
 // TODO
 
-// TODO: uncomment following with query
+// TODO: uncomment following with query, for add voters
 /*
 async function fetchVoters(campaignId: string): Promise<Voter[]> {
   const res = await fetch(`/campaigns/${campaignId}/voters`);
@@ -80,6 +95,41 @@ async function deleteVoters(campaignId: string, voterIds: string[]) {
     body: JSON.stringify({ voter_ids: voterIds }),
   });
   if (!res.ok) throw new Error("Couldn't remove those voters. Try again.");
+}
+*/
+
+// TODO: uncomment following with query, for schedule send button
+/*
+async function fetchReadiness(campaignId: string) {
+  const [rolesRes, candidatesRes] = await Promise.all([
+    fetch(`/campaigns/${campaignId}/roles`),
+    fetch(`/campaigns/${campaignId}/candidates`),
+  ]);
+  if (!rolesRes.ok || !candidatesRes.ok) throw new Error("Couldn't check this election.");
+  const roles = await rolesRes.json();
+  const candidates = await candidatesRes.json();
+  return { roles: roles.length, candidates: candidates.length };
+}
+
+async function scheduleAndInvite(
+  campaignId: string,
+  opening: string,
+  closing: string,
+) {
+  const patch = await fetch(`/campaigns/${campaignId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      opening_date_time: new Date(opening).toISOString(),
+      closing_date_time: new Date(closing).toISOString(),
+    }),
+  });
+  if (!patch.ok) throw new Error("Couldn't save the schedule. Try again.");
+
+  const invite = await fetch(`/campaigns/${campaignId}/voters/invite`, {
+    method: "POST",
+  });
+  if (!invite.ok) throw new Error("Couldn't send the invitations. Try again.");
 }
 */
 
@@ -117,6 +167,10 @@ function RouteComponent() {
   const [raw, setRaw] = useState("");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // for Schedule Send 
+  const [sendOpen, setSendOpen] = useState(false);
+  const uninvited = voters.filter((v) => v.status === "pending").length;
 
   // TODO: delete between TODO lines since just for testing
   useEffect(() => {
@@ -245,6 +299,198 @@ function RouteComponent() {
           </ul>
         )}
       </Card>
+
+      <Card className="p-3">
+        <button
+          type="button"
+          onClick={() => setSendOpen(true)}
+          disabled={uninvited === 0}
+          className="w-full rounded-lg bg-emphasis py-1.5 text-xs disabled:opacity-50"
+        >
+          {uninvited === 0
+            ? "Everyone has been invited"
+            : `Send ${uninvited} ${uninvited === 1 ? "invitation" : "invitations"}`}
+        </button>
+      </Card>
+
+      <SendDialog
+        open={sendOpen}
+        onClose={() => setSendOpen(false)}
+        electionId={electionId}
+        uninvited={uninvited}
+        onSent={() =>
+          setVoters(voters.map((v) => (v.status === "pending" ? { ...v, status: "invited" } : v)))
+        }
+      />
     </div>
+  );
+}
+
+function SendDialog({
+  open,
+  onClose,
+  electionId,
+  uninvited,
+  onSent,
+}: {
+  open: boolean;
+  onClose: () => void;
+  electionId: string;
+  uninvited: number;
+  onSent: () => void;
+}) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
+  const [startNow, setStartNow] = useState(true);
+  const [opening, setOpening] = useState("");
+  const [closing, setClosing] = useState("");
+  const [readiness, setReadiness] = useState<{ roles: number; candidates: number } | null>(null);
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    if (open && !dialog.open) dialog.showModal();
+    if (!open && dialog.open) dialog.close();
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) {
+      setStartNow(true);
+      setOpening("");
+      setClosing("");
+      setPending(false);
+      setError(null);
+      return;
+    }
+    fetchReadiness(electionId).then(setReadiness).catch(() => setReadiness(null));
+  }, [open, electionId]);
+
+  // Frontend-only for now — backend will need the same checks on the invite call.
+  const blockers: string[] = [];
+  if (readiness) {
+    if (readiness.roles === 0) blockers.push("Add at least one role");
+    if (readiness.candidates === 0) blockers.push("Add at least one candidate");
+  }
+  if (uninvited === 0) blockers.push("No one left to invite");
+  if (!startNow && !opening) blockers.push("Choose when voting opens");
+  if (!closing) blockers.push("Choose when voting closes");
+  if (closing && opening && !startNow && closing <= opening) {
+    blockers.push("Voting must close after it opens");
+  }
+
+  const ready = readiness !== null && blockers.length === 0;
+
+  const send = async () => {
+    if (!ready || pending) return;
+    setPending(true);
+    setError(null);
+    try {
+      const start = startNow ? new Date().toISOString() : opening;
+      await scheduleAndInvite(electionId, start, closing);
+      onSent();
+      onClose();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Couldn't send the invitations. Try again.");
+      setPending(false);
+    }
+  };
+
+  return (
+    <dialog
+      ref={dialogRef}
+      aria-labelledby="send-invites-heading"
+      onClose={onClose}
+      onClick={(e) => {
+        if (e.target === dialogRef.current) onClose();
+      }}
+      className="m-auto w-[min(28rem,calc(100vw-2rem))] bg-transparent p-0 backdrop:bg-black/50"
+    >
+      <Card className="p-6">
+        <div className="flex flex-col gap-4">
+          <h2 id="send-invites-heading" className="text-sm font-medium">
+            Send invitations
+          </h2>
+
+          <div className="flex flex-col gap-2">
+            <span className="text-xs text-neutral-800">Voting opens</span>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setStartNow(true)}
+                className={`rounded-full px-3 py-1 text-xs ${
+                  startNow ? "bg-emphasis text-neutral-900" : "border border-muted/40"
+                }`}
+              >
+                Now
+              </button>
+              <button
+                type="button"
+                onClick={() => setStartNow(false)}
+                className={`rounded-full px-3 py-1 text-xs ${
+                  startNow ? "border border-muted/40" : "bg-emphasis text-neutral-900"
+                }`}
+              >
+                Schedule
+              </button>
+            </div>
+            {!startNow && (
+              <Field
+                label=""
+                type="datetime-local"
+                value={opening}
+                onChange={(e) => setOpening(e.target.value)}
+              />
+            )}
+          </div>
+
+          <Field
+            label="Voting closes"
+            type="datetime-local"
+            value={closing}
+            onChange={(e) => setClosing(e.target.value)}
+          />
+
+          <p className="text-xs text-muted/60">
+            {uninvited} {uninvited === 1 ? "person" : "people"} will be emailed a voting link.
+          </p>
+
+          {blockers.length > 0 && (
+            <ul className="space-y-0.5">
+              {blockers.map((b) => (
+                <li key={b} className="text-xs text-red-600">
+                  {b}
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {error && (
+            <p role="alert" className="text-xs text-red-600">
+              {error}
+            </p>
+          )}
+
+          <div className="flex justify-end gap-3">
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-full px-4 py-2 text-sm font-medium text-muted"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={send}
+              disabled={!ready || pending}
+              className="rounded-full bg-emphasis px-4 py-2 text-sm font-medium disabled:opacity-50"
+            >
+              {pending ? "Sending…" : startNow ? "Send now" : "Schedule"}
+            </button>
+          </div>
+        </div>
+      </Card>
+    </dialog>
   );
 }
