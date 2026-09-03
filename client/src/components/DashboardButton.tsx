@@ -1,3 +1,9 @@
+import { Link } from "@tanstack/react-router";
+
 export function DashboardButton() {
-  return <div className="text-sm font-medium text-on-dark">Dashboard</div>;
+  return (
+  <Link to="/dashboard" className="text-sm font-medium text-on-dark">
+    Dashboard
+  </Link>
+  );
 }
