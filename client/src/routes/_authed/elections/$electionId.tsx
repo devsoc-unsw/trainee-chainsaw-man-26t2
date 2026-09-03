@@ -10,8 +10,8 @@ const TABS = [
   { to: "/elections/$electionId", label: "Overview", exact: true },
   { to: "/elections/$electionId/roles", label: "Roles", exact: false },
   { to: "/elections/$electionId/candidates", label: "Candidates", exact: false },
-  { to: "/elections/$electionId/invites", label: "Invites", exact: false },
   { to: "/elections/$electionId/settings", label: "Settings", exact: false },
+  { to: "/elections/$electionId/invites", label: "Invites", exact: false },
   { to: "/elections/$electionId/results", label: "Results", exact: false },
 ] as const;
 
