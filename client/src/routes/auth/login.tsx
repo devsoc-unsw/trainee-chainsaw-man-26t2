@@ -11,7 +11,7 @@ function RouteComponent() {
       <Card className="w-full max-w-sm p-6">
         <div className="flex flex-col gap-5">
           <h1 className="text-sm font-medium">
-            Sign in
+            Sign in or create an account
           </h1>
           {/* TODO: fill in given auth */}
           <Link
