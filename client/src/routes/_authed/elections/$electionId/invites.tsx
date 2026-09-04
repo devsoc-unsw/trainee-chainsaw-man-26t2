@@ -11,7 +11,7 @@ interface Voter {
 }
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-// TODO: change tolerance from 10 mins to what it appropriate given backend
+// TODO: change tolerance from 10 mins to what is appropriate given backend (note 1 hour is a preset not a limit)
 const MIN_OPENING_LEAD_MS = 10 * 60_000;
 
 const STATUS_LABEL: Record<Voter["status"], string> = {
