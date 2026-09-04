@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState, useRef } from "react";
 import { Card } from "@/components/Card";
-import { TextArea, Field } from "@/components/Form";
+import { TextArea } from "@/components/Form";
+import { DateTimeField } from "@/components/DateTimeField";
 
 interface Voter {
   voter_id: string;
@@ -10,6 +11,8 @@ interface Voter {
 }
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// TODO: change tolerance from 10 mins to what it appropriate given backend
+const MIN_OPENING_LEAD_MS = 10 * 60_000;
 
 const STATUS_LABEL: Record<Voter["status"], string> = {
   pending: "Not invited",
@@ -56,13 +59,14 @@ async function fetchReadiness(campaignId: string) {
   return { roles: 2, candidates: 4 };
 }
 
-async function scheduleAndInvite(
-  campaignId: string,
-  opening: string,
-  closing: string,
-) {
+async function scheduleAndInvite(campaignId: string, opening: Date, closing: Date) {
   await new Promise((r) => setTimeout(r, 400));
   console.log("scheduleAndInvite", campaignId, opening, closing);
+}
+
+async function startNowAndInvite(campaignId: string, closing: Date) {
+  await new Promise((r) => setTimeout(r, 400));
+  console.log("startNowAndInvite", campaignId, closing);
 }
 // TODO
 
@@ -113,18 +117,45 @@ async function fetchReadiness(campaignId: string) {
 
 async function scheduleAndInvite(
   campaignId: string,
-  opening: string,
-  closing: string,
+  opening: Date,
+  closing: Date,
 ) {
   const patch = await fetch(`/campaigns/${campaignId}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      opening_date_time: new Date(opening).toISOString(),
-      closing_date_time: new Date(closing).toISOString(),
+      opening_date_time: opening.toISOString(),
+      closing_date_time: closing.toISOString(),
     }),
   });
   if (!patch.ok) throw new Error("Couldn't save the schedule. Try again.");
+
+  const invite = await fetch(`/campaigns/${campaignId}/voters/invite`, {
+    method: "POST",
+  });
+  if (!invite.ok) throw new Error("Couldn't send the invitations. Try again.");
+}
+
+// TODO: the start_now flag is a placeholder. We can't send a client-stamped "now" here.
+// Rewrite given:
+//
+//   a) inviting opens the campaign  -> drop start_now, PATCH only closing_date_time
+//   b) separate start endpoint      -> drop start_now, POST /campaigns/:id/start after
+//                                      the PATCH, and give the PATCH-succeeded-but-start-
+//                                      failed case its own message so nobody resubmits
+//   c) opening_date_time stays required and must be future
+//                                   -> "Now" can't exist; delete the mode toggle in
+//                                      SendDialog and always take the scheduled path
+async function startNowAndInvite(campaignId: string, closing: Date) {
+  const patch = await fetch(`/campaigns/${campaignId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      start_now: true,
+      closing_date_time: closing.toISOString(),
+    }),
+  });
+  if (!patch.ok) throw new Error("Couldn't start the election. Try again.");
 
   const invite = await fetch(`/campaigns/${campaignId}/voters/invite`, {
     method: "POST",
@@ -342,8 +373,8 @@ function SendDialog({
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   const [startNow, setStartNow] = useState(true);
-  const [opening, setOpening] = useState("");
-  const [closing, setClosing] = useState("");
+  const [opening, setOpening] = useState<Date | undefined>();
+  const [closing, setClosing] = useState<Date | undefined>();
   const [readiness, setReadiness] = useState<{ roles: number; candidates: number } | null>(null);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -358,8 +389,8 @@ function SendDialog({
   useEffect(() => {
     if (!open) {
       setStartNow(true);
-      setOpening("");
-      setClosing("");
+      setOpening(undefined);
+      setClosing(undefined);
       setPending(false);
       setError(null);
       return;
@@ -367,7 +398,8 @@ function SendDialog({
     fetchReadiness(electionId).then(setReadiness).catch(() => setReadiness(null));
   }, [open, electionId]);
 
-  // Frontend-only for now — backend will need the same checks on the invite call.
+  // TODO: every check below is frontend-only, needs to be enforced by backend
+  const now = Date.now();
   const blockers: string[] = [];
   if (readiness) {
     if (readiness.roles === 0) blockers.push("Add at least one role");
@@ -376,7 +408,13 @@ function SendDialog({
   if (uninvited === 0) blockers.push("No one left to invite");
   if (!startNow && !opening) blockers.push("Choose when voting opens");
   if (!closing) blockers.push("Choose when voting closes");
-  if (closing && opening && !startNow && closing <= opening) {
+  if (!startNow && opening && opening.getTime() < now + MIN_OPENING_LEAD_MS) {
+    blockers.push("Voting must open at least 10 minutes from now");
+  }
+  if (closing && closing.getTime() <= now) {
+    blockers.push("Voting must close in the future");
+  }
+  if (!startNow && opening && closing && closing <= opening) {
     blockers.push("Voting must close after it opens");
   }
 
@@ -387,8 +425,11 @@ function SendDialog({
     setPending(true);
     setError(null);
     try {
-      const start = startNow ? new Date().toISOString() : opening;
-      await scheduleAndInvite(electionId, start, closing);
+      if (startNow) {
+        await startNowAndInvite(electionId, closing!);
+      } else {
+        await scheduleAndInvite(electionId, opening!, closing!);
+      }
       onSent();
       onClose();
     } catch (err) {
@@ -405,9 +446,9 @@ function SendDialog({
       onClick={(e) => {
         if (e.target === dialogRef.current) onClose();
       }}
-      className="m-auto w-[min(28rem,calc(100vw-2rem))] bg-transparent p-0 backdrop:bg-black/50"
+      className="m-auto w-fit min-w-[20rem] max-w-[calc(100vw-2rem)] bg-transparent p-0 backdrop:bg-black/50"
     >
-      <Card className="p-6">
+      <Card className="max-h-[85vh] overflow-y-auto p-6">
         <div className="flex flex-col gap-4">
           <h2 id="send-invites-heading" className="text-sm font-medium">
             Send invitations
@@ -419,38 +460,87 @@ function SendDialog({
               <button
                 type="button"
                 onClick={() => setStartNow(true)}
-                className={`rounded-full px-3 py-1 text-xs ${
-                  startNow ? "bg-emphasis text-neutral-900" : "border border-muted/40"
-                }`}
+                className={`rounded-full px-3 py-1 text-xs ${startNow ? "bg-emphasis text-neutral-900" : "border border-muted/40"
+                  }`}
               >
                 Now
               </button>
               <button
                 type="button"
                 onClick={() => setStartNow(false)}
-                className={`rounded-full px-3 py-1 text-xs ${
-                  startNow ? "border border-muted/40" : "bg-emphasis text-neutral-900"
-                }`}
+                className={`rounded-full px-3 py-1 text-xs ${startNow ? "border border-muted/40" : "bg-emphasis text-neutral-900"
+                  }`}
               >
                 Schedule
               </button>
             </div>
-            {!startNow && (
-              <Field
-                label=""
-                type="datetime-local"
-                value={opening}
-                onChange={(e) => setOpening(e.target.value)}
-              />
+
+            {startNow && (
+              <p className="text-xs text-muted/60">
+                Voting starts as soon as you send the invitations.
+              </p>
             )}
           </div>
 
-          <Field
-            label="Voting closes"
-            type="datetime-local"
-            value={closing}
-            onChange={(e) => setClosing(e.target.value)}
-          />
+          <div className={startNow ? undefined : "grid gap-4 sm:grid-cols-2"}>
+            {!startNow && (
+              <DateTimeField
+                id="opening"
+                label="Opens"
+                value={opening}
+                onChange={setOpening}
+                minDate={new Date()}
+                presets={[
+                  {
+                    label: "In an hour",
+                    getDate: () => {
+                      const d = new Date(Date.now() + 60 * 60_000);
+                      d.setMinutes(0, 0, 0);
+                      return d;
+                    },
+                  },
+                  {
+                    label: "Tomorrow 9am",
+                    getDate: () => {
+                      const d = new Date();
+                      d.setDate(d.getDate() + 1);
+                      d.setHours(9, 0, 0, 0);
+                      return d;
+                    },
+                  },
+                ]}
+              />
+            )}
+
+            <DateTimeField
+              id="closing"
+              label="Closes"
+              value={closing}
+              onChange={setClosing}
+              minDate={startNow ? new Date() : opening}
+              defaultTime="17:00"
+              presets={[
+                {
+                  label: "In 3 days",
+                  getDate: () => {
+                    const d = new Date();
+                    d.setDate(d.getDate() + 3);
+                    d.setHours(17, 0, 0, 0);
+                    return d;
+                  },
+                },
+                {
+                  label: "In a week",
+                  getDate: () => {
+                    const d = new Date();
+                    d.setDate(d.getDate() + 7);
+                    d.setHours(17, 0, 0, 0);
+                    return d;
+                  },
+                },
+              ]}
+            />
+          </div>
 
           <p className="text-xs text-muted/60">
             {uninvited} {uninvited === 1 ? "person" : "people"} will be emailed a voting link.
