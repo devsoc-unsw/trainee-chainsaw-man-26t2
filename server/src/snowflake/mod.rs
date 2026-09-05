@@ -1,5 +1,6 @@
 use chrono::Utc;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
+use std::fmt::{Debug, Display, Formatter};
 use std::str::FromStr;
 use std::sync::Arc;
 use tokio::sync::Mutex;
@@ -20,7 +21,7 @@ pub fn time_since_epoch() -> i64 {
 /// - The next 42 bits represent the number of milliseconds since the Chainsaw epoch.
 /// - The next 9 bits represent the worker ID of the snowflake generator.
 /// - The next 12 bits represent an auto-incrementing tail ID for the generator.
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Default)]
 pub struct Snowflake(i64);
 
 impl Snowflake {
@@ -36,6 +37,11 @@ impl Snowflake {
 
         // Add to epoch, and return
         CHAINSAW_EPOCH + milliseconds_since_epoch
+    }
+}
+impl Display for Snowflake {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        Display::fmt(&self.0, f)
     }
 }
 

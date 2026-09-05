@@ -5,8 +5,11 @@ version = "0.1.0"
 
 [dependencies]
 anyhow = "1.0.104"
+async-trait = "0.1.92"
 axum = "0.8.9"
+axum_session = "0.21.0"
 axum_session_auth = "0.21.0"
+axum_session_sqlx = "0.11.0"
 chrono = { version = "0.4.45", features = ["serde"] }
 clap = { version = "4.6.4", features = ["derive", "env"] }
 dotenvy = "0.15.7"
