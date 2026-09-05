@@ -1,92 +1,89 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Field, TextArea } from "@/components/Form";
 import { Card } from "@/components/Card";
-
-interface Role {
-  role_id: string;
-  title: string;
-  description: string;
-  no_of_positions: number;
-  enable_abstention: boolean;
-}
-
-// TODO: delete between todo since it's just for testing
-const STUB_ROLES: Role[] = [
-  {
-    role_id: "1",
-    title: "President",
-    description: "Chairs meetings and represents the society",
-    no_of_positions: 1,
-    enable_abstention: true,
-  },
-  {
-    role_id: "2",
-    title: "Treasurer",
-    description: "Manages the budget",
-    no_of_positions: 2,
-    enable_abstention: false,
-  },
-];
-// TODO
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createRole, deleteRole, getRoles, updateRole } from "@/lib/api";
+import type { Role, UpdateRoleRequest } from "@/lib/apiTypes";
 
 export const Route = createFileRoute("/_authed/elections/$electionId/roles")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  // delete const line since it's just for testing
-  const [roles, setRoles] = useState<Role[]>(STUB_ROLES);
+  const { electionId } = Route.useParams();
+
+  const { data, isPending, error } = useQuery({
+    queryKey: ["roles", electionId],
+    queryFn: () => getRoles(electionId),
+  });
+
+  if (isPending) return <p className="p-4 text-xs">Loading…</p>;
+  if (error) return <p className="p-4 text-xs">Couldn't load roles.</p>;
+
+  return <RolesEditor electionId={electionId} roles={data} />;
+}
+
+function RolesEditor({
+  electionId,
+  roles: serverRoles,
+}: {
+  electionId: string;
+  roles: Array<Role>;
+}) {
+  const queryClient = useQueryClient();
+  const [roles, setRoles] = useState(serverRoles);
+
+  useEffect(() => {
+    setRoles(serverRoles);
+  }, [serverRoles]);
+
+  const invalidate = () =>
+    queryClient.invalidateQueries({ queryKey: ["roles", electionId] });
+
+  const createMutation = useMutation({
+    mutationFn: () =>
+      createRole(electionId, {
+        title: "",
+        description: "",
+        no_of_positions: 1,
+        enable_abstention: true,
+      }),
+    onSuccess: invalidate,
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({
+      roleId,
+      changes,
+    }: {
+      roleId: string;
+      changes: UpdateRoleRequest;
+    }) => updateRole(electionId, roleId, changes),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (roleId: string) => deleteRole(electionId, roleId),
+    onSuccess: invalidate,
+  });
 
   const update = (
     id: string,
     key: keyof Role,
     value: string | number | boolean,
   ) => {
-    setRoles(roles.map((r) => (r.role_id === id ? { ...r, [key]: value } : r)));
+    setRoles((prev) =>
+      prev.map((r) => (r.role_id === id ? { ...r, [key]: value } : r)),
+    );
   };
 
-  // TODO: delete between TODO lines, just for testing + uncomment block after
-  const nextId = () => String(Date.now());
-  const addRole = () => {
-    setRoles([
-      ...roles,
-      {
-        role_id: nextId(),
-        title: "",
-        description: "",
-        no_of_positions: 1,
-        enable_abstention: true,
-      },
-    ]);
-  };
-  // TODO
-
-  /*
-  // new array that contains everything already in roles, plus a blank at end
-  const addRole = async () => {
-    const { role_id } = await createRole(electionId, {
-      title: "",
-      description: "",
-      no_of_positions: 1,
-      enable_abstention: true,
+  const save = (role: Role, key: keyof UpdateRoleRequest) => {
+    const original = serverRoles.find((r) => r.role_id === role.role_id);
+    if (original && original[key] === role[key]) return;
+    updateMutation.mutate({
+      roleId: role.role_id,
+      changes: { [key]: role[key] },
     });
-
-    setRoles([
-      ...roles,
-      {
-        role_id,
-        title: "",
-        description: "",
-        no_of_positions: 1,
-        enable_abstention: true,
-      }
-    ]);
-  };
-  */
-
-  const removeRole = (id: string) => {
-    setRoles(roles.filter((r) => r.role_id !== id));
   };
 
   return (
@@ -97,7 +94,7 @@ function RouteComponent() {
             <span className="text-xs text-muted/60">Role #{i + 1}</span>
             <button
               onClick={() => {
-                removeRole(role.role_id);
+                deleteMutation.mutate(role.role_id);
               }}
               className="text-xs text-neutral-500 hover:text-neutral-900"
             >
@@ -112,6 +109,9 @@ function RouteComponent() {
             onChange={(e) => {
               update(role.role_id, "title", e.target.value);
             }}
+            onBlur={() => {
+              save(role, "title");
+            }}
           />
 
           <TextArea
@@ -123,6 +123,9 @@ function RouteComponent() {
             value={role.description}
             onChange={(e) => {
               update(role.role_id, "description", e.target.value);
+            }}
+            onBlur={() => {
+              save(role, "description");
             }}
           />
 
@@ -141,6 +144,9 @@ function RouteComponent() {
             onChange={(e) => {
               update(role.role_id, "no_of_positions", Number(e.target.value));
             }}
+            onBlur={() => {
+              save(role, "no_of_positions");
+            }}
           />
 
           <label className="flex items-center gap-2 pt-3 text-xs text-neutral-800">
@@ -149,6 +155,10 @@ function RouteComponent() {
               checked={role.enable_abstention}
               onChange={(e) => {
                 update(role.role_id, "enable_abstention", e.target.checked);
+                updateMutation.mutate({
+                  roleId: role.role_id,
+                  changes: { enable_abstention: e.target.checked },
+                });
               }}
               className="h-4 w-4 rounded border border-muted/40 bg-input accent-blue"
             />
@@ -159,7 +169,9 @@ function RouteComponent() {
 
       <Card className="p-3">
         <button
-          onClick={addRole}
+          onClick={() => {
+            createMutation.mutate();
+          }}
           className="w-full rounded-lg bg-emphasis py-1.5 text-xs"
         >
           Click to add +
