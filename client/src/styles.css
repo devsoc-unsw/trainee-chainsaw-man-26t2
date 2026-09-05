@@ -1,5 +1,34 @@
 @import "tailwindcss";
 
+
+@theme {
+  --color-blue: #043e89;
+  --color-emphasis: #fbda54;
+  --color-input: #fffdf7;
+  --color-progress: #fa9303;
+
+  --color-card: #fff8e7;
+  --color-card-muted: #dfdfdf;
+
+  /* text */
+  --color-on-dark: #fafafa;
+  --color-on-dark-muted: #E8DCC8;
+  --color-statusLabel: #b11250;
+  --color-muted: #38474d;
+
+  --color-ring-1: #b11250;
+  --color-ring-2: #da1E30;
+  --color-ring-3: #f75610;
+  --color-ring-4: #fa9303;
+  --color-ring-5: #fdd130;
+  --color-ring-6: #fff6E8;
+
+  --color-popover: #fffdf7;
+  --color-popover-foreground: #38474d;
+  --color-accent: #fff8e7;
+  --color-accent-foreground: #38474d;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -12,4 +41,33 @@ body,
 
 body {
   margin: 0;
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-card) transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track,
+.scrollbar-thin::-webkit-scrollbar-button,
+.scrollbar-thin::-webkit-scrollbar-button:single-button,
+.scrollbar-thin::-webkit-scrollbar-button:vertical:decrement,
+.scrollbar-thin::-webkit-scrollbar-button:vertical:increment {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.scrollbar-thin::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: var(--color-card);
+  border-radius: 9999px;
 }
