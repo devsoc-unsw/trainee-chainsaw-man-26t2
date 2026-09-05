@@ -5,6 +5,8 @@ import { TanStackDevtools } from "@tanstack/react-devtools";
 
 import "../styles.css";
 
+import rings from "../../assets/rings.svg";
+
 export const Route = createRootRoute({
   component: RootComponent,
 });
@@ -24,6 +26,13 @@ function RootComponent() {
           },
         ]}
       />
+      <div className="fixed inset-0 -z-10 bg-blue pointer-events-none">
+        <img
+          src={rings}
+          alt=""
+          className="absolute w-[70vw] h-[70vw] left-[-30vw] top-[-6vw] max-w-none"
+        />
+      </div>
     </>
   );
 }
