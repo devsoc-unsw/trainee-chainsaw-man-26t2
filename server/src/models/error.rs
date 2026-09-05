@@ -36,6 +36,8 @@ pub(crate) enum ChainsawError {
     VoterIdsInvalid,
     #[error("Database error.")]
     DatabaseError(#[from] sqlx::Error),
+    #[error("Authentication error.")]
+    AuthError,
 }
 
 impl IntoResponse for ChainsawError {
@@ -55,6 +57,7 @@ impl IntoResponse for ChainsawError {
             Self::CampaignNotFound | Self::CandidateNotFound | Self::RoleNotFound => {
                 StatusCode::NOT_FOUND
             }
+            Self::AuthError => StatusCode::UNAUTHORIZED,
             Self::DatabaseError(_) => StatusCode::INTERNAL_SERVER_ERROR,
         };
 

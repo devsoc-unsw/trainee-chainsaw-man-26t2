@@ -1,7 +1,7 @@
 CREATE TABLE users
 (
     user_id BIGINT PRIMARY KEY,
-    email   TEXT NOT NULL UNIQUE
+    email   TEXT UNIQUE
 );
 
 CREATE TABLE user_identities

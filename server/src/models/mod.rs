@@ -7,4 +7,5 @@ pub(crate) mod error;
 pub(crate) mod role;
 pub(crate) mod state;
 pub(crate) mod user;
+pub(crate) mod user_identity;
 pub(crate) mod voter;
