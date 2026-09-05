@@ -1,8 +1,12 @@
 import axios from "axios";
 import type {
+  Candidate,
+  CreateCandidateRequest,
+  CreateCandidateResponse,
   CreateRoleRequest,
   CreateRoleResponse,
   Role,
+  UpdateCandidateRequest,
   UpdateRoleRequest,
 } from "@/lib/apiTypes";
 
@@ -37,4 +41,40 @@ export async function deleteRole(
   roleId: string,
 ): Promise<void> {
   await api.delete(`/campaigns/${campaignId}/roles/${roleId}`);
+}
+
+export async function getCandidates(
+  campaignId: string,
+): Promise<Array<Candidate>> {
+  const { data } = await api.get(`/campaigns/${campaignId}/candidates`);
+  return data;
+}
+
+export async function createCandidate(
+  campaignId: string,
+  candidate: CreateCandidateRequest,
+): Promise<CreateCandidateResponse> {
+  const { data } = await api.post(
+    `/campaigns/${campaignId}/candidates`,
+    candidate,
+  );
+  return data;
+}
+
+export async function updateCandidate(
+  campaignId: string,
+  candidateId: string,
+  changes: UpdateCandidateRequest,
+): Promise<void> {
+  await api.patch(
+    `/campaigns/${campaignId}/candidates/${candidateId}`,
+    changes,
+  );
+}
+
+export async function deleteCandidate(
+  campaignId: string,
+  candidateId: string,
+): Promise<void> {
+  await api.delete(`/campaigns/${campaignId}/candidates/${candidateId}`);
 }
