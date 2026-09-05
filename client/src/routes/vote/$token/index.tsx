@@ -1,4 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useVoterGetCampaignInformation } from "#/api/UseVoterGetCampaignInformation";
+import type { VotingCampaign, VotingCandidate, VotingRole } from "#/api/apiTypes";
 
 
 export const Route = createFileRoute("/vote/$token/")({
@@ -72,8 +74,8 @@ function SeeDetailsButton() {
 
 function ElectionBanner() {
 
-  const orgName = "Org Name";
-  const electionTitle = "Election Title";
+  const orgName = ;
+  const electionTitle = title;
 
   const userEmail = "example@gmail.com";
 
@@ -145,6 +147,15 @@ function RolesList() {
 } 
 
 function RouteComponent() {
+
+  const { token } = Route.useParams()
+
+  const {data: VotingCampaign, isLoading, isError } = useVoterGetCampaignInformation(token)
+
+
+  const { VotingCampaign, } = data
+
+
   return (
     <>
     <div className="h-screen w-screen min-h-0 flex flex-col items-center">
