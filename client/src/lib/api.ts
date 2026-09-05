@@ -1,12 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
-import type { VotingCampaign } from "./apiTypes"
+import type { VotingCampaign, VotingSelection } from "./apiTypes"
 import { backendUrl } from "./utils";
 import axios from "axios";
-
-const queryKey = (tokenId: string) => [
-    "voter-campaign",
-    tokenId
-]
 
 
 /**
@@ -73,14 +67,18 @@ async function deleteAuthed<T>(path: string): Promise<T> {
 }
 
 /**
- * Make a R
- * @returns 
+ * Make a GET request retrieving the election details from User who has TokenId
+ *
  */
 
 export async function getVoterCampaignInformation(tokenId: string): Promise<VotingCampaign> {
     return await get(`/vote/${tokenId}`)
 }
 
-export async function postVoterCampaignInformation(tokenId: string, body): Promise<VotingCampaign> {
-    return await post(`/vote/${tokenId}`)
+/**
+ * Make a POST request submitting a User's Ballot
+ * 
+ */
+export async function postVoterCampaignInformation(tokenId: string, body: VotingSelection) {
+    await post(`/vote/${tokenId}`, body)
 }
