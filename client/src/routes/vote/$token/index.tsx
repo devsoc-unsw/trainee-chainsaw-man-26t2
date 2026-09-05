@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useVoterGetCampaignInformation } from "#/api/UseVoterGetCampaignInformation";
-import type { VotingCampaign, VotingCandidate, VotingRole } from "#/api/apiTypes";
-
+// import { useQuery } from "@tanstack/react-query";
+// import { getVoterCampaignInformation } from "#/lib/api";
+import { format, getTime } from "date-fns";
+import { utc } from "@date-fns/utc"
+import type { VotingCampaign, VotingRole } from "#/lib/apiTypes";
 
 export const Route = createFileRoute("/vote/$token/")({
   component: RouteComponent,
@@ -20,17 +22,19 @@ function ResponsbilityButton() {
   );
 }
 
-function RoleCard() {
+function RoleCard(role: VotingRole) {
 
-  const roleName = "# Role Name";
-  const numCandidates = 0;
+  
+  const { title, no_of_positions, enable_abstention, candidates } = role;
+
+  const numCandidates = (!candidates) ? 0 : candidates.length;
 
   return (
     <>
       <div className="snap-start h-45 flex-none flex flex-row justify-between bg-card rounded-xl">
         <div className="ml-10 mt-5">
           <h5 className="text-2xl">
-            {roleName}
+            {title}
           </h5>
           <p className="text-muted">
             No. Candidates: {numCandidates}
@@ -44,20 +48,53 @@ function RoleCard() {
   );
 }
 
-function StatusPill() {
+function StatusPill({opens, closes} : {opens: String, closes: String}) {
 
-  const date = "2/2/2022"
+
+  const currTime = Date.now()
+  
+  var date = opens
+  var color = "status-label-red"
+  var text = "opens on"
+  
+  if (currTime > getTime(opens.toString())) {
+    color = "status-label-green"
+    date = closes
+    text = "closes on"
+  }
+
+
   return (
     <>
-    <div className="w-2/3 bg-statusLabel rounded-xl flex flex-row justify-center gap-2 py-1">
+    <div className={`bg-${color} rounded-xl flex flex-row justify-center gap-2 py-1 px-5`}>
       <p className="">
-        opens at
+        {text}
       </p>
       <p className="bg-white rounded-xl px-4 border-accent">
         {date}
       </p>
     </div>
     </>
+  );
+}
+
+function beginVotingButton({opens, closes} : {opens: String, closes: String}) {
+  const currTime = Date.now()
+  
+  var date = closes
+  var color = "status-label-red"
+  
+  if (currTime > getTime(opens.toString())) {
+    color = "status-label-green"
+    date = opens
+  }
+  
+  return (
+  <>
+    <button className={`h-fit bg-${color} px-8 py-3/4 rounded-xl`}>
+      Begin
+    </button>
+  </>
   );
 }
 
@@ -72,25 +109,72 @@ function SeeDetailsButton() {
 }
 
 
-function ElectionBanner() {
+function RouteComponent() {
 
-  const orgName = ;
-  const electionTitle = title;
+  // const { token } = Route.useParams()
 
-  const userEmail = "example@gmail.com";
+  // const { data, isLoading, isError } = useQuery<VotingCampaign>({
+  //   queryKey: ["election-data", token],
+  //   queryFn: () => getVoterCampaignInformation(token),
+  //   staleTime: Infinity
+  // });
+
+  // if (isLoading) return <p>loading..</p> 
+
+  // if (isError || !data) return <p>error loading..</p> 
+
+  const temp_data: VotingCampaign = {
+        campaign_id: "116654608163452025",
+        title: "string",
+        description: "string",
+        opening_date_time: "2026-09-05T16:37:15.101Z",
+        closing_date_time: "2026-09-05T16:37:15.101Z",
+        roles: [
+          {
+            role_id: "45341522702939523632464",
+            title: "Coolest Person evar",
+            description: "string",
+            no_of_positions: 1,
+            enable_abstention: true,
+            candidates: [
+              {
+                candidate_id: "95778102331795927968620469228440003938717881",
+                first_name: "string",
+                last_name: "string",
+                manifesto: "string"
+              }
+            ]
+          }
+        ]
+      };
+
+  // const {title, description, opening_date_time, closing_date_time, roles} = isError || !data ? temp_data : data;
+  const {title, description, opening_date_time, closing_date_time, roles} = temp_data;
+
+
+  const orgName = "orgName"
+  const userEmail = "example@gmail.com"
+
+  // const { title, description, opening_date_time, closing_date_time, roles } = data;
+
+  const open_date = format(opening_date_time, "HH:MM dd-mm-yyyy", { in: utc})
+  const closing_date = format(closing_date_time, "HH:MM dd-mm-yyyy", { in: utc})
+
+
 
   return (
     <>
-      <div className="w-3/4 h-1/3 flex-none flex flex-row justify-between items-center rounded-xl my-10 backdrop-blur-3xl shadow-2xl">
+    <div className="h-screen w-screen min-h-0 flex flex-col items-center">
+      <div className="w-3/4 h-1/3 flex-none flex flex-row justify-between items-center rounded-xl my-10 backdrop-blur-xl shadow-2xl">
         <div className="h-3/4 flex flex-col gap-4 ml-10">
           <h1 className="text-6xl text-white font-bold">
             {orgName}
           </h1>
           <p className="text-3xl text-on-dark-muted">
-            {electionTitle}
+            {title}
           </p>
           <div className="h-100 flex items-center">
-            <StatusPill />
+            <StatusPill opens={open_date} closes={closing_date}/>
           </div>
         </div>
         <div className="h-3/4 flex flex-col justify-around mr-10">
@@ -105,17 +189,6 @@ function ElectionBanner() {
           </div>
         </div>
       </div>
-    </>
-  );
-}
-
-
-function RolesList() {
-
-  const numRoles = 0;
-
-  return (
-    <>
       <div className="w-2/3 min-h-0 flex-1 flex flex-col gap-4">
         <div className="flex flex-row items-center justify-between">
           <div className="w-2/3 flex flex-row items-center gap-4">
@@ -126,41 +199,20 @@ function RolesList() {
                •
             </p>
             <p className="text-xl text-on-dark-muted">
-              {`Positions: ${numRoles}`}
+              {`Positions: ${roles.length}`}
             </p>
           </div>
           <button className="h-fit bg-card-muted px-8 py-3/4 rounded-xl">
             Begin
           </button>
         </div>
-        <div className="scrollbar-thin min-h-0 snap-y scroll-pt-1 flex-1 flex flex-col overflow-y-auto gap-4">
-          <RoleCard />
-          <RoleCard />
-          <RoleCard />
-          <RoleCard />
-          <RoleCard />
+          <div className="scrollbar-thin min-h-0 snap-y scroll-pt-1 flex-1 flex flex-col overflow-y-auto gap-4">
+            {(!roles) ? <></> : roles.map((role: VotingRole) => (
+              <RoleCard role={role}/>
+            ))}
           <div className="h-[50%] min-h-0 flex-none" aria-hidden="true" />
         </div>
       </div>
-    </>
-  );
-} 
-
-function RouteComponent() {
-
-  const { token } = Route.useParams()
-
-  const {data: VotingCampaign, isLoading, isError } = useVoterGetCampaignInformation(token)
-
-
-  const { VotingCampaign, } = data
-
-
-  return (
-    <>
-    <div className="h-screen w-screen min-h-0 flex flex-col items-center">
-      <ElectionBanner />
-      <RolesList/>
     </div>
     </>
   );

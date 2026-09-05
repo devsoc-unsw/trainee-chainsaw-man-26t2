@@ -13,6 +13,8 @@
   /* text */
   --color-on-dark: #fafafa;
   --color-on-dark-muted: #E8DCC8;
+  --color-status-label-green: #A3D6AE;
+  --color-status-label-red: #FFB3CC;
   --color-statusLabel: #b11250;
   --color-muted: #38474d;
 
