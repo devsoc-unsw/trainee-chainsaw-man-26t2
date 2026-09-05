@@ -1,9 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import type { ElectionResults as Results } from "@/components/ElectionResults";
 import { Card } from "@/components/Card";
 import { ElectionResults } from "@/components/ElectionResults";
-import type { ElectionResults as Results } from "@/components/ElectionResults";
-
 
 export const Route = createFileRoute("/count/$electionId")({
   component: RouteComponent,
@@ -26,12 +25,16 @@ async function fetchPublicResults(campaignId: string): Promise<PublicResults> {
         {
           role_id: "1",
           title: "Co-President",
-          winners: [{ candidate_id: "3", first_name: "Priya", last_name: "Nair" }],
+          winners: [
+            { candidate_id: "3", first_name: "Priya", last_name: "Nair" },
+          ],
         },
         {
           role_id: "2",
           title: "Secretary",
-          winners: [{ candidate_id: "5", first_name: "Tom", last_name: "Okafor" }],
+          winners: [
+            { candidate_id: "5", first_name: "Tom", last_name: "Okafor" },
+          ],
         },
       ],
     },
@@ -57,19 +60,22 @@ function RouteComponent() {
   useEffect(() => {
     fetchPublicResults(electionId)
       .then(setData)
-      .catch((err: unknown) =>
-        setError(err instanceof Error ? err.message : "Couldn't load results."),
-      );
+      .catch((err: unknown) => {
+        setError(err instanceof Error ? err.message : "Couldn't load results.");
+      });
   }, [electionId]);
 
   const countsHidden =
-    data !== null && data.results.roles.every((role) => role.rounds === undefined);
+    data !== null &&
+    data.results.roles.every((role) => role.rounds === undefined);
 
   return (
     <div className="mx-auto w-full max-w-4xl space-y-5 px-6 py-8">
       <header className="flex items-baseline gap-4">
         <h1 className="text-4xl font-bold text-on-dark">Results</h1>
-        {data && <p className="text-lg font-semibold text-on-dark">{data.title}</p>}
+        {data && (
+          <p className="text-lg font-semibold text-on-dark">{data.title}</p>
+        )}
       </header>
 
       {error ? (

@@ -20,9 +20,16 @@ export function AvatarButton() {
       </Menu.Trigger>
 
       <Menu.Portal>
-        <Menu.Positioner side="bottom" align="end" sideOffset={8} className="z-50">
+        <Menu.Positioner
+          side="bottom"
+          align="end"
+          sideOffset={8}
+          className="z-50"
+        >
           <Menu.Popup className="min-w-44 rounded-lg border border-muted/40 bg-input p-1 shadow-lg">
-            <div className="truncate px-2 py-1.5 text-xs text-muted/60">{EMAIL}</div>
+            <div className="truncate px-2 py-1.5 text-xs text-muted/60">
+              {EMAIL}
+            </div>
             <Menu.Separator className="-mx-1 my-1 h-px bg-muted/20" />
             <Menu.Item
               onClick={logOut}

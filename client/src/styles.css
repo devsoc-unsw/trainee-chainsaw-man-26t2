@@ -20,11 +20,11 @@
   --color-muted: #38474d;
 
   --color-ring-1: #b11250;
-  --color-ring-2: #da1E30;
+  --color-ring-2: #da1e30;
   --color-ring-3: #f75610;
   --color-ring-4: #fa9303;
   --color-ring-5: #fdd130;
-  --color-ring-6: #fff6E8;
+  --color-ring-6: #fff6e8;
 
   --color-popover: #fffdf7;
   --color-popover-foreground: #38474d;
@@ -48,7 +48,7 @@ body {
 
 @theme inline {
   --font-heading: var(--font-sans);
-  --font-sans: 'Geist Variable', sans-serif;
+  --font-sans: "Geist Variable", sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);

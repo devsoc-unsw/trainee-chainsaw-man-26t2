@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Field, SelectField, type Option } from "@/components/Form";
-import { Card } from "@/components/Card";
 import { useState } from "react";
+import type { Option } from "@/components/Form";
+import { Field, SelectField } from "@/components/Form";
+import { Card } from "@/components/Card";
 // TODO: uncomment out following with query
 /* 
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -14,12 +15,12 @@ export const Route = createFileRoute("/_authed/elections/$electionId/settings")(
   },
 );
 
-type Settings = {
+interface Settings {
   counting_method: string | null;
   tie_breaking_method: string | null;
   quorum_percentage: string;
   quorum_flat_number: string;
-};
+}
 
 type SettingsPatch = Partial<{
   counting_method: string | null;
@@ -45,10 +46,12 @@ const TIE_BREAKING_METHODS: Option[] = [
   { value: "manual", label: "Pause and let an admin decide" },
 ];
 
-const QUORUM_PERCENTAGES: Option[] = [0, 10, 20, 25, 33, 50, 66, 75].map((n) => ({
-  value: String(n),
-  label: `${n}%`,
-}));
+const QUORUM_PERCENTAGES: Option[] = [0, 10, 20, 25, 33, 50, 66, 75].map(
+  (n) => ({
+    value: String(n),
+    label: `${n}%`,
+  }),
+);
 
 // TODO: delete between TODO since it's just for testing
 const MOCK: Record<string, Partial<Settings>> = {
@@ -64,7 +67,9 @@ function useSettings(campaign_id: string): Settings {
 }
 
 function useSaveSettings(_campaign_id: string) {
-  return (patch: SettingsPatch) => console.log("PATCH", patch);
+  return (patch: SettingsPatch) => {
+    console.log("PATCH", patch);
+  };
 }
 // TODO
 
@@ -104,8 +109,9 @@ function RouteComponent() {
 
   const update =
     <K extends keyof Settings>(key: K) =>
-      (value: Settings[K]) =>
-        setSettings((s) => ({ ...s, [key]: value }));
+    (value: Settings[K]) => {
+      setSettings((s) => ({ ...s, [key]: value }));
+    };
 
   return (
     <div key={electionId} className="w-full space-y-3">
@@ -148,13 +154,20 @@ function RouteComponent() {
           type="text"
           inputMode="numeric"
           value={settings.quorum_flat_number}
-          error={settings.quorum_flat_number === "" ? "Enter 0 for no quorum" : undefined}
+          error={
+            settings.quorum_flat_number === ""
+              ? "Enter 0 for no quorum"
+              : undefined
+          }
           onChange={(e) => {
             const v = e.target.value;
             if (v === "" || /^\d+$/.test(v)) update("quorum_flat_number")(v);
           }}
           onBlur={() => {
-            if (settings.quorum_flat_number === "") return update("quorum_flat_number")("0");
+            if (settings.quorum_flat_number === "") {
+              update("quorum_flat_number")("0");
+              return;
+            }
             save({ quorum_flat_number: Number(settings.quorum_flat_number) });
           }}
         />

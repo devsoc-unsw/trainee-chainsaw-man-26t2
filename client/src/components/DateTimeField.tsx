@@ -77,7 +77,9 @@ export function DateTimeField({
             <button
               key={preset.label}
               type="button"
-              onClick={() => onChange(preset.getDate())}
+              onClick={() => {
+                onChange(preset.getDate());
+              }}
               className="rounded-full border border-muted/40 px-3 py-1 text-xs"
             >
               {preset.label}
@@ -104,7 +106,9 @@ export function DateTimeField({
           type="time"
           step="60"
           value={time}
-          onChange={(e) => changeTime(e.target.value)}
+          onChange={(e) => {
+            changeTime(e.target.value);
+          }}
           className="appearance-none [&::-webkit-calendar-picker-indicator]:hidden"
         />
         <InputGroupAddon>

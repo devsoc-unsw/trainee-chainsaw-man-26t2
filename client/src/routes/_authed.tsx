@@ -1,4 +1,4 @@
-import { createFileRoute, redirect, Outlet} from "@tanstack/react-router";
+import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 import { Header } from "../components/Header";
 
 export const Route = createFileRoute("/_authed")({
@@ -20,8 +20,8 @@ export const Route = createFileRoute("/_authed")({
 function AuthedLayout() {
   return (
     <>
-    <Header />
-    <Outlet />
+      <Header />
+      <Outlet />
     </>
   );
 }

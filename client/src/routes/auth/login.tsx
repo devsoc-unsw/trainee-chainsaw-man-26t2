@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { Card } from "@/components/Card";
 
 export const Route = createFileRoute("/auth/login")({
@@ -10,9 +10,7 @@ function RouteComponent() {
     <div className="fixed inset-0 flex items-center justify-center p-8">
       <Card className="w-full max-w-sm p-6">
         <div className="flex flex-col gap-5">
-          <h1 className="text-sm font-medium">
-            Sign in or create an account
-          </h1>
+          <h1 className="text-sm font-medium">Sign in or create an account</h1>
           {/* TODO: fill in given auth */}
           <Link
             to="/dashboard"
@@ -21,7 +19,7 @@ function RouteComponent() {
             Continue with Google
           </Link>
         </div>
-      </Card >
-    </div >
+      </Card>
+    </div>
   );
 }

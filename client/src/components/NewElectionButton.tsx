@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import type { SyntheticEvent } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import type { SyntheticEvent } from "react";
 // TODO: uncomment out following with query
 // import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card } from "@/components/Card";
 import { Field, TextArea } from "@/components/Form";
 
-const pillClass = "rounded-full bg-emphasis px-4 py-2 text-sm font-medium text-muted";
+const pillClass =
+  "rounded-full bg-emphasis px-4 py-2 text-sm font-medium text-muted";
 
 interface CreateCampaignRequest {
   title: string;
@@ -19,7 +20,9 @@ interface CreateCampaignResponse {
 
 // TODO: delete between TODO lines, just for testing
 let mockId = 0;
-async function createCampaign(body: CreateCampaignRequest): Promise<CreateCampaignResponse> {
+async function createCampaign(
+  body: CreateCampaignRequest,
+): Promise<CreateCampaignResponse> {
   await new Promise((r) => setTimeout(r, 400));
   console.log("createCampaign", body);
   return { campaign_id: String(++mockId) };
@@ -46,20 +49,27 @@ export function NewElectionButton() {
     <>
       <button
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          setOpen(true);
+        }}
         className={pillClass}
       >
         New Election
       </button>
-      <NewElectionPopUp open={open} onClose={() => setOpen(false)} />
+      <NewElectionPopUp
+        open={open}
+        onClose={() => {
+          setOpen(false);
+        }}
+      />
     </>
   );
 }
 
-type DialogProps = {
+interface DialogProps {
   open: boolean;
   onClose: () => void;
-};
+}
 
 function NewElectionPopUp({ open, onClose }: DialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -86,9 +96,14 @@ function NewElectionPopUp({ open, onClose }: DialogProps) {
       try {
         const { campaign_id } = await createCampaign(body);
         onClose();
-        navigate({ to: "/elections/$electionId", params: { electionId: campaign_id } });
+        navigate({
+          to: "/elections/$electionId",
+          params: { electionId: campaign_id },
+        });
       } catch (err) {
-        setSubmitError(err instanceof Error ? err.message : "That didn't save. Try again.");
+        setSubmitError(
+          err instanceof Error ? err.message : "That didn't save. Try again.",
+        );
         setPending(false);
       }
     },
@@ -141,7 +156,10 @@ function NewElectionPopUp({ open, onClose }: DialogProps) {
     setShowErrors(true);
     if (!isValid || createElection.isPending) return;
 
-    createElection.mutate({ title: title.trim(), description: description.trim() });
+    createElection.mutate({
+      title: title.trim(),
+      description: description.trim(),
+    });
   }
 
   return (
@@ -155,7 +173,11 @@ function NewElectionPopUp({ open, onClose }: DialogProps) {
       className="m-auto w-[min(28rem,calc(100vw-2rem))] bg-transparent p-0 backdrop:bg-black/50"
     >
       <Card className="p-6">
-        <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
+        <form
+          onSubmit={handleSubmit}
+          noValidate
+          className="flex flex-col gap-4"
+        >
           <h2 id="new-election-heading" className="text-sm font-medium">
             New election
           </h2>
@@ -164,7 +186,9 @@ function NewElectionPopUp({ open, onClose }: DialogProps) {
             label="Title"
             autoFocus
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(e) => {
+              setTitle(e.target.value);
+            }}
             placeholder="Input Field"
             error={showErrors ? errors.title : undefined}
           />
@@ -172,7 +196,9 @@ function NewElectionPopUp({ open, onClose }: DialogProps) {
           <TextArea
             label="Description"
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={(e) => {
+              setDescription(e.target.value);
+            }}
             rows={3}
             maxLength={200}
             hint={`${description.length}/200`}

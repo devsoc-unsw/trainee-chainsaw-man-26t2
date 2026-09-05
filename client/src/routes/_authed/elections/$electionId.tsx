@@ -1,4 +1,4 @@
-import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
+import { Link, Outlet, createFileRoute } from "@tanstack/react-router";
 import { useCallback, useState } from "react";
 import { PullCord } from "@/components/PullCord";
 
@@ -9,7 +9,11 @@ export const Route = createFileRoute("/_authed/elections/$electionId")({
 const TABS = [
   { to: "/elections/$electionId", label: "Overview", exact: true },
   { to: "/elections/$electionId/roles", label: "Roles", exact: false },
-  { to: "/elections/$electionId/candidates", label: "Candidates", exact: false },
+  {
+    to: "/elections/$electionId/candidates",
+    label: "Candidates",
+    exact: false,
+  },
   { to: "/elections/$electionId/settings", label: "Settings", exact: false },
   { to: "/elections/$electionId/invites", label: "Invites", exact: false },
   { to: "/elections/$electionId/results", label: "Results", exact: false },
@@ -23,7 +27,9 @@ function RouteComponent() {
   // nav bar open by default
   const [open, setOpen] = useState(true);
   const [pointer, setPointer] = useState<{ x: number; y: number } | null>(null);
-  const toggle = useCallback(() => setOpen((o) => !o), []);
+  const toggle = useCallback(() => {
+    setOpen((o) => !o);
+  }, []);
 
   return (
     <div className="mx-auto flex w-full max-w-5xl gap-10 px-6 py-8">
@@ -34,8 +40,12 @@ function RouteComponent() {
       {/* navigation bar */}
       <div
         className="w-36 shrink-0"
-        onPointerMove={(e) => setPointer({ x: e.clientX, y: e.clientY })}
-        onPointerLeave={() => setPointer(null)}
+        onPointerMove={(e) => {
+          setPointer({ x: e.clientX, y: e.clientY });
+        }}
+        onPointerLeave={() => {
+          setPointer(null);
+        }}
       >
         {/* Pills slide down out from behind the header when pulled open */}
         <div
@@ -62,7 +72,12 @@ function RouteComponent() {
           </nav>
         </div>
 
-        <PullCord open={open} onToggle={toggle} length={open ? 200 : 420} pointer={pointer}/>
+        <PullCord
+          open={open}
+          onToggle={toggle}
+          length={open ? 200 : 420}
+          pointer={pointer}
+        />
       </div>
     </div>
   );

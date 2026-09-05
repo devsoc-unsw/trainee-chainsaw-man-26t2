@@ -1,5 +1,11 @@
 import type { InputHTMLAttributes, TextareaHTMLAttributes } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/Select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/Select";
 
 export const fieldClass =
   "w-full rounded-lg bg-input px-4 py-1 text-xs " +
@@ -13,7 +19,10 @@ export const areaClass =
 
 export const labelClass = "block text-xs text-neutral-800 mt-1 mb-1 ";
 
-export type Option = { value: string; label: string };
+export interface Option {
+  value: string;
+  label: string;
+}
 
 export function Field({
   label,
@@ -22,9 +31,7 @@ export function Field({
 }: { label: string; error?: string } & InputHTMLAttributes<HTMLInputElement>) {
   return (
     <div>
-      <label className={labelClass}>
-        {label}
-      </label>
+      <label className={labelClass}>{label}</label>
       <input className={fieldClass} {...props} />
       {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
     </div>
@@ -36,7 +43,11 @@ export function TextArea({
   error,
   hint,
   ...props
-}: { label: string; error?: string; hint?: string; } & TextareaHTMLAttributes<HTMLTextAreaElement>) {
+}: {
+  label: string;
+  error?: string;
+  hint?: string;
+} & TextareaHTMLAttributes<HTMLTextAreaElement>) {
   return (
     <div>
       <div className="flex items-baseline justify-between">
@@ -68,7 +79,9 @@ export function SelectField({
     <div>
       <label className={labelClass}>{label}</label>
       <Select value={value} onValueChange={onChange} items={options}>
-        <SelectTrigger className={`${fieldClass} flex items-center justify-between`}>
+        <SelectTrigger
+          className={`${fieldClass} flex items-center justify-between`}
+        >
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>

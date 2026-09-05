@@ -83,8 +83,9 @@ function RouteComponent() {
 function ElectionOverview({ campaign }: { campaign: Campaign }) {
   const [draft, setDraft] = useState(campaign);
   const [locationTouched, setLocationTouched] = useState(false);
-  const update = <K extends keyof Campaign>(key: K, value: Campaign[K]) =>
+  const update = <K extends keyof Campaign>(key: K, value: Campaign[K]) => {
     setDraft({ ...draft, [key]: value });
+  };
   const save = <K extends keyof Campaign>(key: K) => {
     if (draft[key] === campaign[key]) return;
     patchCampaign(draft.campaign_id, { [key]: draft[key] });
@@ -97,8 +98,12 @@ function ElectionOverview({ campaign }: { campaign: Campaign }) {
           label="Title"
           placeholder="Input field"
           value={draft.title}
-          onChange={(e) => update("title", e.target.value)}
-          onBlur={() => save("title")}
+          onChange={(e) => {
+            update("title", e.target.value);
+          }}
+          onBlur={() => {
+            save("title");
+          }}
           error={draft.title.trim() ? undefined : "Title can't be empty"}
         />
 
@@ -106,12 +111,18 @@ function ElectionOverview({ campaign }: { campaign: Campaign }) {
           label="Description"
           placeholder="What this election is for and who can vote."
           value={draft.description}
-          onChange={(e) => update("description", e.target.value)}
+          onChange={(e) => {
+            update("description", e.target.value);
+          }}
           rows={3}
           maxLength={200}
           hint={`${draft.description.length}/200`}
-          onBlur={() => save("description")}
-          error={draft.description.trim() ? undefined : "Description can't be empty"}
+          onBlur={() => {
+            save("description");
+          }}
+          error={
+            draft.description.trim() ? undefined : "Description can't be empty"
+          }
         />
 
         <label className="flex items-start gap-2 pt-3 text-xs text-neutral-800">
@@ -120,7 +131,9 @@ function ElectionOverview({ campaign }: { campaign: Campaign }) {
             checked={draft.publicise_results}
             onChange={(e) => {
               update("publicise_results", e.target.checked);
-              patchCampaign(draft.campaign_id, { publicise_results: e.target.checked });
+              patchCampaign(draft.campaign_id, {
+                publicise_results: e.target.checked,
+              });
             }}
             className="h-4 w-4 rounded border border-muted/40 bg-input accent-blue"
           />
@@ -153,7 +166,9 @@ function ElectionOverview({ campaign }: { campaign: Campaign }) {
               label="Location"
               placeholder="Input field"
               value={draft.location}
-              onChange={(e) => update("location", e.target.value)}
+              onChange={(e) => {
+                update("location", e.target.value);
+              }}
               onBlur={() => {
                 setLocationTouched(true);
                 save("location");
@@ -169,5 +184,4 @@ function ElectionOverview({ campaign }: { campaign: Campaign }) {
       </Card>
     </div>
   );
-
 }

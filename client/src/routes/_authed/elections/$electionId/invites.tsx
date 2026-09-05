@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Card } from "@/components/Card";
 import { TextArea } from "@/components/Form";
 import { DateTimeField } from "@/components/DateTimeField";
@@ -33,9 +33,21 @@ async function fetchVoters(campaignId: string): Promise<Voter[]> {
   await new Promise((r) => setTimeout(r, 200));
   console.log("fetchVoters", campaignId);
   return [
-    { voter_id: "1", email: "amelia.chen@student.unsw.edu.au", status: "voted" },
-    { voter_id: "2", email: "raj.patel@student.unsw.edu.au", status: "invited" },
-    { voter_id: "3", email: "sam.oconnor@student.unsw.edu.au", status: "pending" },
+    {
+      voter_id: "1",
+      email: "amelia.chen@student.unsw.edu.au",
+      status: "voted",
+    },
+    {
+      voter_id: "2",
+      email: "raj.patel@student.unsw.edu.au",
+      status: "invited",
+    },
+    {
+      voter_id: "3",
+      email: "sam.oconnor@student.unsw.edu.au",
+      status: "pending",
+    },
   ];
 }
 
@@ -59,7 +71,11 @@ async function fetchReadiness(campaignId: string) {
   return { roles: 2, candidates: 4 };
 }
 
-async function scheduleAndInvite(campaignId: string, opening: Date, closing: Date) {
+async function scheduleAndInvite(
+  campaignId: string,
+  opening: Date,
+  closing: Date,
+) {
   await new Promise((r) => setTimeout(r, 400));
   console.log("scheduleAndInvite", campaignId, opening, closing);
 }
@@ -199,7 +215,7 @@ function RouteComponent() {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // for Schedule Send 
+  // for Schedule Send
   const [sendOpen, setSendOpen] = useState(false);
   const uninvited = voters.filter((v) => v.status === "pending").length;
 
@@ -237,7 +253,11 @@ function RouteComponent() {
       ]);
       setRaw("");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Couldn't add those voters. Try again.");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Couldn't add those voters. Try again.",
+      );
     }
     setPending(false);
   };
@@ -255,7 +275,9 @@ function RouteComponent() {
           placeholder="Paste a column from your spreadsheet, or type emails separated by commas"
           rows={4}
           value={raw}
-          onChange={(e) => setRaw(e.target.value)}
+          onChange={(e) => {
+            setRaw(e.target.value);
+          }}
         />
 
         {raw.trim() && (
@@ -313,14 +335,20 @@ function RouteComponent() {
                 <span className="min-w-0 flex-1 truncate text-xs text-neutral-800">
                   {voter.email}
                 </span>
-                <span className={`rounded-full px-2 py-0.5 text-[11px] ${STATUS_CLASS[voter.status]}`}>
+                <span
+                  className={`rounded-full px-2 py-0.5 text-[11px] ${STATUS_CLASS[voter.status]}`}
+                >
                   {STATUS_LABEL[voter.status]}
                 </span>
                 <button
                   type="button"
                   disabled={voter.status === "voted"}
                   onClick={() => remove(voter.voter_id)}
-                  title={voter.status === "voted" ? "Can't remove someone who has already voted" : undefined}
+                  title={
+                    voter.status === "voted"
+                      ? "Can't remove someone who has already voted"
+                      : undefined
+                  }
                   className="text-xs text-red-600 hover:text-red-700 disabled:cursor-not-allowed disabled:text-muted/40! disabled:hover:text-red-600"
                 >
                   Remove
@@ -334,7 +362,9 @@ function RouteComponent() {
       <Card className="p-3">
         <button
           type="button"
-          onClick={() => setSendOpen(true)}
+          onClick={() => {
+            setSendOpen(true);
+          }}
           disabled={uninvited === 0}
           className="w-full rounded-lg bg-emphasis py-1.5 text-xs disabled:opacity-50"
         >
@@ -346,12 +376,18 @@ function RouteComponent() {
 
       <SendDialog
         open={sendOpen}
-        onClose={() => setSendOpen(false)}
+        onClose={() => {
+          setSendOpen(false);
+        }}
         electionId={electionId}
         uninvited={uninvited}
-        onSent={() =>
-          setVoters(voters.map((v) => (v.status === "pending" ? { ...v, status: "invited" } : v)))
-        }
+        onSent={() => {
+          setVoters(
+            voters.map((v) =>
+              v.status === "pending" ? { ...v, status: "invited" } : v,
+            ),
+          );
+        }}
       />
     </div>
   );
@@ -375,7 +411,10 @@ function SendDialog({
   const [startNow, setStartNow] = useState(true);
   const [opening, setOpening] = useState<Date | undefined>();
   const [closing, setClosing] = useState<Date | undefined>();
-  const [readiness, setReadiness] = useState<{ roles: number; candidates: number } | null>(null);
+  const [readiness, setReadiness] = useState<{
+    roles: number;
+    candidates: number;
+  } | null>(null);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -395,7 +434,11 @@ function SendDialog({
       setError(null);
       return;
     }
-    fetchReadiness(electionId).then(setReadiness).catch(() => setReadiness(null));
+    fetchReadiness(electionId)
+      .then(setReadiness)
+      .catch(() => {
+        setReadiness(null);
+      });
   }, [open, electionId]);
 
   // TODO: every check below is frontend-only, needs to be enforced by backend
@@ -433,7 +476,11 @@ function SendDialog({
       onSent();
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Couldn't send the invitations. Try again.");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Couldn't send the invitations. Try again.",
+      );
       setPending(false);
     }
   };
@@ -459,17 +506,27 @@ function SendDialog({
             <div className="flex gap-2">
               <button
                 type="button"
-                onClick={() => setStartNow(true)}
-                className={`rounded-full px-3 py-1 text-xs ${startNow ? "bg-emphasis text-neutral-900" : "border border-muted/40"
-                  }`}
+                onClick={() => {
+                  setStartNow(true);
+                }}
+                className={`rounded-full px-3 py-1 text-xs ${
+                  startNow
+                    ? "bg-emphasis text-neutral-900"
+                    : "border border-muted/40"
+                }`}
               >
                 Now
               </button>
               <button
                 type="button"
-                onClick={() => setStartNow(false)}
-                className={`rounded-full px-3 py-1 text-xs ${startNow ? "border border-muted/40" : "bg-emphasis text-neutral-900"
-                  }`}
+                onClick={() => {
+                  setStartNow(false);
+                }}
+                className={`rounded-full px-3 py-1 text-xs ${
+                  startNow
+                    ? "border border-muted/40"
+                    : "bg-emphasis text-neutral-900"
+                }`}
               >
                 Schedule
               </button>
@@ -543,7 +600,8 @@ function SendDialog({
           </div>
 
           <p className="text-xs text-muted/60">
-            {uninvited} {uninvited === 1 ? "person" : "people"} will be emailed a voting link.
+            {uninvited} {uninvited === 1 ? "person" : "people"} will be emailed
+            a voting link.
           </p>
 
           {blockers.length > 0 && (
