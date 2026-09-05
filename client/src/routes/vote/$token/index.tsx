@@ -147,7 +147,7 @@ function RolesList() {
 function RouteComponent() {
   return (
     <>
-    <div className="bg-blue h-screen w-screen min-h-0 flex flex-col items-center">
+    <div className="h-screen w-screen min-h-0 flex flex-col items-center">
       <ElectionBanner />
       <RolesList/>
     </div>
