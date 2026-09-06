@@ -19,6 +19,7 @@ import { Route as AuthedDashboardRouteImport } from './routes/_authed/dashboard'
 import { Route as VoteTokenIndexRouteImport } from './routes/vote/$token/index'
 import { Route as VoteTokenConfirmRouteImport } from './routes/vote/$token/confirm'
 import { Route as VoteTokenClosedRouteImport } from './routes/vote/$token/closed'
+import { Route as VoteTokenRoleIdRouteImport } from './routes/vote/$token/$roleId'
 import { Route as AuthedElectionsNewRouteImport } from './routes/_authed/elections/new'
 import { Route as AuthedElectionsElectionIdRouteImport } from './routes/_authed/elections/$electionId'
 import { Route as AuthedElectionsElectionIdIndexRouteImport } from './routes/_authed/elections/$electionId/index'
@@ -68,14 +69,19 @@ const VoteTokenIndexRoute = VoteTokenIndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const VoteTokenConfirmRoute = VoteTokenConfirmRouteImport.update({
-  id: '/confirm',
-  path: '/confirm',
-  getParentRoute: () => VoteTokenRoute,
+  id: '/vote/$token/confirm',
+  path: '/vote/$token/confirm',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const VoteTokenClosedRoute = VoteTokenClosedRouteImport.update({
-  id: '/closed',
-  path: '/closed',
-  getParentRoute: () => VoteTokenRoute,
+  id: '/vote/$token/closed',
+  path: '/vote/$token/closed',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VoteTokenRoleIdRoute = VoteTokenRoleIdRouteImport.update({
+  id: '/vote/$token/$roleId',
+  path: '/vote/$token/$roleId',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthedElectionsNewRoute = AuthedElectionsNewRouteImport.update({
   id: '/elections/new',
@@ -95,9 +101,9 @@ const AuthedElectionsElectionIdIndexRoute =
     getParentRoute: () => AuthedElectionsElectionIdRoute,
   } as any)
 const VoteTokenRoleIdRoleIdRoute = VoteTokenRoleIdRoleIdRouteImport.update({
-  id: '/$roleId/$roleId',
-  path: '/$roleId/$roleId',
-  getParentRoute: () => VoteTokenRoute,
+  id: '/$roleId',
+  path: '/$roleId',
+  getParentRoute: () => VoteTokenRoleIdRoute,
 } as any)
 const AuthedElectionsElectionIdSettingsRoute =
   AuthedElectionsElectionIdSettingsRouteImport.update({
@@ -133,6 +139,7 @@ export interface FileRoutesByFullPath {
   '/count/': typeof CountIndexRoute
   '/elections/$electionId': typeof AuthedElectionsElectionIdRouteWithChildren
   '/elections/new': typeof AuthedElectionsNewRoute
+  '/vote/$token/$roleId': typeof VoteTokenRoleIdRouteWithChildren
   '/vote/$token/closed': typeof VoteTokenClosedRoute
   '/vote/$token/confirm': typeof VoteTokenConfirmRoute
   '/vote/$token/': typeof VoteTokenIndexRoute
@@ -151,6 +158,7 @@ export interface FileRoutesByTo {
   '/count/$electionId': typeof CountElectionIdRoute
   '/count': typeof CountIndexRoute
   '/elections/new': typeof AuthedElectionsNewRoute
+  '/vote/$token/$roleId': typeof VoteTokenRoleIdRouteWithChildren
   '/vote/$token/closed': typeof VoteTokenClosedRoute
   '/vote/$token/confirm': typeof VoteTokenConfirmRoute
   '/vote/$token': typeof VoteTokenIndexRoute
@@ -172,6 +180,7 @@ export interface FileRoutesById {
   '/count/': typeof CountIndexRoute
   '/_authed/elections/$electionId': typeof AuthedElectionsElectionIdRouteWithChildren
   '/_authed/elections/new': typeof AuthedElectionsNewRoute
+  '/vote/$token/$roleId': typeof VoteTokenRoleIdRouteWithChildren
   '/vote/$token/closed': typeof VoteTokenClosedRoute
   '/vote/$token/confirm': typeof VoteTokenConfirmRoute
   '/vote/$token/': typeof VoteTokenIndexRoute
@@ -193,6 +202,7 @@ export interface FileRouteTypes {
     | '/count/'
     | '/elections/$electionId'
     | '/elections/new'
+    | '/vote/$token/$roleId'
     | '/vote/$token/closed'
     | '/vote/$token/confirm'
     | '/vote/$token/'
@@ -211,6 +221,7 @@ export interface FileRouteTypes {
     | '/count/$electionId'
     | '/count'
     | '/elections/new'
+    | '/vote/$token/$roleId'
     | '/vote/$token/closed'
     | '/vote/$token/confirm'
     | '/vote/$token'
@@ -231,6 +242,7 @@ export interface FileRouteTypes {
     | '/count/'
     | '/_authed/elections/$electionId'
     | '/_authed/elections/new'
+    | '/vote/$token/$roleId'
     | '/vote/$token/closed'
     | '/vote/$token/confirm'
     | '/vote/$token/'
@@ -249,6 +261,9 @@ export interface RootRouteChildren {
   AuthLoginRoute: typeof AuthLoginRoute
   CountElectionIdRoute: typeof CountElectionIdRoute
   CountIndexRoute: typeof CountIndexRoute
+  VoteTokenRoleIdRoute: typeof VoteTokenRoleIdRouteWithChildren
+  VoteTokenClosedRoute: typeof VoteTokenClosedRoute
+  VoteTokenConfirmRoute: typeof VoteTokenConfirmRoute
   VoteTokenIndexRoute: typeof VoteTokenIndexRoute
 }
 
@@ -312,17 +327,24 @@ declare module '@tanstack/react-router' {
     }
     '/vote/$token/confirm': {
       id: '/vote/$token/confirm'
-      path: '/confirm'
+      path: '/vote/$token/confirm'
       fullPath: '/vote/$token/confirm'
       preLoaderRoute: typeof VoteTokenConfirmRouteImport
-      parentRoute: typeof VoteTokenRoute
+      parentRoute: typeof rootRouteImport
     }
     '/vote/$token/closed': {
       id: '/vote/$token/closed'
-      path: '/closed'
+      path: '/vote/$token/closed'
       fullPath: '/vote/$token/closed'
       preLoaderRoute: typeof VoteTokenClosedRouteImport
-      parentRoute: typeof VoteTokenRoute
+      parentRoute: typeof rootRouteImport
+    }
+    '/vote/$token/$roleId': {
+      id: '/vote/$token/$roleId'
+      path: '/vote/$token/$roleId'
+      fullPath: '/vote/$token/$roleId'
+      preLoaderRoute: typeof VoteTokenRoleIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authed/elections/new': {
       id: '/_authed/elections/new'
@@ -347,10 +369,10 @@ declare module '@tanstack/react-router' {
     }
     '/vote/$token/$roleId/$roleId': {
       id: '/vote/$token/$roleId/$roleId'
-      path: '/$roleId/$roleId'
+      path: '/$roleId'
       fullPath: '/vote/$token/$roleId/$roleId'
       preLoaderRoute: typeof VoteTokenRoleIdRoleIdRouteImport
-      parentRoute: typeof VoteTokenRoute
+      parentRoute: typeof VoteTokenRoleIdRoute
     }
     '/_authed/elections/$electionId/settings': {
       id: '/_authed/elections/$electionId/settings'
@@ -423,6 +445,18 @@ const AuthedRouteChildren: AuthedRouteChildren = {
 const AuthedRouteWithChildren =
   AuthedRoute._addFileChildren(AuthedRouteChildren)
 
+interface VoteTokenRoleIdRouteChildren {
+  VoteTokenRoleIdRoleIdRoute: typeof VoteTokenRoleIdRoleIdRoute
+}
+
+const VoteTokenRoleIdRouteChildren: VoteTokenRoleIdRouteChildren = {
+  VoteTokenRoleIdRoleIdRoute: VoteTokenRoleIdRoleIdRoute,
+}
+
+const VoteTokenRoleIdRouteWithChildren = VoteTokenRoleIdRoute._addFileChildren(
+  VoteTokenRoleIdRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthedRoute: AuthedRouteWithChildren,
@@ -430,6 +464,9 @@ const rootRouteChildren: RootRouteChildren = {
   AuthLoginRoute: AuthLoginRoute,
   CountElectionIdRoute: CountElectionIdRoute,
   CountIndexRoute: CountIndexRoute,
+  VoteTokenRoleIdRoute: VoteTokenRoleIdRouteWithChildren,
+  VoteTokenClosedRoute: VoteTokenClosedRoute,
+  VoteTokenConfirmRoute: VoteTokenConfirmRoute,
   VoteTokenIndexRoute: VoteTokenIndexRoute,
 }
 export const routeTree = rootRouteImport
