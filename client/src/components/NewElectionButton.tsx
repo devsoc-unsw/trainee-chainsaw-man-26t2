@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import type { SyntheticEvent } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import type { SyntheticEvent } from "react";
 // TODO: uncomment out following with query
 // import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card } from "@/components/Card";
@@ -46,20 +46,20 @@ export function NewElectionButton() {
     <>
       <button
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={() => { setOpen(true); }}
         className={pillClass}
       >
         New Election
       </button>
-      <NewElectionPopUp open={open} onClose={() => setOpen(false)} />
+      <NewElectionPopUp open={open} onClose={() => { setOpen(false); }} />
     </>
   );
 }
 
-type DialogProps = {
+interface DialogProps {
   open: boolean;
   onClose: () => void;
-};
+}
 
 function NewElectionPopUp({ open, onClose }: DialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -164,7 +164,7 @@ function NewElectionPopUp({ open, onClose }: DialogProps) {
             label="Title"
             autoFocus
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(e) => { setTitle(e.target.value); }}
             placeholder="Input Field"
             error={showErrors ? errors.title : undefined}
           />
@@ -172,7 +172,7 @@ function NewElectionPopUp({ open, onClose }: DialogProps) {
           <TextArea
             label="Description"
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={(e) => { setDescription(e.target.value); }}
             rows={3}
             maxLength={200}
             hint={`${description.length}/200`}

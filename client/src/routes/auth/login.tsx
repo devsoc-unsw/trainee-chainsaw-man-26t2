@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { Card } from "@/components/Card";
 
 export const Route = createFileRoute("/auth/login")({

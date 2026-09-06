@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Field, SelectField, type Option } from "@/components/Form";
-import { Card } from "@/components/Card";
 import { useState } from "react";
+import type {Option} from "@/components/Form";
+import { Field,  SelectField } from "@/components/Form";
+import { Card } from "@/components/Card";
 // TODO: uncomment out following with query
 /* 
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -14,12 +15,12 @@ export const Route = createFileRoute("/_authed/elections/$electionId/settings")(
   },
 );
 
-type Settings = {
+interface Settings {
   counting_method: string | null;
   tie_breaking_method: string | null;
   quorum_percentage: string;
   quorum_flat_number: string;
-};
+}
 
 type SettingsPatch = Partial<{
   counting_method: string | null;
@@ -66,7 +67,7 @@ function useSettings(campaign_id: string): Settings {
 }
 
 function useSaveSettings(_campaign_id: string) {
-  return (patch: SettingsPatch) => console.log("PATCH", patch);
+  return (patch: SettingsPatch) => { console.log("PATCH", patch); };
 }
 // TODO
 
@@ -107,7 +108,7 @@ function RouteComponent() {
   const update =
     <K extends keyof Settings>(key: K) =>
     (value: Settings[K]) =>
-      setSettings((s) => ({ ...s, [key]: value }));
+      { setSettings((s) => ({ ...s, [key]: value })); };
 
   return (
     <div key={electionId} className="w-full space-y-3">
@@ -161,7 +162,7 @@ function RouteComponent() {
           }}
           onBlur={() => {
             if (settings.quorum_flat_number === "")
-              return update("quorum_flat_number")("0");
+              { update("quorum_flat_number")("0"); return; }
             save({ quorum_flat_number: Number(settings.quorum_flat_number) });
           }}
         />

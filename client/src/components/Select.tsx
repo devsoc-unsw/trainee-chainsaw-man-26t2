@@ -2,8 +2,9 @@ import * as React from "react"
 import { Select as SelectPrimitive } from "@base-ui/react/select"
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react"
 
-import { clsx, type ClassValue } from "clsx";
+import {  clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import type {ClassValue} from "clsx";
 
 const Select = SelectPrimitive.Root
 

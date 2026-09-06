@@ -13,7 +13,7 @@ export const areaClass =
 
 export const labelClass = "block text-xs text-neutral-800 mt-1 mb-1 ";
 
-export type Option = { value: string; label: string };
+export interface Option { value: string; label: string }
 
 export function Field({
   label,

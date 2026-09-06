@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Card } from "@/components/Card";
 import { TextArea } from "@/components/Form";
 import { DateTimeField } from "@/components/DateTimeField";
@@ -275,7 +275,7 @@ function RouteComponent() {
           placeholder="Paste a column from your spreadsheet, or type emails separated by commas"
           rows={4}
           value={raw}
-          onChange={(e) => setRaw(e.target.value)}
+          onChange={(e) => { setRaw(e.target.value); }}
         />
 
         {raw.trim() && (
@@ -360,7 +360,7 @@ function RouteComponent() {
       <Card className="p-3">
         <button
           type="button"
-          onClick={() => setSendOpen(true)}
+          onClick={() => { setSendOpen(true); }}
           disabled={uninvited === 0}
           className="w-full rounded-lg bg-emphasis py-1.5 text-xs disabled:opacity-50"
         >
@@ -372,15 +372,15 @@ function RouteComponent() {
 
       <SendDialog
         open={sendOpen}
-        onClose={() => setSendOpen(false)}
+        onClose={() => { setSendOpen(false); }}
         electionId={electionId}
         uninvited={uninvited}
         onSent={() =>
-          setVoters(
+          { setVoters(
             voters.map((v) =>
               v.status === "pending" ? { ...v, status: "invited" } : v,
             ),
-          )
+          ); }
         }
       />
     </div>
@@ -430,7 +430,7 @@ function SendDialog({
     }
     fetchReadiness(electionId)
       .then(setReadiness)
-      .catch(() => setReadiness(null));
+      .catch(() => { setReadiness(null); });
   }, [open, electionId]);
 
   // TODO: every check below is frontend-only, needs to be enforced by backend
@@ -498,7 +498,7 @@ function SendDialog({
             <div className="flex gap-2">
               <button
                 type="button"
-                onClick={() => setStartNow(true)}
+                onClick={() => { setStartNow(true); }}
                 className={`rounded-full px-3 py-1 text-xs ${
                   startNow
                     ? "bg-emphasis text-neutral-900"
@@ -509,7 +509,7 @@ function SendDialog({
               </button>
               <button
                 type="button"
-                onClick={() => setStartNow(false)}
+                onClick={() => { setStartNow(false); }}
                 className={`rounded-full px-3 py-1 text-xs ${
                   startNow
                     ? "border border-muted/40"

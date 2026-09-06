@@ -43,12 +43,12 @@ function RouteComponent() {
     key: keyof Role,
     value: string | number | boolean,
   ) =>
-    setRoles(roles.map((r) => (r.role_id === id ? { ...r, [key]: value } : r)));
+    { setRoles(roles.map((r) => (r.role_id === id ? { ...r, [key]: value } : r))); };
 
   // TODO: delete between TODO lines, just for testing + uncomment block after
   const nextId = () => String(Date.now());
   const addRole = () =>
-    setRoles([
+    { setRoles([
       ...roles,
       {
         role_id: nextId(),
@@ -57,7 +57,7 @@ function RouteComponent() {
         no_of_positions: 1,
         enable_abstention: true,
       },
-    ]);
+    ]); };
   // TODO
 
   /*
@@ -84,7 +84,7 @@ function RouteComponent() {
   */
 
   const removeRole = (id: string) =>
-    setRoles(roles.filter((r) => r.role_id !== id));
+    { setRoles(roles.filter((r) => r.role_id !== id)); };
 
   return (
     <div className="w-full space-y-3">
@@ -93,7 +93,7 @@ function RouteComponent() {
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs text-muted/60">Role #{i + 1}</span>
             <button
-              onClick={() => removeRole(role.role_id)}
+              onClick={() => { removeRole(role.role_id); }}
               className="text-xs text-neutral-500 hover:text-neutral-900"
             >
               Remove
@@ -104,7 +104,7 @@ function RouteComponent() {
             label="Title"
             placeholder="Input field"
             value={role.title}
-            onChange={(e) => update(role.role_id, "title", e.target.value)}
+            onChange={(e) => { update(role.role_id, "title", e.target.value); }}
           />
 
           <TextArea
@@ -115,7 +115,7 @@ function RouteComponent() {
             hint={`${role.description.length}/200`}
             value={role.description}
             onChange={(e) =>
-              update(role.role_id, "description", e.target.value)
+              { update(role.role_id, "description", e.target.value); }
             }
           />
 
@@ -132,7 +132,7 @@ function RouteComponent() {
                 : undefined
             }
             onChange={(e) =>
-              update(role.role_id, "no_of_positions", Number(e.target.value))
+              { update(role.role_id, "no_of_positions", Number(e.target.value)); }
             }
           />
 
@@ -141,7 +141,7 @@ function RouteComponent() {
               type="checkbox"
               checked={role.enable_abstention}
               onChange={(e) =>
-                update(role.role_id, "enable_abstention", e.target.checked)
+                { update(role.role_id, "enable_abstention", e.target.checked); }
               }
               className="h-4 w-4 rounded border border-muted/40 bg-input accent-blue"
             />

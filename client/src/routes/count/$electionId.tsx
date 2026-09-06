@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import type { ElectionResults as Results } from "@/components/ElectionResults";
 import { Card } from "@/components/Card";
 import { ElectionResults } from "@/components/ElectionResults";
-import type { ElectionResults as Results } from "@/components/ElectionResults";
 
 
 export const Route = createFileRoute("/count/$electionId")({
@@ -58,7 +58,7 @@ function RouteComponent() {
     fetchPublicResults(electionId)
       .then(setData)
       .catch((err: unknown) =>
-        setError(err instanceof Error ? err.message : "Couldn't load results."),
+        { setError(err instanceof Error ? err.message : "Couldn't load results."); },
       );
   }, [electionId]);
 

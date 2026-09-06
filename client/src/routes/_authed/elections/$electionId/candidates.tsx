@@ -93,14 +93,14 @@ function RouteComponent() {
     key: K,
     value: Candidate[K],
   ) =>
-    setCandidates((prev) =>
+    { setCandidates((prev) =>
       prev.map((c) => (c.candidate_id === id ? { ...c, [key]: value } : c)),
-    );
+    ); };
 
   // TODO: delete between TODO lines since it's just for testing
   const nextId = () => String(Date.now());
   const addCandidate = () =>
-    setCandidates([
+    { setCandidates([
       ...candidates,
       {
         candidate_id: nextId(),
@@ -110,7 +110,7 @@ function RouteComponent() {
         manifesto: "",
         role_ids: [],
       },
-    ]);
+    ]); };
 
   // TODO
 
@@ -140,7 +140,7 @@ function RouteComponent() {
   */
 
   const removeCandidate = (id: string) =>
-    setCandidates(candidates.filter((c) => c.candidate_id !== id));
+    { setCandidates(candidates.filter((c) => c.candidate_id !== id)); };
 
   if (roles.length === 0) {
     return (
@@ -161,7 +161,7 @@ function RouteComponent() {
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs text-muted/60">Candidate #{i + 1}</span>
             <button
-              onClick={() => removeCandidate(candidate.candidate_id)}
+              onClick={() => { removeCandidate(candidate.candidate_id); }}
               className="text-xs text-neutral-500 hover:text-neutral-900"
             >
               Remove
@@ -173,7 +173,7 @@ function RouteComponent() {
             placeholder="Input Field"
             value={candidate.first_name}
             onChange={(e) =>
-              update(candidate.candidate_id, "first_name", e.target.value)
+              { update(candidate.candidate_id, "first_name", e.target.value); }
             }
           />
           <Field
@@ -181,7 +181,7 @@ function RouteComponent() {
             placeholder="Input Field"
             value={candidate.last_name}
             onChange={(e) =>
-              update(candidate.candidate_id, "last_name", e.target.value)
+              { update(candidate.candidate_id, "last_name", e.target.value); }
             }
           />
           <Field
@@ -195,7 +195,7 @@ function RouteComponent() {
                 : undefined
             }
             onChange={(e) =>
-              update(candidate.candidate_id, "email", e.target.value)
+              { update(candidate.candidate_id, "email", e.target.value); }
             }
           />
           <TextArea
@@ -205,14 +205,14 @@ function RouteComponent() {
             maxLength={MAX_MANIFESTO}
             hint={`${candidate.manifesto.length}/${MAX_MANIFESTO}`}
             onChange={(e) =>
-              update(candidate.candidate_id, "manifesto", e.target.value)
+              { update(candidate.candidate_id, "manifesto", e.target.value); }
             }
           />
           <RoleSelect
             roles={roles}
             selected={candidate.role_ids}
             onChange={(next) =>
-              update(candidate.candidate_id, "role_ids", next)
+              { update(candidate.candidate_id, "role_ids", next); }
             }
           />
         </Card>
@@ -258,7 +258,7 @@ function RoleSelect({
             >
               {role?.title ?? id}
               <button
-                onClick={() => onChange(selected.filter((x) => x !== id))}
+                onClick={() => { onChange(selected.filter((x) => x !== id)); }}
                 aria-label={`Remove ${role?.title ?? id}`}
                 className="text-sm leading-none opacity-50 transition-opacity hover:opacity-100"
               >
@@ -272,7 +272,7 @@ function RoleSelect({
           <select
             className="cursor-pointer appearance-none bg-transparent px-1 text-xs outline-none"
             value=""
-            onChange={(e) => onChange([...selected, e.target.value])}
+            onChange={(e) => { onChange([...selected, e.target.value]); }}
           >
             <option value="" disabled>
               +

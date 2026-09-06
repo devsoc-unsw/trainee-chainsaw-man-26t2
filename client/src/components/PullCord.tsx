@@ -10,7 +10,7 @@ const ANCHOR = { x: 72, y: 0 };
 const BREEZE_RADIUS = 140;
 const BREEZE_FORCE = 0.7;
 
-type Point = { x: number; y: number; px: number; py: number };
+interface Point { x: number; y: number; px: number; py: number }
 
 export function PullCord({
     open,
@@ -124,7 +124,7 @@ export function PullCord({
         };
 
         frame = requestAnimationFrame(tick);
-        return () => cancelAnimationFrame(frame);
+        return () => { cancelAnimationFrame(frame); };
     }, []);
 
     const yank = () => {

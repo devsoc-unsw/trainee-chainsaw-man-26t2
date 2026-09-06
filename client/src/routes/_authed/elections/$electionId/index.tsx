@@ -84,7 +84,7 @@ function ElectionOverview({ campaign }: { campaign: Campaign }) {
   const [draft, setDraft] = useState(campaign);
   const [locationTouched, setLocationTouched] = useState(false);
   const update = <K extends keyof Campaign>(key: K, value: Campaign[K]) =>
-    setDraft({ ...draft, [key]: value });
+    { setDraft({ ...draft, [key]: value }); };
   const save = <K extends keyof Campaign>(key: K) => {
     if (draft[key] === campaign[key]) return;
     patchCampaign(draft.campaign_id, { [key]: draft[key] });
@@ -97,8 +97,8 @@ function ElectionOverview({ campaign }: { campaign: Campaign }) {
           label="Title"
           placeholder="Input field"
           value={draft.title}
-          onChange={(e) => update("title", e.target.value)}
-          onBlur={() => save("title")}
+          onChange={(e) => { update("title", e.target.value); }}
+          onBlur={() => { save("title"); }}
           error={draft.title.trim() ? undefined : "Title can't be empty"}
         />
 
@@ -106,11 +106,11 @@ function ElectionOverview({ campaign }: { campaign: Campaign }) {
           label="Description"
           placeholder="What this election is for and who can vote."
           value={draft.description}
-          onChange={(e) => update("description", e.target.value)}
+          onChange={(e) => { update("description", e.target.value); }}
           rows={3}
           maxLength={200}
           hint={`${draft.description.length}/200`}
-          onBlur={() => save("description")}
+          onBlur={() => { save("description"); }}
           error={
             draft.description.trim() ? undefined : "Description can't be empty"
           }
@@ -157,7 +157,7 @@ function ElectionOverview({ campaign }: { campaign: Campaign }) {
               label="Location"
               placeholder="Input field"
               value={draft.location}
-              onChange={(e) => update("location", e.target.value)}
+              onChange={(e) => { update("location", e.target.value); }}
               onBlur={() => {
                 setLocationTouched(true);
                 save("location");

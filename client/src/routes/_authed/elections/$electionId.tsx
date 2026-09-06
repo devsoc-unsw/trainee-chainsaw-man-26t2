@@ -1,4 +1,4 @@
-import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
+import { Link, Outlet, createFileRoute } from "@tanstack/react-router";
 import { useCallback, useState } from "react";
 import { PullCord } from "@/components/PullCord";
 
@@ -27,7 +27,7 @@ function RouteComponent() {
   // nav bar open by default
   const [open, setOpen] = useState(true);
   const [pointer, setPointer] = useState<{ x: number; y: number } | null>(null);
-  const toggle = useCallback(() => setOpen((o) => !o), []);
+  const toggle = useCallback(() => { setOpen((o) => !o); }, []);
 
   return (
     <div className="mx-auto flex w-full max-w-5xl gap-10 px-6 py-8">
@@ -38,8 +38,8 @@ function RouteComponent() {
       {/* navigation bar */}
       <div
         className="w-36 shrink-0"
-        onPointerMove={(e) => setPointer({ x: e.clientX, y: e.clientY })}
-        onPointerLeave={() => setPointer(null)}
+        onPointerMove={(e) => { setPointer({ x: e.clientX, y: e.clientY }); }}
+        onPointerLeave={() => { setPointer(null); }}
       >
         {/* Pills slide down out from behind the header when pulled open */}
         <div
