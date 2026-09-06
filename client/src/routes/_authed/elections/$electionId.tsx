@@ -9,7 +9,11 @@ export const Route = createFileRoute("/_authed/elections/$electionId")({
 const TABS = [
   { to: "/elections/$electionId", label: "Overview", exact: true },
   { to: "/elections/$electionId/roles", label: "Roles", exact: false },
-  { to: "/elections/$electionId/candidates", label: "Candidates", exact: false },
+  {
+    to: "/elections/$electionId/candidates",
+    label: "Candidates",
+    exact: false,
+  },
   { to: "/elections/$electionId/settings", label: "Settings", exact: false },
   { to: "/elections/$electionId/invites", label: "Invites", exact: false },
   { to: "/elections/$electionId/results", label: "Results", exact: false },
@@ -62,7 +66,12 @@ function RouteComponent() {
           </nav>
         </div>
 
-        <PullCord open={open} onToggle={toggle} length={open ? 200 : 420} pointer={pointer}/>
+        <PullCord
+          open={open}
+          onToggle={toggle}
+          length={open ? 200 : 420}
+          pointer={pointer}
+        />
       </div>
     </div>
   );

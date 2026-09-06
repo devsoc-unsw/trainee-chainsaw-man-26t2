@@ -38,7 +38,11 @@ function RouteComponent() {
   // delete const line since it's just for testing
   const [roles, setRoles] = useState<Role[]>(STUB_ROLES);
 
-  const update = (id: string, key: keyof Role, value: string | number | boolean) =>
+  const update = (
+    id: string,
+    key: keyof Role,
+    value: string | number | boolean,
+  ) =>
     setRoles(roles.map((r) => (r.role_id === id ? { ...r, [key]: value } : r)));
 
   // TODO: delete between TODO lines, just for testing + uncomment block after
@@ -52,7 +56,7 @@ function RouteComponent() {
         description: "",
         no_of_positions: 1,
         enable_abstention: true,
-      }
+      },
     ]);
   // TODO
 
@@ -87,9 +91,7 @@ function RouteComponent() {
       {roles.map((role, i) => (
         <Card key={role.role_id} className="p-4 space-y-2">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs text-muted/60">
-              Role #{i + 1}
-            </span>
+            <span className="text-xs text-muted/60">Role #{i + 1}</span>
             <button
               onClick={() => removeRole(role.role_id)}
               className="text-xs text-neutral-500 hover:text-neutral-900"
@@ -112,7 +114,9 @@ function RouteComponent() {
             maxLength={200}
             hint={`${role.description.length}/200`}
             value={role.description}
-            onChange={(e) => update(role.role_id, "description", e.target.value)}
+            onChange={(e) =>
+              update(role.role_id, "description", e.target.value)
+            }
           />
 
           <Field
@@ -121,18 +125,24 @@ function RouteComponent() {
             type="number"
             min={1}
             value={role.no_of_positions}
-            error={!Number.isInteger(role.no_of_positions) || role.no_of_positions < 1
-              ? "Must be an integer greater or equal to 1"
-              : undefined
+            error={
+              !Number.isInteger(role.no_of_positions) ||
+              role.no_of_positions < 1
+                ? "Must be an integer greater or equal to 1"
+                : undefined
             }
-            onChange={(e) => update(role.role_id, "no_of_positions", Number(e.target.value))}
+            onChange={(e) =>
+              update(role.role_id, "no_of_positions", Number(e.target.value))
+            }
           />
 
           <label className="flex items-center gap-2 pt-3 text-xs text-neutral-800">
             <input
               type="checkbox"
               checked={role.enable_abstention}
-              onChange={(e) => update(role.role_id, "enable_abstention", e.target.checked)}
+              onChange={(e) =>
+                update(role.role_id, "enable_abstention", e.target.checked)
+              }
               className="h-4 w-4 rounded border border-muted/40 bg-input accent-blue"
             />
             Enable abstain
@@ -142,8 +152,8 @@ function RouteComponent() {
 
       <Card className="p-3">
         <button
-        onClick={addRole}
-        className="w-full rounded-lg bg-emphasis py-1.5 text-xs"
+          onClick={addRole}
+          className="w-full rounded-lg bg-emphasis py-1.5 text-xs"
         >
           Click to add +
         </button>

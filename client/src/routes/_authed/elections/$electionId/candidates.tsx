@@ -11,10 +11,11 @@ const CHIP_COLOURS = [
   "bg-ring-3 text-on-dark",
   "bg-ring-4 text-muted",
   "bg-ring-5 text-muted",
-]
+];
 
 // checks for exactly one @, no whitespace and dot in the domain
-const isValidEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+const isValidEmail = (value: string) =>
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
 // fetch data on roles to unlock candidates, and used in multi-select
 interface Role {
@@ -36,9 +37,27 @@ interface Candidate {
 
 // TODO: delete between TODO since it's just for testing
 const STUB_ROLES: Role[] = [
-  { role_id: "1", title: "President", description: "Chairs meetings", no_of_positions: 1, enable_abstention: true },
-  { role_id: "2", title: "Treasurer", description: "Manages the budget", no_of_positions: 2, enable_abstention: false },
-  { role_id: "3", title: "Secretary", description: "Takes minutes", no_of_positions: 1, enable_abstention: true },
+  {
+    role_id: "1",
+    title: "President",
+    description: "Chairs meetings",
+    no_of_positions: 1,
+    enable_abstention: true,
+  },
+  {
+    role_id: "2",
+    title: "Treasurer",
+    description: "Manages the budget",
+    no_of_positions: 2,
+    enable_abstention: false,
+  },
+  {
+    role_id: "3",
+    title: "Secretary",
+    description: "Takes minutes",
+    no_of_positions: 1,
+    enable_abstention: true,
+  },
 ];
 
 const HAS_ROLES = true;
@@ -46,7 +65,7 @@ const HAS_ROLES = true;
 const fetchRoles = async (_electionID: string): Promise<Role[]> => {
   await new Promise((r) => setTimeout(r, 300));
   return HAS_ROLES ? STUB_ROLES : [];
-}
+};
 // TODO
 
 // TODO: uncomment out following given query
@@ -91,7 +110,7 @@ function RouteComponent() {
         manifesto: "",
         role_ids: [],
       },
-    ])
+    ]);
 
   // TODO
 
@@ -140,9 +159,7 @@ function RouteComponent() {
       {candidates.map((candidate, i) => (
         <Card key={candidate.candidate_id} className="space-y-2 p-4">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs text-muted/60">
-              Candidate #{i + 1}
-            </span>
+            <span className="text-xs text-muted/60">Candidate #{i + 1}</span>
             <button
               onClick={() => removeCandidate(candidate.candidate_id)}
               className="text-xs text-neutral-500 hover:text-neutral-900"
@@ -155,13 +172,17 @@ function RouteComponent() {
             label="First Name"
             placeholder="Input Field"
             value={candidate.first_name}
-            onChange={(e) => update(candidate.candidate_id, "first_name", e.target.value)}
+            onChange={(e) =>
+              update(candidate.candidate_id, "first_name", e.target.value)
+            }
           />
           <Field
             label="Last Name"
             placeholder="Input Field"
             value={candidate.last_name}
-            onChange={(e) => update(candidate.candidate_id, "last_name", e.target.value)}
+            onChange={(e) =>
+              update(candidate.candidate_id, "last_name", e.target.value)
+            }
           />
           <Field
             label="Email"
@@ -173,7 +194,9 @@ function RouteComponent() {
                 ? "Must be a valid email"
                 : undefined
             }
-            onChange={(e) => update(candidate.candidate_id, "email", e.target.value)}
+            onChange={(e) =>
+              update(candidate.candidate_id, "email", e.target.value)
+            }
           />
           <TextArea
             label="Manifesto"
@@ -181,12 +204,16 @@ function RouteComponent() {
             value={candidate.manifesto}
             maxLength={MAX_MANIFESTO}
             hint={`${candidate.manifesto.length}/${MAX_MANIFESTO}`}
-            onChange={(e) => update(candidate.candidate_id, "manifesto", e.target.value)}
+            onChange={(e) =>
+              update(candidate.candidate_id, "manifesto", e.target.value)
+            }
           />
           <RoleSelect
             roles={roles}
             selected={candidate.role_ids}
-            onChange={(next) => update(candidate.candidate_id, "role_ids", next)}
+            onChange={(next) =>
+              update(candidate.candidate_id, "role_ids", next)
+            }
           />
         </Card>
       ))}
@@ -220,11 +247,18 @@ function RoleSelect({
       <div className="flex flex-wrap items-center gap-1 rounded-full border border-muted/40 bg-input px-3 py-2">
         {selected.map((id) => {
           const role = roles.find((r) => r.role_id === id);
-          const index = Math.max(0, roles.findIndex((r) => r.role_id === id));
+          const index = Math.max(
+            0,
+            roles.findIndex((r) => r.role_id === id),
+          );
           return (
-            <span key={id} className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-xs ${CHIP_COLOURS[index % CHIP_COLOURS.length]}`}>
+            <span
+              key={id}
+              className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-xs ${CHIP_COLOURS[index % CHIP_COLOURS.length]}`}
+            >
               {role?.title ?? id}
-              <button onClick={() => onChange(selected.filter((x) => x !== id))}
+              <button
+                onClick={() => onChange(selected.filter((x) => x !== id))}
                 aria-label={`Remove ${role?.title ?? id}`}
                 className="text-sm leading-none opacity-50 transition-opacity hover:opacity-100"
               >
@@ -235,8 +269,14 @@ function RoleSelect({
         })}
 
         {unselected.length > 0 && (
-          <select className="cursor-pointer appearance-none bg-transparent px-1 text-xs outline-none" value="" onChange={(e) => onChange([...selected, e.target.value])}>
-            <option value="" disabled>+</option>
+          <select
+            className="cursor-pointer appearance-none bg-transparent px-1 text-xs outline-none"
+            value=""
+            onChange={(e) => onChange([...selected, e.target.value])}
+          >
+            <option value="" disabled>
+              +
+            </option>
             {unselected.map((r) => (
               <option key={r.role_id} value={r.role_id}>
                 {r.title}

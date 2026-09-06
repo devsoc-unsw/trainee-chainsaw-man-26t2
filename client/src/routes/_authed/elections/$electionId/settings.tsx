@@ -45,10 +45,12 @@ const TIE_BREAKING_METHODS: Option[] = [
   { value: "manual", label: "Pause and let an admin decide" },
 ];
 
-const QUORUM_PERCENTAGES: Option[] = [0, 10, 20, 25, 33, 50, 66, 75].map((n) => ({
-  value: String(n),
-  label: `${n}%`,
-}));
+const QUORUM_PERCENTAGES: Option[] = [0, 10, 20, 25, 33, 50, 66, 75].map(
+  (n) => ({
+    value: String(n),
+    label: `${n}%`,
+  }),
+);
 
 // TODO: delete between TODO since it's just for testing
 const MOCK: Record<string, Partial<Settings>> = {
@@ -104,8 +106,8 @@ function RouteComponent() {
 
   const update =
     <K extends keyof Settings>(key: K) =>
-      (value: Settings[K]) =>
-        setSettings((s) => ({ ...s, [key]: value }));
+    (value: Settings[K]) =>
+      setSettings((s) => ({ ...s, [key]: value }));
 
   return (
     <div key={electionId} className="w-full space-y-3">
@@ -148,13 +150,18 @@ function RouteComponent() {
           type="text"
           inputMode="numeric"
           value={settings.quorum_flat_number}
-          error={settings.quorum_flat_number === "" ? "Enter 0 for no quorum" : undefined}
+          error={
+            settings.quorum_flat_number === ""
+              ? "Enter 0 for no quorum"
+              : undefined
+          }
           onChange={(e) => {
             const v = e.target.value;
             if (v === "" || /^\d+$/.test(v)) update("quorum_flat_number")(v);
           }}
           onBlur={() => {
-            if (settings.quorum_flat_number === "") return update("quorum_flat_number")("0");
+            if (settings.quorum_flat_number === "")
+              return update("quorum_flat_number")("0");
             save({ quorum_flat_number: Number(settings.quorum_flat_number) });
           }}
         />

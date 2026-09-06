@@ -111,7 +111,9 @@ function ElectionOverview({ campaign }: { campaign: Campaign }) {
           maxLength={200}
           hint={`${draft.description.length}/200`}
           onBlur={() => save("description")}
-          error={draft.description.trim() ? undefined : "Description can't be empty"}
+          error={
+            draft.description.trim() ? undefined : "Description can't be empty"
+          }
         />
 
         <label className="flex items-start gap-2 pt-3 text-xs text-neutral-800">
@@ -120,7 +122,9 @@ function ElectionOverview({ campaign }: { campaign: Campaign }) {
             checked={draft.publicise_results}
             onChange={(e) => {
               update("publicise_results", e.target.checked);
-              patchCampaign(draft.campaign_id, { publicise_results: e.target.checked });
+              patchCampaign(draft.campaign_id, {
+                publicise_results: e.target.checked,
+              });
             }}
             className="h-4 w-4 rounded border border-muted/40 bg-input accent-blue"
           />
@@ -169,5 +173,4 @@ function ElectionOverview({ campaign }: { campaign: Campaign }) {
       </Card>
     </div>
   );
-
 }
