@@ -23,18 +23,14 @@ export interface paths {
             responses: {
                 /** @description Campaigns retrieved successfully */
                 200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content: {
                         "application/json": components["schemas"]["Campaign"][];
                     };
                 };
                 /** @description Unauthorized */
                 401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
             };
@@ -56,32 +52,24 @@ export interface paths {
             responses: {
                 /** @description Campaign created successfully */
                 201: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content: {
                         "application/json": components["schemas"]["CreateCampaignResponse"];
                     };
                 };
                 /** @description Malformed JSON request body */
                 400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Unauthorized */
                 401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Request body could not be deserialized or failed field validation */
                 422: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
             };
@@ -115,25 +103,19 @@ export interface paths {
             responses: {
                 /** @description Campaign retrieved successfully */
                 200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content: {
                         "application/json": components["schemas"]["Campaign"];
                     };
                 };
                 /** @description Unauthorized */
                 401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Campaign not found */
                 404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
             };
@@ -154,23 +136,17 @@ export interface paths {
             responses: {
                 /** @description Campaign deleted successfully */
                 204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Unauthorized */
                 401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Campaign not found */
                 404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
             };
@@ -195,37 +171,27 @@ export interface paths {
             responses: {
                 /** @description Campaign updated successfully */
                 204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Malformed JSON request body */
                 400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Unauthorized */
                 401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Campaign not found */
                 404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Request body could not be deserialized or failed field validation */
                 422: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
             };
@@ -255,25 +221,19 @@ export interface paths {
             responses: {
                 /** @description Candidates retrieved successfully */
                 200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content: {
                         "application/json": components["schemas"]["Candidate"][];
                     };
                 };
                 /** @description Unauthorized */
                 401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Campaign not found */
                 404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
             };
@@ -297,39 +257,29 @@ export interface paths {
             responses: {
                 /** @description Candidate created successfully */
                 201: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content: {
                         "application/json": components["schemas"]["CreateCandidateResponse"];
                     };
                 };
                 /** @description Malformed JSON request body */
                 400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Unauthorized */
                 401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Campaign not found */
                 404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Request body could not be deserialized or failed field validation */
                 422: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
             };
@@ -365,25 +315,19 @@ export interface paths {
             responses: {
                 /** @description Candidate retrieved successfully */
                 200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content: {
                         "application/json": components["schemas"]["Candidate"];
                     };
                 };
                 /** @description Unauthorized */
                 401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Candidate not found */
                 404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
             };
@@ -405,23 +349,17 @@ export interface paths {
             responses: {
                 /** @description Candidate deleted successfully */
                 204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Unauthorized */
                 401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Candidate not found */
                 404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
             };
@@ -447,37 +385,27 @@ export interface paths {
             responses: {
                 /** @description Candidate updated successfully */
                 204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Malformed JSON request body */
                 400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Unauthorized */
                 401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Candidate not found */
                 404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Request body could not be deserialized or failed field validation */
                 422: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
             };
@@ -507,25 +435,19 @@ export interface paths {
             responses: {
                 /** @description Roles retrieved successfully */
                 200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content: {
                         "application/json": components["schemas"]["Role"][];
                     };
                 };
                 /** @description Unauthorized */
                 401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Campaign not found */
                 404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
             };
@@ -549,39 +471,29 @@ export interface paths {
             responses: {
                 /** @description Role created successfully */
                 201: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content: {
                         "application/json": components["schemas"]["CreateRoleResponse"];
                     };
                 };
                 /** @description Malformed JSON request body */
                 400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Unauthorized */
                 401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Campaign not found */
                 404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Request body could not be deserialized or failed field validation */
                 422: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
             };
@@ -617,25 +529,19 @@ export interface paths {
             responses: {
                 /** @description Role retrieved successfully */
                 200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content: {
                         "application/json": components["schemas"]["Role"];
                     };
                 };
                 /** @description Unauthorized */
                 401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Role not found */
                 404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
             };
@@ -657,23 +563,17 @@ export interface paths {
             responses: {
                 /** @description Role deleted successfully */
                 204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Unauthorized */
                 401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Role not found */
                 404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
             };
@@ -699,37 +599,27 @@ export interface paths {
             responses: {
                 /** @description Role updated successfully */
                 204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Malformed JSON request body */
                 400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Unauthorized */
                 401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Role not found */
                 404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Request body could not be deserialized or failed field validation */
                 422: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
             };
@@ -759,25 +649,19 @@ export interface paths {
             responses: {
                 /** @description Voters retrieved successfully */
                 200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content: {
                         "application/json": components["schemas"]["Voter"][];
                     };
                 };
                 /** @description Unauthorized */
                 401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Campaign not found */
                 404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
             };
@@ -801,46 +685,34 @@ export interface paths {
             responses: {
                 /** @description Voters added successfully */
                 201: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content: {
                         "application/json": components["schemas"]["CreateVotersResponse"];
                     };
                 };
                 /** @description Malformed JSON request body */
                 400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Unauthorized */
                 401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Campaign not found */
                 404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description One or more voters already exists in campaign */
                 409: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Request body could not be deserialized or failed field validation */
                 422: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
             };
@@ -880,37 +752,27 @@ export interface paths {
             responses: {
                 /** @description Voters deleted successfully */
                 204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Malformed JSON request body */
                 400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Unauthorized */
                 401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Campaign not found */
                 404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Request body could not be deserialized or failed field validation */
                 422: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
             };
@@ -949,23 +811,17 @@ export interface paths {
             responses: {
                 /** @description Invitations accepted for sending */
                 202: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Unauthorized */
                 401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Campaign not found */
                 404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
             };
@@ -1002,25 +858,19 @@ export interface paths {
             responses: {
                 /** @description Voting information retrieved successfully */
                 200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content: {
                         "application/json": components["schemas"]["VotingCampaign"];
                     };
                 };
                 /** @description Voting token not found or invalid */
                 404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Voting is not currently open */
                 409: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
             };
@@ -1062,30 +912,22 @@ export interface paths {
             responses: {
                 /** @description Ballot submitted successfully */
                 204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Invalid ballot */
                 400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Voting token not found or invalid */
                 404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Vote already submitted or voting is not currently open */
                 409: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
             };
@@ -1122,32 +964,24 @@ export interface paths {
             responses: {
                 /** @description Results retrieved successfully */
                 200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content: {
                         "application/json": components["schemas"]["ElectionResults"];
                     };
                 };
                 /** @description Unauthorized */
                 401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Campaign not found */
                 404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Results are not yet available */
                 409: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
             };
@@ -1186,25 +1020,19 @@ export interface paths {
             responses: {
                 /** @description Election data exported successfully */
                 200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content: {
                         "text/csv": string;
                     };
                 };
                 /** @description Unauthorized */
                 401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Campaign not found */
                 404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
             };
@@ -1239,16 +1067,12 @@ export interface paths {
             responses: {
                 /** @description Authentication successful and user redirected */
                 302: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Invalid authentication callback */
                 400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
             };
@@ -1282,16 +1106,12 @@ export interface paths {
             responses: {
                 /** @description Logout successful */
                 204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
                 /** @description Unauthorized */
                 401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
+                    headers: Record<string, unknown>;
                     content?: never;
                 };
             };
@@ -1447,7 +1267,7 @@ export interface components {
             abstain: boolean;
             /** @description Ranked candidate preferences for this role. */
             preferences: components["schemas"]["CandidatePreference"][];
-        } & unknown;
+        } & unknown; // // eslint-disable-next-line no-redundant-type-constituents
         CandidatePreference: {
             /** Format: number */
             candidate_id: string;

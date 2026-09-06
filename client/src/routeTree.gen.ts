@@ -68,14 +68,14 @@ const VoteTokenIndexRoute = VoteTokenIndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const VoteTokenConfirmRoute = VoteTokenConfirmRouteImport.update({
-  id: '/vote/$token/confirm',
-  path: '/vote/$token/confirm',
-  getParentRoute: () => rootRouteImport,
+  id: '/confirm',
+  path: '/confirm',
+  getParentRoute: () => VoteTokenRoute,
 } as any)
 const VoteTokenClosedRoute = VoteTokenClosedRouteImport.update({
-  id: '/vote/$token/closed',
-  path: '/vote/$token/closed',
-  getParentRoute: () => rootRouteImport,
+  id: '/closed',
+  path: '/closed',
+  getParentRoute: () => VoteTokenRoute,
 } as any)
 const AuthedElectionsNewRoute = AuthedElectionsNewRouteImport.update({
   id: '/elections/new',
@@ -95,9 +95,9 @@ const AuthedElectionsElectionIdIndexRoute =
     getParentRoute: () => AuthedElectionsElectionIdRoute,
   } as any)
 const VoteTokenRoleIdRoleIdRoute = VoteTokenRoleIdRoleIdRouteImport.update({
-  id: '/vote/$token/$roleId/$roleId',
-  path: '/vote/$token/$roleId/$roleId',
-  getParentRoute: () => rootRouteImport,
+  id: '/$roleId/$roleId',
+  path: '/$roleId/$roleId',
+  getParentRoute: () => VoteTokenRoute,
 } as any)
 const AuthedElectionsElectionIdSettingsRoute =
   AuthedElectionsElectionIdSettingsRouteImport.update({
@@ -249,10 +249,7 @@ export interface RootRouteChildren {
   AuthLoginRoute: typeof AuthLoginRoute
   CountElectionIdRoute: typeof CountElectionIdRoute
   CountIndexRoute: typeof CountIndexRoute
-  VoteTokenClosedRoute: typeof VoteTokenClosedRoute
-  VoteTokenConfirmRoute: typeof VoteTokenConfirmRoute
   VoteTokenIndexRoute: typeof VoteTokenIndexRoute
-  VoteTokenRoleIdRoleIdRoute: typeof VoteTokenRoleIdRoleIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -315,17 +312,17 @@ declare module '@tanstack/react-router' {
     }
     '/vote/$token/confirm': {
       id: '/vote/$token/confirm'
-      path: '/vote/$token/confirm'
+      path: '/confirm'
       fullPath: '/vote/$token/confirm'
       preLoaderRoute: typeof VoteTokenConfirmRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof VoteTokenRoute
     }
     '/vote/$token/closed': {
       id: '/vote/$token/closed'
-      path: '/vote/$token/closed'
+      path: '/closed'
       fullPath: '/vote/$token/closed'
       preLoaderRoute: typeof VoteTokenClosedRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof VoteTokenRoute
     }
     '/_authed/elections/new': {
       id: '/_authed/elections/new'
@@ -350,10 +347,10 @@ declare module '@tanstack/react-router' {
     }
     '/vote/$token/$roleId/$roleId': {
       id: '/vote/$token/$roleId/$roleId'
-      path: '/vote/$token/$roleId/$roleId'
+      path: '/$roleId/$roleId'
       fullPath: '/vote/$token/$roleId/$roleId'
       preLoaderRoute: typeof VoteTokenRoleIdRoleIdRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof VoteTokenRoute
     }
     '/_authed/elections/$electionId/settings': {
       id: '/_authed/elections/$electionId/settings'
@@ -433,10 +430,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthLoginRoute: AuthLoginRoute,
   CountElectionIdRoute: CountElectionIdRoute,
   CountIndexRoute: CountIndexRoute,
-  VoteTokenClosedRoute: VoteTokenClosedRoute,
-  VoteTokenConfirmRoute: VoteTokenConfirmRoute,
   VoteTokenIndexRoute: VoteTokenIndexRoute,
-  VoteTokenRoleIdRoleIdRoute: VoteTokenRoleIdRoleIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

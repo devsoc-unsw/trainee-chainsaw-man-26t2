@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 // import { useQuery } from "@tanstack/react-query";
 // import { getVoterCampaignInformation } from "#/lib/api";
 import { format, getTime } from "date-fns";
@@ -22,12 +23,19 @@ function ResponsbilityButton() {
   );
 }
 
-function RoleCard(role: VotingRole) {
-
-  
+function RoleCard({ role }: { role: VotingRole }) {
   const { title, no_of_positions, enable_abstention, candidates } = role;
+  
+ 
 
-  const numCandidates = (!candidates) ? 0 : candidates.length;
+  console.log(title)
+
+  console.log(no_of_positions)
+
+  const isAbstainable = (enable_abstention) ? "True" : "False";
+
+   
+  const numCandidates = candidates.length;
 
   return (
     <>
@@ -39,6 +47,12 @@ function RoleCard(role: VotingRole) {
           <p className="text-muted">
             No. Candidates: {numCandidates}
           </p>
+          <p className="text-muted">
+            No. Positions: {no_of_positions}
+          </p>
+          <p className="text-muted">
+            Abstainable?: {isAbstainable}
+          </p>
         </div>
         <div className="mr-10 mt-6">
           <ResponsbilityButton />
@@ -48,16 +62,15 @@ function RoleCard(role: VotingRole) {
   );
 }
 
-function StatusPill({opens, closes} : {opens: String, closes: String}) {
+function StatusPill({opens, closes} : {opens: string, closes: string}) {
 
-
-  const currTime = Date.now()
+  const [time, ] = useState(() => Date.now())
   
-  var date = opens
-  var color = "status-label-red"
-  var text = "opens on"
+  let date = opens
+  let color = "status-label-red"
+  let text = "opens on"
   
-  if (currTime > getTime(opens.toString())) {
+  if (time > getTime(opens)) {
     color = "status-label-green"
     date = closes
     text = "closes on"
@@ -78,15 +91,14 @@ function StatusPill({opens, closes} : {opens: String, closes: String}) {
   );
 }
 
-function beginVotingButton({opens, closes} : {opens: String, closes: String}) {
-  const currTime = Date.now()
+function BeginVotingButton({opens}: {opens: string}) {
+
+  const [time, ] = useState(() => Date.now())
   
-  var date = closes
-  var color = "status-label-red"
+  let color = "status-label-red"
   
-  if (currTime > getTime(opens.toString())) {
+  if (time > getTime(opens)) {
     color = "status-label-green"
-    date = opens
   }
   
   return (
@@ -149,8 +161,10 @@ function RouteComponent() {
       };
 
   // const {title, description, opening_date_time, closing_date_time, roles} = isError || !data ? temp_data : data;
+  
   const {title, description, opening_date_time, closing_date_time, roles} = temp_data;
-
+  console.log(description)
+  
 
   const orgName = "orgName"
   const userEmail = "example@gmail.com"
@@ -199,16 +213,14 @@ function RouteComponent() {
                •
             </p>
             <p className="text-xl text-on-dark-muted">
-              {`Positions: ${roles.length}`}
+              {`Positions: ${roles.length.toString()}`}
             </p>
           </div>
-          <button className="h-fit bg-card-muted px-8 py-3/4 rounded-xl">
-            Begin
-          </button>
+          <BeginVotingButton opens={open_date}/>
         </div>
           <div className="scrollbar-thin min-h-0 snap-y scroll-pt-1 flex-1 flex flex-col overflow-y-auto gap-4">
-            {(!roles) ? <></> : roles.map((role: VotingRole) => (
-              <RoleCard role={role}/>
+            {roles.map((role: VotingRole) => (
+              <RoleCard key={role.role_id} role={role}/>
             ))}
           <div className="h-[50%] min-h-0 flex-none" aria-hidden="true" />
         </div>
