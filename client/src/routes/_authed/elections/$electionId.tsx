@@ -19,15 +19,14 @@ const TABS = [
   { to: "/elections/$electionId/results", label: "Results", exact: false },
 ] as const;
 
-const ROW = 40;
-const NAV_HEIGHT = TABS.length * ROW;
-
 function RouteComponent() {
   const { electionId } = Route.useParams();
   // nav bar open by default
   const [open, setOpen] = useState(true);
   const [pointer, setPointer] = useState<{ x: number; y: number } | null>(null);
-  const toggle = useCallback(() => { setOpen((o) => !o); }, []);
+  const toggle = useCallback(() => {
+    setOpen((o) => !o);
+  }, []);
 
   return (
     <div className="mx-auto flex w-full max-w-5xl gap-10 px-6 py-8">
@@ -38,15 +37,22 @@ function RouteComponent() {
       {/* navigation bar */}
       <div
         className="w-36 shrink-0"
-        onPointerMove={(e) => { setPointer({ x: e.clientX, y: e.clientY }); }}
-        onPointerLeave={() => { setPointer(null); }}
+        onPointerMove={(e) => {
+          setPointer({ x: e.clientX, y: e.clientY });
+        }}
+        onPointerLeave={() => {
+          setPointer(null);
+        }}
       >
         {/* Pills slide down out from behind the header when pulled open */}
         <div
-          className="overflow-hidden transition-[height] duration-500 ease-out"
-          style={{ height: open ? NAV_HEIGHT : 0 }}
+          className="grid transition-[grid-template-rows] duration-500 ease-out"
+          style={{ gridTemplateRows: open ? "1fr" : "0fr" }}
         >
-          <nav aria-hidden={!open} className="flex flex-col gap-2">
+          <nav
+            aria-hidden={!open}
+            className="flex flex-col gap-2 overflow-hidden"
+          >
             {TABS.map((tab) => (
               <Link
                 key={tab.label}
