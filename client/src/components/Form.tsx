@@ -27,13 +27,17 @@ export interface Option {
 export function Field({
   label,
   error,
+  hint,
   ...props
-}: { label: string; error?: string } & InputHTMLAttributes<HTMLInputElement>) {
+}: { label: string; error?: string; hint?: string; } & InputHTMLAttributes<HTMLInputElement>) {
   return (
     <div>
-      <label className={labelClass}>{label}</label>
-      <input className={fieldClass} {...props} />
-      {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+      <div className="flex items-baseline justify-between">
+        <label className={labelClass}>{label}</label>
+        {hint && <span className="text-xs text-muted/60">{hint}</span>}
+        </div>
+        <input className={fieldClass} {...props} />
+        {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
     </div>
   );
 }

@@ -1,5 +1,10 @@
 import type { components } from "./generated/schema";
 
+export type Campaign = components["schemas"]["Campaign"];
+export type CreateCampaignRequest = components["schemas"]["CreateCampaignRequest"];
+export type CreateCampaignResponse = components["schemas"]["CreateCampaignResponse"];
+export type UpdateCampaignRequest = components["schemas"]["UpdateCampaignRequest"];
+
 export type VotingCampaign = components["schemas"]["VotingCampaign"];
 export type VotingRole = components["schemas"]["VotingRole"];
 export type VotingCandidate = components["schemas"]["VotingCandidate"];

@@ -60,6 +60,7 @@ function RolesEditor({
       roleId: string;
       changes: UpdateRoleRequest;
     }) => updateRole(electionId, roleId, changes),
+    onSettled: invalidate,
   });
 
   const deleteMutation = useMutation({
@@ -79,7 +80,7 @@ function RolesEditor({
 
   const save = (role: Role, key: keyof UpdateRoleRequest) => {
     const original = serverRoles.find((r) => r.role_id === role.role_id);
-    if (original && original[key] === role[key]) return;
+    if (!original || original[key] === role[key]) return;
     updateMutation.mutate({
       roleId: role.role_id,
       changes: { [key]: role[key] },

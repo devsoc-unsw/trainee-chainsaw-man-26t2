@@ -1,5 +1,9 @@
 import axios from "axios";
 import type {
+  Campaign,
+  CreateCampaignRequest,
+  CreateCampaignResponse,
+  UpdateCampaignRequest,
   Candidate,
   CreateCandidateRequest,
   CreateCandidateResponse,
@@ -14,6 +18,23 @@ export const api = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
   withCredentials: true,
 });
+
+export async function createCampaign(body: CreateCampaignRequest): Promise<CreateCampaignResponse> {
+  const { data } = await api.post("/campaigns", body);
+  return data;
+}
+
+export async function getCampaign(campaignId: string): Promise<Campaign> {
+  const { data } = await api.get(`/campaigns/${campaignId}`);
+  return data;
+}
+
+export async function updateCampaign(
+  campaignId: string,
+  changes: UpdateCampaignRequest,
+): Promise<void> {
+  await api.patch(`/campaigns/${campaignId}`, changes);
+}
 
 export async function getRoles(campaignId: string): Promise<Array<Role>> {
   const { data } = await api.get(`/campaigns/${campaignId}/roles`);

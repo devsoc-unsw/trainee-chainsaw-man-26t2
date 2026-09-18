@@ -1,46 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import type { SyntheticEvent } from "react";
-// TODO: uncomment out following with query
-// import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createCampaign } from "@/lib/api";
 import { Card } from "@/components/Card";
 import { Field, TextArea } from "@/components/Form";
 
-const pillClass =
-  "rounded-full bg-emphasis px-4 py-2 text-sm font-medium text-muted";
-
-interface CreateCampaignRequest {
-  title: string;
-  description: string;
-}
-
-interface CreateCampaignResponse {
-  campaign_id: string;
-}
-
-// TODO: delete between TODO lines, just for testing
-let mockId = 0;
-async function createCampaign(
-  body: CreateCampaignRequest,
-): Promise<CreateCampaignResponse> {
-  await new Promise((r) => setTimeout(r, 400));
-  console.log("createCampaign", body);
-  return { campaign_id: String(++mockId) };
-}
+// TODO: delete between TODO once dates made optional
+const HOUR = 60 * 60 * 1000;
+const DAY = 24 * HOUR;
 // TODO
 
-// TODO: uncomment following with query
-/*
-async function createCampaign(body: CreateCampaignRequest): Promise<CreateCampaignResponse> {
-  const res = await fetch("/campaigns", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  if (!res.ok) throw new Error("That didn't save. Try again.");
-  return res.json();
-}
-*/
+const pillClass =
+  "rounded-full bg-emphasis px-4 py-2 text-sm font-medium text-muted";
 
 export function NewElectionButton() {
   const [open, setOpen] = useState(false);
@@ -79,39 +51,6 @@ function NewElectionPopUp({ open, onClose }: DialogProps) {
   const [description, setDescription] = useState("");
   const [showErrors, setShowErrors] = useState(false);
 
-  // TODO: delete between TODO lines since just for testing
-  const [pending, setPending] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
-  const createElection = {
-    isPending: pending,
-    isError: submitError !== null,
-    error: { message: submitError ?? "" },
-    reset: () => {
-      setPending(false);
-      setSubmitError(null);
-    },
-    mutate: async (body: CreateCampaignRequest) => {
-      setPending(true);
-      setSubmitError(null);
-      try {
-        const { campaign_id } = await createCampaign(body);
-        onClose();
-        navigate({
-          to: "/elections/$electionId",
-          params: { electionId: campaign_id },
-        });
-      } catch (err) {
-        setSubmitError(
-          err instanceof Error ? err.message : "That didn't save. Try again.",
-        );
-        setPending(false);
-      }
-    },
-  };
-  // TODO
-
-  // TODO: uncomment following with query
-  /*
   const queryClient = useQueryClient();
   const createElection = useMutation({
     mutationFn: createCampaign,
@@ -121,7 +60,6 @@ function NewElectionPopUp({ open, onClose }: DialogProps) {
       navigate({ to: "/elections/$electionId", params: { electionId: campaign_id } });
     },
   });
-  */
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -135,13 +73,8 @@ function NewElectionPopUp({ open, onClose }: DialogProps) {
       setTitle("");
       setDescription("");
       setShowErrors(false);
-      // TODO: delete between TODO lines since just for testing
-      setPending(false);
-      setSubmitError(null);
-      // TODO
-
-      // TODO: uncomment out following with query
-      // createElection.reset();
+      
+      createElection.reset();
     }
   }, [open]);
 
@@ -159,6 +92,11 @@ function NewElectionPopUp({ open, onClose }: DialogProps) {
     createElection.mutate({
       title: title.trim(),
       description: description.trim(),
+      allow_role_overlaps: false,
+      // TODO: delete between TODO once dates made optional
+      opening_date_time: new Date(Date.now() + HOUR).toISOString(),
+      closing_date_time: new Date(Date.now() + 7 * DAY).toISOString(),
+      // TODO
     });
   }
 
@@ -190,6 +128,8 @@ function NewElectionPopUp({ open, onClose }: DialogProps) {
               setTitle(e.target.value);
             }}
             placeholder="Input Field"
+            maxLength={50}
+            hint={`${title.length}/50`}
             error={showErrors ? errors.title : undefined}
           />
 
