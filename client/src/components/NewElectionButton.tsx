@@ -95,7 +95,7 @@ function NewElectionPopUp({ open, onClose }: DialogProps) {
       allow_role_overlaps: false,
       // TODO: delete between TODO once dates made optional
       opening_date_time: new Date(Date.now() + HOUR).toISOString(),
-      closing_date_time: new Date(Date.now() + 7 * DAY).toISOString(),
+      closing_date_time: new Date(Date.now() + 365 * DAY).toISOString(),
       // TODO
     });
   }
