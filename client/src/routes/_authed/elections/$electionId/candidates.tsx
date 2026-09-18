@@ -1,7 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Field, TextArea, labelClass } from "@/components/Form";
 import { Card } from "@/components/Card";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createCandidate, deleteCandidate, getCandidates, getRoles, updateCandidate } from "@/lib/api";
+import type { Candidate, Role, UpdateCandidateRequest } from "@/lib/apiTypes";
 
 const MAX_MANIFESTO = 1000;
 // concentric ring palette cycled by role order for role selection
@@ -17,145 +20,83 @@ const CHIP_COLOURS = [
 const isValidEmail = (value: string) =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
-// fetch data on roles to unlock candidates, and used in multi-select
-interface Role {
-  role_id: string;
-  title: string;
-  description: string;
-  no_of_positions: number;
-  enable_abstention: boolean;
-}
-
-interface Candidate {
-  candidate_id: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  manifesto: string;
-  role_ids: string[];
-}
-
-// TODO: delete between TODO since it's just for testing
-const STUB_ROLES: Role[] = [
-  {
-    role_id: "1",
-    title: "President",
-    description: "Chairs meetings",
-    no_of_positions: 1,
-    enable_abstention: true,
-  },
-  {
-    role_id: "2",
-    title: "Treasurer",
-    description: "Manages the budget",
-    no_of_positions: 2,
-    enable_abstention: false,
-  },
-  {
-    role_id: "3",
-    title: "Secretary",
-    description: "Takes minutes",
-    no_of_positions: 1,
-    enable_abstention: true,
-  },
-];
-
-const HAS_ROLES = true;
-
-const fetchRoles = async (_electionID: string): Promise<Role[]> => {
-  await new Promise((r) => setTimeout(r, 300));
-  return HAS_ROLES ? STUB_ROLES : [];
-};
-// TODO
-
-// TODO: uncomment out following given query
-/*
-const fetchRoles = async (electionId: string): Promise<Role[]> => {
-  const res = await fetch(`/api/elections/${electionId}/roles`);
-  if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
-  return res.json();
-};
-*/
-
 export const Route = createFileRoute(
   "/_authed/elections/$electionId/candidates",
 )({
-  loader: ({ params }) => fetchRoles(params.electionId),
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const roles = Route.useLoaderData();
-  const [candidates, setCandidates] = useState<Candidate[]>([]);
-
-  const update = <K extends keyof Candidate>(
-    id: string,
-    key: K,
-    value: Candidate[K],
-  ) => {
-    setCandidates((prev) =>
-      prev.map((c) => (c.candidate_id === id ? { ...c, [key]: value } : c)),
+  const { electionId } = Route.useParams();
+  const roles = useQuery({ queryKey:  ["roles", electionId], queryFn: () => getRoles(electionId) });
+  const candidates = useQuery({ queryKey: ["candidates", electionId], queryFn: () => getCandidates(electionId) });
+  if (roles.isPending || candidates.isPending) return <p className="p-4 text-xs">Loading…</p>;
+  if (roles.error || candidates.error) return <p className="p-4 text-xs">Couldn't load candidates.</p>;
+  if (roles.data.length === 0) {
+    return (
+      <Card className="p-4">
+        <p className="text-center text-xs">Add at least one role before adding candidate(s).</p>
+      </Card>
     );
-  };
+  }
 
-  // TODO: delete between TODO lines since it's just for testing
-  const nextId = () => String(Date.now());
-  const addCandidate = () => {
-    setCandidates([
-      ...candidates,
-      {
-        candidate_id: nextId(),
-        first_name: "",
-        last_name: "",
-        email: "",
-        manifesto: "",
-        role_ids: [],
-      },
-    ]);
-  };
+  return <CandidatesEditor electionId={electionId} roles={roles.data} candidates={candidates.data} />;
+}
 
-  // TODO
+function CandidatesEditor({
+  electionId,
+  roles,
+  candidates: serverCandidates,
+}: {
+  electionId: string;
+  roles: Array<Role>;
+  candidates: Array<Candidate>;
+}) {
+  const queryClient = useQueryClient();
+  const [candidates, setCandidates] = useState(serverCandidates);
 
-  // TODO: uncomment out below with query
-  /*
-  const addCandidate = async () => {
-    const { candidate_id } = await createCandidate(electionId, {
+  useEffect(() => { setCandidates(serverCandidates); }, [serverCandidates]);
+
+  const invalidate = () =>
+    queryClient.invalidateQueries({ queryKey: ["candidates", electionId] });
+
+const createMutation = useMutation({
+  mutationFn: () =>
+    createCandidate(electionId, {
       first_name: "",
       last_name: "",
       email: "",
-      manifesto: "",
-      role_ids: [],
-    });
+      role_ids: [roles[0].role_id],
+    }),
+  onSuccess: invalidate,
+});
 
-    setCandidates([
-      ...candidates,
-      {
-        candidate_id,
-        first_name: "",
-        last_name: "",
-        email: "",
-        manifesto: "",
-        role_ids: [],
-      },
-    ]);
-  };
-  */
+const updateMutation = useMutation({
+  mutationFn: ({ candidateId, changes }: { candidateId: string; changes: UpdateCandidateRequest }) =>
+    updateCandidate(electionId, candidateId, changes),
+  onSettled: invalidate,
+});
 
-  const removeCandidate = (id: string) => {
-    setCandidates(candidates.filter((c) => c.candidate_id !== id));
-  };
+const deleteMutation = useMutation({
+  mutationFn: (candidateId: string) => deleteCandidate(electionId, candidateId),
+  onSuccess: invalidate,
+});
 
-  if (roles.length === 0) {
-    return (
-      <div className="w-full space-y-3">
-        <Card className="p-4">
-          <p className="text-center text-xs">
-            Add at least one role before adding candidate(s).
-          </p>
-        </Card>
-      </div>
-    );
-  }
+const update = <K extends keyof Candidate>(id: string, key: K, value: Candidate[K]) => {
+  setCandidates((prev) =>
+    prev.map((c) => (c.candidate_id === id ? { ...c, [key]: value } : c)),
+  );
+};
+
+const save = (candidate: Candidate, key: keyof UpdateCandidateRequest) => {
+  const original = serverCandidates.find((c) => c.candidate_id === candidate.candidate_id);
+  if (!original || original[key] === candidate[key]) return;
+  if (key === "email" && !isValidEmail(candidate.email)) return;
+  updateMutation.mutate({
+    candidateId: candidate.candidate_id,
+    changes: { [key]: candidate[key] } as UpdateCandidateRequest,
+  });
+};
 
   return (
     <div className="w-full space-y-3">
@@ -165,7 +106,7 @@ function RouteComponent() {
             <span className="text-xs text-muted/60">Candidate #{i + 1}</span>
             <button
               onClick={() => {
-                removeCandidate(candidate.candidate_id);
+                deleteMutation.mutate(candidate.candidate_id);
               }}
               className="text-xs text-neutral-500 hover:text-neutral-900"
             >
@@ -180,6 +121,9 @@ function RouteComponent() {
             onChange={(e) => {
               update(candidate.candidate_id, "first_name", e.target.value);
             }}
+            onBlur={() => {
+              save(candidate, "first_name");
+            }}
           />
           <Field
             label="Last Name"
@@ -187,6 +131,9 @@ function RouteComponent() {
             value={candidate.last_name}
             onChange={(e) => {
               update(candidate.candidate_id, "last_name", e.target.value);
+            }}
+            onBlur={() => {
+              save(candidate, "last_name");
             }}
           />
           <Field
@@ -202,15 +149,21 @@ function RouteComponent() {
             onChange={(e) => {
               update(candidate.candidate_id, "email", e.target.value);
             }}
+            onBlur={() => {
+              save(candidate, "email");
+            }}
           />
           <TextArea
             label="Manifesto"
             placeholder="Input Field"
-            value={candidate.manifesto}
+            value={candidate.manifesto ?? ""}
             maxLength={MAX_MANIFESTO}
-            hint={`${candidate.manifesto.length}/${MAX_MANIFESTO}`}
+            hint={`${(candidate.manifesto ?? "").length}/${MAX_MANIFESTO}`}
             onChange={(e) => {
               update(candidate.candidate_id, "manifesto", e.target.value);
+            }}
+            onBlur={() => {
+              save(candidate, "manifesto");
             }}
           />
           <RoleSelect
@@ -218,6 +171,7 @@ function RouteComponent() {
             selected={candidate.role_ids}
             onChange={(next) => {
               update(candidate.candidate_id, "role_ids", next);
+              if (next.length > 0) updateMutation.mutate({ candidateId: candidate.candidate_id, changes: { role_ids: next } });
             }}
           />
         </Card>
@@ -225,7 +179,7 @@ function RouteComponent() {
 
       <Card className="p-3">
         <button
-          onClick={addCandidate}
+          onClick={ () => { createMutation.mutate() }}
           className="w-full rounded-lg bg-emphasis py-2 text-xs"
         >
           Click to add +
