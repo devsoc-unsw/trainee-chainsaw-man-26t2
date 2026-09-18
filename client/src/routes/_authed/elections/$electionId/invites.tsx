@@ -3,12 +3,9 @@ import { useEffect, useRef, useState } from "react";
 import { Card } from "@/components/Card";
 import { TextArea } from "@/components/Form";
 import { DateTimeField } from "@/components/DateTimeField";
-
-interface Voter {
-  voter_id: string;
-  email: string;
-  status: "pending" | "invited" | "voted";
-}
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createVoters, deleteVoters, getCandidates, getRoles, getVoters, inviteVoters, updateCampaign } from "@/lib/api";
+import type { Voter } from "@/lib/apiTypes";
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // TODO: change tolerance from 10 mins to what is appropriate given backend (note 1 hour is a preset not a limit)
@@ -26,132 +23,6 @@ const STATUS_CLASS: Record<Voter["status"], string> = {
   voted: "bg-emphasis text-neutral-900",
 };
 
-// TODO: delete between TODO lines since just for testing
-let mockVoterId = 100;
-
-async function fetchVoters(campaignId: string): Promise<Voter[]> {
-  await new Promise((r) => setTimeout(r, 200));
-  console.log("fetchVoters", campaignId);
-  return [
-    {
-      voter_id: "1",
-      email: "amelia.chen@student.unsw.edu.au",
-      status: "voted",
-    },
-    {
-      voter_id: "2",
-      email: "raj.patel@student.unsw.edu.au",
-      status: "invited",
-    },
-    {
-      voter_id: "3",
-      email: "sam.oconnor@student.unsw.edu.au",
-      status: "pending",
-    },
-  ];
-}
-
-async function createVoters(
-  campaignId: string,
-  emails: string[],
-): Promise<{ voter_id: string }[]> {
-  await new Promise((r) => setTimeout(r, 300));
-  console.log("createVoters", campaignId, emails);
-  return emails.map(() => ({ voter_id: String(++mockVoterId) }));
-}
-
-async function deleteVoters(campaignId: string, voterIds: string[]) {
-  await new Promise((r) => setTimeout(r, 200));
-  console.log("deleteVoters", campaignId, voterIds);
-}
-
-async function fetchReadiness(campaignId: string) {
-  await new Promise((r) => setTimeout(r, 200));
-  console.log("fetchReadiness", campaignId);
-  return { roles: 2, candidates: 4 };
-}
-
-async function scheduleAndInvite(
-  campaignId: string,
-  opening: Date,
-  closing: Date,
-) {
-  await new Promise((r) => setTimeout(r, 400));
-  console.log("scheduleAndInvite", campaignId, opening, closing);
-}
-
-async function startNowAndInvite(campaignId: string, closing: Date) {
-  await new Promise((r) => setTimeout(r, 400));
-  console.log("startNowAndInvite", campaignId, closing);
-}
-// TODO
-
-// TODO: uncomment following with query, for add voters
-/*
-async function fetchVoters(campaignId: string): Promise<Voter[]> {
-  const res = await fetch(`/campaigns/${campaignId}/voters`);
-  if (!res.ok) throw new Error("Couldn't load voters.");
-  return res.json();
-}
-
-async function createVoters(
-  campaignId: string,
-  emails: string[],
-): Promise<{ voter_id: string }[]> {
-  const res = await fetch(`/campaigns/${campaignId}/voters`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ emails }),
-  });
-  if (res.status === 409) throw new Error("Some of those voters are already on the list.");
-  if (!res.ok) throw new Error("Couldn't add those voters. Try again.");
-  return res.json();
-}
-
-async function deleteVoters(campaignId: string, voterIds: string[]) {
-  const res = await fetch(`/campaigns/${campaignId}/voters/delete`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ voter_ids: voterIds }),
-  });
-  if (!res.ok) throw new Error("Couldn't remove those voters. Try again.");
-}
-*/
-
-// TODO: uncomment following with query, for schedule send button
-/*
-async function fetchReadiness(campaignId: string) {
-  const [rolesRes, candidatesRes] = await Promise.all([
-    fetch(`/campaigns/${campaignId}/roles`),
-    fetch(`/campaigns/${campaignId}/candidates`),
-  ]);
-  if (!rolesRes.ok || !candidatesRes.ok) throw new Error("Couldn't check this election.");
-  const roles = await rolesRes.json();
-  const candidates = await candidatesRes.json();
-  return { roles: roles.length, candidates: candidates.length };
-}
-
-async function scheduleAndInvite(
-  campaignId: string,
-  opening: Date,
-  closing: Date,
-) {
-  const patch = await fetch(`/campaigns/${campaignId}`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      opening_date_time: opening.toISOString(),
-      closing_date_time: closing.toISOString(),
-    }),
-  });
-  if (!patch.ok) throw new Error("Couldn't save the schedule. Try again.");
-
-  const invite = await fetch(`/campaigns/${campaignId}/voters/invite`, {
-    method: "POST",
-  });
-  if (!invite.ok) throw new Error("Couldn't send the invitations. Try again.");
-}
-
 // TODO: the start_now flag is a placeholder. We can't send a client-stamped "now" here.
 // Rewrite given:
 //
@@ -162,23 +33,6 @@ async function scheduleAndInvite(
 //   c) opening_date_time stays required and must be future
 //                                   -> "Now" can't exist; delete the mode toggle in
 //                                      SendDialog and always take the scheduled path
-async function startNowAndInvite(campaignId: string, closing: Date) {
-  const patch = await fetch(`/campaigns/${campaignId}`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      start_now: true,
-      closing_date_time: closing.toISOString(),
-    }),
-  });
-  if (!patch.ok) throw new Error("Couldn't start the election. Try again.");
-
-  const invite = await fetch(`/campaigns/${campaignId}/voters/invite`, {
-    method: "POST",
-  });
-  if (!invite.ok) throw new Error("Couldn't send the invitations. Try again.");
-}
-*/
 
 export const Route = createFileRoute("/_authed/elections/$electionId/invites")({
   component: RouteComponent,
@@ -209,63 +63,33 @@ function parseEmails(raw: string) {
 
 function RouteComponent() {
   const { electionId } = Route.useParams();
-
-  const [voters, setVoters] = useState<Voter[]>([]);
+  const queryClient = useQueryClient();
   const [raw, setRaw] = useState("");
-  const [pending, setPending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  // for Schedule Send
   const [sendOpen, setSendOpen] = useState(false);
-  const uninvited = voters.filter((v) => v.status === "pending").length;
 
-  // TODO: delete between TODO lines since just for testing
-  useEffect(() => {
-    fetchVoters(electionId).then(setVoters);
-  }, [electionId]);
-  // TODO
-
-  // TODO: uncomment following with query
-  /*
   const { data: voters = [] } = useQuery({
     queryKey: ["voters", electionId],
-    queryFn: () => fetchVoters(electionId),
+    queryFn: () => getVoters(electionId),
   });
-  */
+
+  const uninvited = voters.filter((v) => v.status === "pending").length;
+  
+  const invalidate = () =>
+  queryClient.invalidateQueries({ queryKey: ["voters", electionId] });
+
+const addMutation = useMutation({
+  mutationFn: (emails: Array<string>) => createVoters(electionId, emails),
+  onSuccess: () => { invalidate(); setRaw(""); },
+});
+
+const removeMutation = useMutation({
+  mutationFn: (voterId: string) => deleteVoters(electionId, [voterId]),
+  onSuccess: invalidate,
+});
   const { valid, invalid } = parseEmails(raw);
   const existing = new Set(voters.map((v) => v.email));
   const toAdd = valid.filter((e) => !existing.has(e));
   const duplicates = valid.length - toAdd.length;
-
-  const add = async () => {
-    if (toAdd.length === 0 || pending) return;
-    setPending(true);
-    setError(null);
-    try {
-      const created = await createVoters(electionId, toAdd);
-      setVoters([
-        ...voters,
-        ...created.map((c, i) => ({
-          voter_id: c.voter_id,
-          email: toAdd[i],
-          status: "pending" as const,
-        })),
-      ]);
-      setRaw("");
-    } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Couldn't add those voters. Try again.",
-      );
-    }
-    setPending(false);
-  };
-
-  const remove = async (voterId: string) => {
-    setVoters(voters.filter((v) => v.voter_id !== voterId));
-    await deleteVoters(electionId, [voterId]);
-  };
 
   return (
     <div className="w-full space-y-3">
@@ -296,19 +120,19 @@ function RouteComponent() {
         )}
 
         {/* request failed, but not a field error */}
-        {error && (
-          <p role="alert" className="text-xs text-red-600">
-            {error}
-          </p>
-        )}
+        {addMutation.isError && (
+  <p role="alert" className="text-xs text-red-600">
+    Couldn't add those voters. Try again.
+  </p>
+)}
 
         <button
           type="button"
-          onClick={add}
-          disabled={toAdd.length === 0 || pending}
+          onClick={() => { addMutation.mutate(toAdd); }}
+          disabled={toAdd.length === 0 || addMutation.isPending}
           className="w-full rounded-lg bg-emphasis py-1.5 text-xs disabled:opacity-50"
         >
-          {pending
+          {addMutation.isPending
             ? "Adding…"
             : `Add ${toAdd.length || ""} ${toAdd.length === 1 ? "voter" : "voters"}`}
         </button>
@@ -343,7 +167,7 @@ function RouteComponent() {
                 <button
                   type="button"
                   disabled={voter.status === "voted"}
-                  onClick={() => remove(voter.voter_id)}
+                  onClick={() => { removeMutation.mutate(voter.voter_id); }}
                   title={
                     voter.status === "voted"
                       ? "Can't remove someone who has already voted"
@@ -381,13 +205,7 @@ function RouteComponent() {
         }}
         electionId={electionId}
         uninvited={uninvited}
-        onSent={() => {
-          setVoters(
-            voters.map((v) =>
-              v.status === "pending" ? { ...v, status: "invited" } : v,
-            ),
-          );
-        }}
+        onSent={invalidate}
       />
     </div>
   );
@@ -411,12 +229,17 @@ function SendDialog({
   const [startNow, setStartNow] = useState(true);
   const [opening, setOpening] = useState<Date | undefined>();
   const [closing, setClosing] = useState<Date | undefined>();
-  const [readiness, setReadiness] = useState<{
-    roles: number;
-    candidates: number;
-  } | null>(null);
-  const [pending, setPending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+
+  const roles = useQuery({
+    queryKey: ["roles", electionId],
+    queryFn: () => getRoles(electionId),
+    enabled: open,
+  });
+  const candidates = useQuery({
+    queryKey: ["candidates", electionId],
+    queryFn: () => getCandidates(electionId),
+    enabled: open,
+  });
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -430,24 +253,15 @@ function SendDialog({
       setStartNow(true);
       setOpening(undefined);
       setClosing(undefined);
-      setPending(false);
-      setError(null);
       return;
     }
-    fetchReadiness(electionId)
-      .then(setReadiness)
-      .catch(() => {
-        setReadiness(null);
-      });
   }, [open, electionId]);
 
   // TODO: every check below is frontend-only, needs to be enforced by backend
   const now = Date.now();
   const blockers: string[] = [];
-  if (readiness) {
-    if (readiness.roles === 0) blockers.push("Add at least one role");
-    if (readiness.candidates === 0) blockers.push("Add at least one candidate");
-  }
+  if (roles.data?.length === 0) blockers.push("Add at least one role");
+  if (candidates.data?.length === 0) blockers.push("Add at least one candidate");
   if (uninvited === 0) blockers.push("No one left to invite");
   if (!startNow && !opening) blockers.push("Choose when voting opens");
   if (!closing) blockers.push("Choose when voting closes");
@@ -461,28 +275,25 @@ function SendDialog({
     blockers.push("Voting must close after it opens");
   }
 
-  const ready = readiness !== null && blockers.length === 0;
+  const ready = !roles.isPending && !candidates.isPending && blockers.length === 0;
+
+  const sendMutation = useMutation({
+    mutationFn: async ({ opening, closing }: { opening: Date; closing: Date }) => {
+      await updateCampaign(electionId, {
+        opening_date_time: opening.toISOString(),
+        closing_date_time: closing.toISOString(),
+      });
+      await inviteVoters(electionId);
+    },
+    onSuccess: () => { onSent(); onClose(); },
+  });
 
   const send = async () => {
-    if (!ready || pending) return;
-    setPending(true);
-    setError(null);
-    try {
-      if (startNow) {
-        await startNowAndInvite(electionId, closing!);
-      } else {
-        await scheduleAndInvite(electionId, opening!, closing!);
-      }
-      onSent();
-      onClose();
-    } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Couldn't send the invitations. Try again.",
-      );
-      setPending(false);
-    }
+    if (!ready || sendMutation.isPending) return;
+  sendMutation.mutate({
+    opening: startNow ? new Date(Date.now() + 60_000) : opening!,
+    closing: closing!,
+  });
   };
 
   return (
@@ -614,9 +425,9 @@ function SendDialog({
             </ul>
           )}
 
-          {error && (
+          {sendMutation.isError && (
             <p role="alert" className="text-xs text-red-600">
-              {error}
+              Couldn't send the invitations. Try again.
             </p>
           )}
 
@@ -631,10 +442,10 @@ function SendDialog({
             <button
               type="button"
               onClick={send}
-              disabled={!ready || pending}
+              disabled={!ready || sendMutation.isPending}
               className="rounded-full bg-emphasis px-4 py-2 text-sm font-medium disabled:opacity-50"
             >
-              {pending ? "Sending…" : startNow ? "Send now" : "Schedule"}
+              {sendMutation.isPending ? "Sending…" : startNow ? "Send now" : "Schedule"}
             </button>
           </div>
         </div>

@@ -12,6 +12,8 @@ import type {
   Role,
   UpdateCandidateRequest,
   UpdateRoleRequest,
+  Voter,
+  CreateVotersResponse,
 } from "@/lib/apiTypes";
 
 export const api = axios.create({
@@ -98,4 +100,25 @@ export async function deleteCandidate(
   candidateId: string,
 ): Promise<void> {
   await api.delete(`/campaigns/${campaignId}/candidates/${candidateId}`);
+}
+
+export async function getVoters(campaignId: string): Promise<Array<Voter>> {
+  const { data } = await api.get(`/campaigns/${campaignId}/voters`);
+  return data;
+}
+
+export async function createVoters(
+  campaignId: string,
+  emails: Array<string>,
+): Promise<CreateVotersResponse> {
+  const { data } = await api.post(`/campaigns/${campaignId}/voters`, { emails });
+  return data;
+}
+
+export async function deleteVoters(campaignId: string, voterIds: Array<string>): Promise<void> {
+  await api.post(`/campaigns/${campaignId}/voters/delete`, { voter_ids: voterIds });
+}
+
+export async function inviteVoters(campaignId: string): Promise<void> {
+  await api.post(`/campaigns/${campaignId}/voters/invite`);
 }

@@ -18,3 +18,8 @@ export type Candidate = components["schemas"]["Candidate"];
 export type CreateCandidateRequest = components["schemas"]["CreateCandidateRequest"];
 export type CreateCandidateResponse = components["schemas"]["CreateCandidateResponse"];
 export type UpdateCandidateRequest = components["schemas"]["UpdateCandidateRequest"];
+
+export type Voter = components["schemas"]["Voter"];
+export type CreateVotersRequest = components["schemas"]["CreateVotersRequest"];
+export type CreateVotersResponse = components["schemas"]["CreateVotersResponse"];
+export type DeleteVotersRequest = components["schemas"]["DeleteVotersRequest"];
