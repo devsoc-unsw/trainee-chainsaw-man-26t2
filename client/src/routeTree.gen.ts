@@ -26,6 +26,7 @@ import { Route as AuthedElectionsElectionIdIndexRouteImport } from './routes/_au
 import { Route as VoteTokenRoleIdRoleIdRouteImport } from './routes/vote/$token/$roleId/$roleId'
 import { Route as AuthedElectionsElectionIdSettingsRouteImport } from './routes/_authed/elections/$electionId/settings'
 import { Route as AuthedElectionsElectionIdRolesRouteImport } from './routes/_authed/elections/$electionId/roles'
+import { Route as AuthedElectionsElectionIdResultsRouteImport } from './routes/_authed/elections/$electionId/results'
 import { Route as AuthedElectionsElectionIdInvitesRouteImport } from './routes/_authed/elections/$electionId/invites'
 import { Route as AuthedElectionsElectionIdCandidatesRouteImport } from './routes/_authed/elections/$electionId/candidates'
 
@@ -117,6 +118,12 @@ const AuthedElectionsElectionIdRolesRoute =
     path: '/roles',
     getParentRoute: () => AuthedElectionsElectionIdRoute,
   } as any)
+const AuthedElectionsElectionIdResultsRoute =
+  AuthedElectionsElectionIdResultsRouteImport.update({
+    id: '/results',
+    path: '/results',
+    getParentRoute: () => AuthedElectionsElectionIdRoute,
+  } as any)
 const AuthedElectionsElectionIdInvitesRoute =
   AuthedElectionsElectionIdInvitesRouteImport.update({
     id: '/invites',
@@ -145,6 +152,7 @@ export interface FileRoutesByFullPath {
   '/vote/$token/': typeof VoteTokenIndexRoute
   '/elections/$electionId/candidates': typeof AuthedElectionsElectionIdCandidatesRoute
   '/elections/$electionId/invites': typeof AuthedElectionsElectionIdInvitesRoute
+  '/elections/$electionId/results': typeof AuthedElectionsElectionIdResultsRoute
   '/elections/$electionId/roles': typeof AuthedElectionsElectionIdRolesRoute
   '/elections/$electionId/settings': typeof AuthedElectionsElectionIdSettingsRoute
   '/vote/$token/$roleId/$roleId': typeof VoteTokenRoleIdRoleIdRoute
@@ -163,6 +171,7 @@ export interface FileRoutesByTo {
   '/vote/$token': typeof VoteTokenIndexRoute
   '/elections/$electionId/candidates': typeof AuthedElectionsElectionIdCandidatesRoute
   '/elections/$electionId/invites': typeof AuthedElectionsElectionIdInvitesRoute
+  '/elections/$electionId/results': typeof AuthedElectionsElectionIdResultsRoute
   '/elections/$electionId/roles': typeof AuthedElectionsElectionIdRolesRoute
   '/elections/$electionId/settings': typeof AuthedElectionsElectionIdSettingsRoute
   '/vote/$token/$roleId/$roleId': typeof VoteTokenRoleIdRoleIdRoute
@@ -185,6 +194,7 @@ export interface FileRoutesById {
   '/vote/$token/': typeof VoteTokenIndexRoute
   '/_authed/elections/$electionId/candidates': typeof AuthedElectionsElectionIdCandidatesRoute
   '/_authed/elections/$electionId/invites': typeof AuthedElectionsElectionIdInvitesRoute
+  '/_authed/elections/$electionId/results': typeof AuthedElectionsElectionIdResultsRoute
   '/_authed/elections/$electionId/roles': typeof AuthedElectionsElectionIdRolesRoute
   '/_authed/elections/$electionId/settings': typeof AuthedElectionsElectionIdSettingsRoute
   '/vote/$token/$roleId/$roleId': typeof VoteTokenRoleIdRoleIdRoute
@@ -207,6 +217,7 @@ export interface FileRouteTypes {
     | '/vote/$token/'
     | '/elections/$electionId/candidates'
     | '/elections/$electionId/invites'
+    | '/elections/$electionId/results'
     | '/elections/$electionId/roles'
     | '/elections/$electionId/settings'
     | '/vote/$token/$roleId/$roleId'
@@ -225,6 +236,7 @@ export interface FileRouteTypes {
     | '/vote/$token'
     | '/elections/$electionId/candidates'
     | '/elections/$electionId/invites'
+    | '/elections/$electionId/results'
     | '/elections/$electionId/roles'
     | '/elections/$electionId/settings'
     | '/vote/$token/$roleId/$roleId'
@@ -246,6 +258,7 @@ export interface FileRouteTypes {
     | '/vote/$token/'
     | '/_authed/elections/$electionId/candidates'
     | '/_authed/elections/$electionId/invites'
+    | '/_authed/elections/$electionId/results'
     | '/_authed/elections/$electionId/roles'
     | '/_authed/elections/$electionId/settings'
     | '/vote/$token/$roleId/$roleId'
@@ -383,6 +396,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedElectionsElectionIdRolesRouteImport
       parentRoute: typeof AuthedElectionsElectionIdRoute
     }
+    '/_authed/elections/$electionId/results': {
+      id: '/_authed/elections/$electionId/results'
+      path: '/results'
+      fullPath: '/elections/$electionId/results'
+      preLoaderRoute: typeof AuthedElectionsElectionIdResultsRouteImport
+      parentRoute: typeof AuthedElectionsElectionIdRoute
+    }
     '/_authed/elections/$electionId/invites': {
       id: '/_authed/elections/$electionId/invites'
       path: '/invites'
@@ -403,6 +423,7 @@ declare module '@tanstack/react-router' {
 interface AuthedElectionsElectionIdRouteChildren {
   AuthedElectionsElectionIdCandidatesRoute: typeof AuthedElectionsElectionIdCandidatesRoute
   AuthedElectionsElectionIdInvitesRoute: typeof AuthedElectionsElectionIdInvitesRoute
+  AuthedElectionsElectionIdResultsRoute: typeof AuthedElectionsElectionIdResultsRoute
   AuthedElectionsElectionIdRolesRoute: typeof AuthedElectionsElectionIdRolesRoute
   AuthedElectionsElectionIdSettingsRoute: typeof AuthedElectionsElectionIdSettingsRoute
   AuthedElectionsElectionIdIndexRoute: typeof AuthedElectionsElectionIdIndexRoute
@@ -414,6 +435,8 @@ const AuthedElectionsElectionIdRouteChildren: AuthedElectionsElectionIdRouteChil
       AuthedElectionsElectionIdCandidatesRoute,
     AuthedElectionsElectionIdInvitesRoute:
       AuthedElectionsElectionIdInvitesRoute,
+    AuthedElectionsElectionIdResultsRoute:
+      AuthedElectionsElectionIdResultsRoute,
     AuthedElectionsElectionIdRolesRoute: AuthedElectionsElectionIdRolesRoute,
     AuthedElectionsElectionIdSettingsRoute:
       AuthedElectionsElectionIdSettingsRoute,
