@@ -146,7 +146,7 @@ function ElectionOverview({ campaign }: { campaign: Campaign }) {
         </label>
       </Card>
 
-      <Card className="p-4">
+      {/* <Card className="p-4">
         <label className="flex items-center gap-2 text-xs text-neutral-800">
           <input
             type="checkbox"
@@ -181,7 +181,7 @@ function ElectionOverview({ campaign }: { campaign: Campaign }) {
             />
           </div>
         )}
-      </Card>
+      </Card> */}
     </div>
   );
 }
